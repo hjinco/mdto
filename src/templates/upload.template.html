@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>mdto.page</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="preconnect" href="https://challenges.cloudflare.com">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			--background: #08090A;
+			--surface: #121315;
+			--surface-highlight: #1C1D21;
+			--border: #222326;
+			--border-highlight: #3A3B40;
+			--text-primary: #EDEDED;
+			--text-secondary: #8A8F98;
+			--text-tertiary: #5F636A;
+			--primary: #5E6AD2;
+			--primary-hover: #6E79D6;
+			--primary-glow: rgba(94, 106, 210, 0.4);
+			--danger: #E5484D;
+			--success: #46A758;
+			--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		body {
+			background-color: var(--background);
+			color: var(--text-primary);
+			font-family: var(--font-sans);
+			height: 100vh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			overflow: hidden;
+			position: relative;
+			padding-bottom: 10vh; /* Move slightly up */
+		}
+
+		/* Background Ambience */
+		body::before {
+			content: '';
+			position: absolute;
+			width: 140vw;
+			height: 140vh;
+			background: radial-gradient(circle at 50% 0%, rgba(94, 106, 210, 0.08), transparent 50%);
+			top: -40%;
+			left: -20%;
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		.container {
+			position: relative;
+			z-index: 1;
+			width: 100%;
+			max-width: 440px;
+			padding: 0 20px;
+			animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.logo {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 40px;
+			opacity: 1;
+		}
+
+		.logo-text {
+			font-size: 18px;
+			font-weight: 600;
+			color: var(--text-primary);
+			letter-spacing: -0.02em;
+			background: linear-gradient(180deg, #FFFFFF 0%, #A0A0A0 100%);
+			background-clip: text;
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.card {
+			background: #141517;
+			border: 1px solid var(--border);
+			border-radius: 12px;
+			padding: 6px;
+			box-shadow: 
+				0 0 0 1px rgba(0,0,0,0.2),
+				0 20px 40px -10px rgba(0,0,0,0.6);
+			transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+			position: relative;
+		}
+
+		.card:hover {
+			border-color: #2A2B30;
+			box-shadow: 
+				0 0 0 1px rgba(0,0,0,0.2),
+				0 30px 60px -12px rgba(0,0,0,0.7);
+		}
+
+		/* Upload View */
+		.upload-view {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+
+		.upload-zone {
+			background: var(--surface);
+			border: 1px dashed var(--border);
+			border-radius: 8px;
+			padding: 60px 24px;
+			text-align: center;
+			cursor: pointer;
+			transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+			position: relative;
+		}
+
+		.upload-zone:hover {
+			background: var(--surface-highlight);
+			border-color: var(--text-secondary);
+		}
+
+		.upload-zone.dragover {
+			border-color: var(--primary);
+			background: rgba(94, 106, 210, 0.08);
+			border-style: solid;
+		}
+
+		.icon-wrapper {
+			width: 40px;
+			height: 40px;
+			background: #1F2023;
+			border: 1px solid var(--border);
+			border-radius: 10px;
+			margin: 0 auto 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+			transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+			color: var(--text-secondary);
+		}
+
+		.upload-zone:hover .icon-wrapper {
+			transform: scale(1.1);
+			border-color: #333;
+			color: var(--text-primary);
+		}
+
+		.upload-title {
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--text-primary);
+			margin-bottom: 6px;
+		}
+
+		.upload-desc {
+			font-size: 13px;
+			color: var(--text-tertiary);
+			line-height: 1.5;
+		}
+
+		.file-input {
+			display: none;
+		}
+
+		.actions {
+			padding: 4px;
+		}
+
+		.btn {
+			width: 100%;
+			background: linear-gradient(180deg, #5E6AD2 0%, #4E5AC0 100%);
+			border: 1px solid rgba(255,255,255,0.08);
+			border-top: 1px solid rgba(255,255,255,0.15);
+			color: white;
+			padding: 10px;
+			height: 40px;
+			border-radius: 8px;
+			font-size: 13px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s;
+			box-shadow: 
+				0 1px 2px rgba(0,0,0,0.1),
+				0 2px 4px rgba(0,0,0,0.1);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+		}
+
+		.btn:hover:not(:disabled) {
+			transform: translateY(-1px);
+			box-shadow: 
+				0 4px 8px rgba(94, 106, 210, 0.25),
+				0 0 0 1px rgba(94, 106, 210, 0.4);
+		}
+
+		.btn:active:not(:disabled) {
+			transform: translateY(0);
+			opacity: 0.9;
+		}
+
+		.btn:disabled {
+			background: var(--surface);
+			border-color: var(--border);
+			color: var(--text-tertiary);
+			cursor: not-allowed;
+			opacity: 1;
+			box-shadow: none;
+		}
+		
+		.btn-secondary {
+			background: transparent;
+			border: 1px solid var(--border);
+			color: var(--text-secondary);
+			box-shadow: none;
+		}
+
+		.btn-secondary:hover:not(:disabled) {
+			background: var(--surface-highlight);
+			border-color: var(--text-tertiary);
+			color: var(--text-primary);
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+		
+		.btn-icon {
+			width: 36px;
+			height: 36px;
+			padding: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: var(--surface-highlight);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			color: var(--text-secondary);
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+		
+		.btn-icon:hover {
+			background: #25262A;
+			border-color: var(--text-tertiary);
+			color: var(--text-primary);
+		}
+
+		/* Success State */
+		.success-view {
+			display: none; /* Hidden by default */
+			flex-direction: column;
+			align-items: center;
+			padding: 40px 24px 24px;
+			text-align: center;
+			border-radius: 8px;
+			background: var(--surface);
+		}
+
+		.success-view.visible {
+			display: flex;
+			animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.success-icon {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			background: rgba(70, 167, 88, 0.15);
+			color: var(--success);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 20px;
+			box-shadow: 0 0 0 1px rgba(70, 167, 88, 0.1);
+		}
+
+		.success-title {
+			font-size: 16px;
+			font-weight: 500;
+			color: var(--text-primary);
+			margin-bottom: 8px;
+		}
+
+		.success-desc {
+			font-size: 13px;
+			color: var(--text-tertiary);
+			margin-bottom: 24px;
+		}
+
+		.url-container {
+			display: flex;
+			width: 100%;
+			gap: 8px;
+			margin-bottom: 24px;
+		}
+
+		.url-input {
+			flex: 1;
+			background: #08090A;
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 0 12px;
+			font-family: var(--font-sans);
+			font-size: 13px;
+			color: var(--text-secondary);
+			outline: none;
+			height: 36px;
+			transition: border-color 0.2s;
+		}
+		
+		.url-input:focus {
+			border-color: var(--text-tertiary);
+			color: var(--text-primary);
+		}
+
+		.copy-btn {
+			height: 36px;
+			padding: 0 12px;
+			background: var(--surface-highlight);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			color: var(--text-primary);
+			font-size: 13px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s;
+			white-space: nowrap;
+		}
+
+		.copy-btn:hover {
+			background: #25262A;
+			border-color: var(--text-tertiary);
+		}
+		
+		.copy-btn:active {
+			transform: scale(0.98);
+		}
+
+		.action-row {
+			width: 100%;
+			border-top: 1px solid var(--border);
+			padding-top: 20px;
+			display: flex;
+			justify-content: center;
+		}
+
+		/* Loading State */
+		.loader {
+			width: 14px;
+			height: 14px;
+			border: 2px solid rgba(255,255,255,0.3);
+			border-radius: 50%;
+			border-top-color: white;
+			animation: spin 0.8s linear infinite;
+			display: none;
+		}
+
+		.btn.loading .loader {
+			display: block;
+		}
+		
+		.btn.loading span {
+			display: none;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(5px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+
+		.footer {
+			position: absolute;
+			bottom: 40px;
+			text-align: center;
+			width: 100%;
+			font-size: 12px;
+			color: var(--text-tertiary);
+			opacity: 0.6;
+			transition: opacity 0.2s;
+		}
+		
+		.footer:hover {
+			opacity: 1;
+		}
+		
+		.kbd {
+			background: rgba(255,255,255,0.05);
+			border: 1px solid var(--border);
+			border-radius: 4px;
+			padding: 2px 6px;
+			margin-left: 6px;
+			font-size: 10px;
+			vertical-align: middle;
+			color: var(--text-secondary);
+			font-family: inherit;
+		}
+		.upload-zone.file-selected {
+			border-style: solid;
+			border-color: rgba(94, 106, 210, 0.5);
+			background: radial-gradient(circle at 50% 0%, rgba(94, 106, 210, 0.1), transparent 70%);
+		}
+
+		.upload-zone.file-selected .icon-wrapper {
+			background: var(--primary);
+			border-color: var(--primary);
+			color: white;
+			transform: scale(1.05);
+			box-shadow: 0 4px 12px rgba(94, 106, 210, 0.3);
+		}
+		
+		.upload-zone.file-selected:hover {
+			border-color: var(--primary);
+		}
+/* Expiration Selector */
+		.expiration-section {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 12px;
+			padding: 0 4px;
+		}
+
+		.expiration-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			margin-bottom: 8px;
+		}
+
+		.expiration-label {
+			font-size: 13px;
+			color: var(--text-secondary);
+			font-weight: 500;
+		}
+
+		.expiration-date {
+			font-size: 11px;
+			color: var(--text-tertiary);
+			font-feature-settings: "tnum";
+		}
+
+		.expiration-options {
+			display: flex;
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: 6px;
+			padding: 2px;
+			gap: 2px;
+		}
+
+		.option-btn {
+			background: transparent;
+			border: 1px solid transparent; /* Fixed layout shift */
+			color: var(--text-tertiary);
+			font-size: 12px;
+			font-weight: 500;
+			padding: 4px 10px;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: all 0.2s;
+			font-family: var(--font-sans);
+			flex: 1; /* Distribute width evenly */
+		}
+
+		.option-btn:hover {
+			color: var(--text-secondary);
+		}
+
+		.option-btn.active {
+			background: var(--surface-highlight);
+			color: var(--text-primary);
+			box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+			border-color: rgba(255,255,255,0.05); /* Only color changes */
+		}
+
+		/* Tooltip */
+		.tooltip-container {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			margin-left: 4px;
+			cursor: help;
+			vertical-align: middle;
+		}
+
+		.tooltip-icon {
+			color: var(--text-tertiary);
+			transition: color 0.2s;
+		}
+
+		.tooltip-container:hover .tooltip-icon {
+			color: var(--text-secondary);
+		}
+
+		.tooltip-content {
+			visibility: hidden;
+			position: absolute;
+			bottom: 100%;
+			left: 50%; /* Center horizontally relative to icon */
+			transform: translateX(-50%) translateY(4px);
+			background: #1F2023;
+			border: 1px solid var(--border-highlight);
+			color: var(--text-primary);
+			padding: 8px 12px;
+			border-radius: 6px;
+			font-size: 11px;
+			line-height: 1.4;
+			width: max-content;
+			max-width: 200px;
+			text-align: center;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+			opacity: 0;
+			transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+			pointer-events: none;
+			z-index: 100;
+		}
+		
+		/* Arrow */
+		.tooltip-content::after {
+			content: '';
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-left: -4px;
+			border-width: 4px;
+			border-style: solid;
+			border-color: var(--border-highlight) transparent transparent transparent;
+		}
+
+		.tooltip-container:hover .tooltip-content {
+			visibility: visible;
+			opacity: 1;
+			transform: translateX(-50%) translateY(-8px);
+		}
+	</style>
+	<script
+  	src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+  	async
+  	defer
+	></script>
+</head>
+<body>
+	<div class="container">
+		<div class="logo">
+			<div class="logo-text">mdto.page</div>
+		</div>
+
+		<div class="card">
+			<!-- Upload View -->
+			<div class="upload-view" id="uploadView">
+				<div class="upload-zone" id="uploadArea">
+					<div class="icon-wrapper">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+							<polyline points="17 8 12 3 7 8"></polyline>
+							<line x1="12" y1="3" x2="12" y2="15"></line>
+						</svg>
+					</div>
+					<div class="upload-title">Import Markdown</div>
+					<div class="upload-desc">
+						Drop your .md file here or click to browse<br>
+						<span style="opacity: 0.5; font-size: 11px; margin-top: 6px; display: inline-block;">Maximum 1MB</span>
+					</div>
+				</div>
+				
+				<div class="expiration-section" style="display: block; margin-top: 16px;">
+					<div class="expiration-header">
+						<div class="expiration-label" style="display: flex; align-items: center;">
+							Expiration
+							<div class="tooltip-container">
+								<svg class="tooltip-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"></circle>
+									<line x1="12" y1="16" x2="12" y2="12"></line>
+									<line x1="12" y1="8" x2="12.01" y2="8"></line>
+								</svg>
+								<div class="tooltip-content">
+									Deletion occurs periodically,<br>so the exact time may vary.
+								</div>
+							</div>
+						</div>
+						<div class="expiration-date" id="expirationDate"></div>
+					</div>
+					<div class="expiration-options" id="expirationOptions">
+						<button type="button" class="option-btn" data-value="1">1 Day</button>
+						<button type="button" class="option-btn" data-value="7">1 Week</button>
+						<button type="button" class="option-btn" data-value="14">2 Weeks</button>
+						<button type="button" class="option-btn active" data-value="30">1 Month</button>
+					</div>
+				</div>
+
+				<div class="cf-turnstile" data-sitekey="0x4AAAAAACMzQnf-J0EKwNYD" style="align-self: center;"></div>
+				
+				<div class="actions">
+					<button class="btn" id="uploadButton" disabled>
+						<span>Create Page</span>
+						<div class="loader"></div>
+					</button>
+				</div>
+			</div>
+
+			<!-- Success View -->
+			<div class="success-view" id="successView">
+				<div class="success-icon">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="20 6 9 17 4 12"></polyline>
+					</svg>
+				</div>
+				<h3 class="success-title">Page Created</h3>
+				<p class="success-desc">Your page is now live.</p>
+				
+				<div class="url-container">
+					<input type="text" class="url-input" id="urlInput" readonly value="https://mdto.page/example" onclick="this.select()">
+					<button class="copy-btn" id="copyButton">Copy</button>
+					<a href="#" target="_blank" class="btn-icon" id="openLinkBtn" title="Open Link">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+							<polyline points="15 3 21 3 21 9"></polyline>
+							<line x1="10" y1="14" x2="21" y2="3"></line>
+						</svg>
+					</a>
+				</div>
+				
+				<div class="action-row">
+					<button class="btn btn-secondary" id="resetButton" style="width: auto; padding-left: 20px; padding-right: 20px;">
+						Create another page
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer">
+		Press <span class="kbd">⌘ O</span> to browse files
+	</div>
+
+	<input type="file" id="fileInput" class="file-input" accept=".md,text/markdown,text/plain">
+
+	<script>
+		const uploadView = document.getElementById('uploadView');
+		const successView = document.getElementById('successView');
+		const uploadArea = document.getElementById('uploadArea');
+		const fileInput = document.getElementById('fileInput');
+		const uploadButton = document.getElementById('uploadButton');
+		const urlInput = document.getElementById('urlInput');
+		const copyButton = document.getElementById('copyButton');
+		const openLinkBtn = document.getElementById('openLinkBtn');
+		const resetButton = document.getElementById('resetButton');
+		const expirationDateEl = document.getElementById('expirationDate');
+		
+		let selectedFile = null;
+		let expirationDays = 30;
+
+		function updateExpirationDate(days) {
+			const date = new Date();
+			date.setDate(date.getDate() + days);
+			// Format: "Jan 1, 2024 at 12:00 PM"
+			const dateStr = date.toLocaleDateString('en-US', { 
+				weekday: 'short',
+				month: 'short', 
+				day: 'numeric', 
+				year: 'numeric' 
+			});
+			const timeStr = date.toLocaleTimeString('en-US', { 
+				hour: 'numeric', 
+				minute: 'numeric',
+				hour12: true
+			});
+			expirationDateEl.textContent = `Expires on ${dateStr} at ${timeStr}`;
+		}
+
+		// Initialize date
+		updateExpirationDate(expirationDays);
+
+		// Shortcuts
+		document.addEventListener('keydown', (e) => {
+			if ((e.metaKey || e.ctrlKey) && e.key === 'o') {
+				e.preventDefault();
+				if (uploadView.style.display !== 'none') {
+					fileInput.click();
+				}
+			}
+		});
+
+		// Expiration Selection
+		expirationOptions.addEventListener('click', (e) => {
+			if (e.target.classList.contains('option-btn')) {
+				// Remove active class from all
+				expirationOptions.querySelectorAll('.option-btn').forEach(btn => { btn.classList.remove('active'); });
+				// Add active class to clicked
+				e.target.classList.add('active');
+				// Update value
+				expirationDays = parseInt(e.target.dataset.value, 10);
+				updateExpirationDate(expirationDays);
+			}
+		});
+
+		// Drag and Drop
+		uploadArea.addEventListener('click', () => fileInput.click());
+
+		['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+			uploadArea.addEventListener(eventName, preventDefaults, false);
+		});
+
+		function preventDefaults(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+
+		['dragenter', 'dragover'].forEach(eventName => {
+			uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+		});
+
+		['dragleave', 'drop'].forEach(eventName => {
+			uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+		});
+
+		uploadArea.addEventListener('drop', (e) => {
+			const files = e.dataTransfer.files;
+			if (files.length > 0) handleFileSelect(files[0]);
+		});
+
+		fileInput.addEventListener('change', (e) => {
+			if (e.target.files.length > 0) handleFileSelect(e.target.files[0]);
+		});
+
+
+
+		const defaultIcon = `
+			<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+			<polyline points="17 8 12 3 7 8"></polyline>
+			<line x1="12" y1="3" x2="12" y2="15"></line>
+		`;
+
+		const fileIcon = `
+			<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+			<polyline points="14 2 14 8 20 8"></polyline>
+		`;
+
+		function handleFileSelect(file) {
+			selectedFile = file;
+			
+			// Update UI to show selection
+			uploadArea.classList.add('file-selected');
+			
+			const iconWrapper = uploadArea.querySelector('.icon-wrapper svg');
+			iconWrapper.innerHTML = fileIcon;
+			
+			uploadArea.querySelector('.upload-title').textContent = file.name;
+			uploadArea.querySelector('.upload-desc').innerHTML = `
+				<span style="color: var(--text-primary)">${(file.size / 1024).toFixed(2)} KB</span>
+				<span style="color: var(--text-tertiary)"> • Ready to publish</span>
+			`;
+			
+			uploadButton.disabled = false;
+		}
+
+		function resetUI() {
+			selectedFile = null;
+			fileInput.value = '';
+			
+			// Reset text
+			uploadArea.querySelector('.upload-title').textContent = 'Write your page';
+			uploadArea.querySelector('.upload-desc').innerHTML = 'Drop your .md file here or click to browse<br><span style="opacity: 0.5; font-size: 11px; margin-top: 6px; display: inline-block;">Maximum 1MB</span>';
+			
+			// Reset expiration to default (30 days)
+			expirationDays = 30;
+			expirationOptions.querySelectorAll('.option-btn').forEach(btn => {
+				btn.classList.toggle('active', btn.dataset.value === '30');
+			});
+			updateExpirationDate(30);
+
+			// Reset styles
+			uploadArea.classList.remove('file-selected');
+			const iconWrapper = uploadArea.querySelector('.icon-wrapper svg');
+			iconWrapper.innerHTML = defaultIcon;
+			
+			uploadButton.disabled = true;
+			
+			// Toggle views
+			successView.classList.remove('visible');
+			setTimeout(() => {
+				successView.style.display = 'none';
+				uploadView.style.display = 'flex';
+			}, 200);
+		}
+
+		resetButton.addEventListener('click', resetUI);
+
+		copyButton.addEventListener('click', () => {
+			urlInput.select();
+			document.execCommand('copy');
+			
+			const originalText = copyButton.textContent;
+			copyButton.textContent = 'Copied!';
+			copyButton.style.color = 'var(--success)';
+			copyButton.style.borderColor = 'rgba(70, 167, 88, 0.3)';
+			
+			setTimeout(() => {
+				copyButton.textContent = originalText;
+				copyButton.style.color = '';
+				copyButton.style.borderColor = '';
+			}, 2000);
+		});
+
+		uploadButton.addEventListener('click', async () => {
+			if (!selectedFile) return;
+
+			// Get Turnstile token (optional in development)
+			let turnstileToken = null;
+			if (typeof turnstile !== 'undefined') {
+				turnstileToken = turnstile.getResponse();
+			}
+
+			uploadButton.classList.add('loading');
+			uploadButton.disabled = true;
+
+			try {
+				const text = await selectedFile.text();
+				
+				// Build headers - include token only if available
+				const headers = { 'Content-Type': 'text/plain' };
+				if (turnstileToken) {
+					headers['X-Turnstile-Token'] = turnstileToken;
+				}
+				
+				const response = await fetch(`/upload?expiration=${expirationDays}`, {
+					method: 'POST',
+					headers: headers,
+					body: text,
+				});
+
+				const data = await response.json();
+
+				if (response.ok && data.slug) {
+					const viewUrl = `${window.location.origin}/${data.slug}`;
+					
+					// Setup Success View
+					urlInput.value = viewUrl;
+					openLinkBtn.href = viewUrl;
+					
+					// Switch Views
+					uploadView.style.display = 'none';
+					successView.style.display = 'flex';
+					// Trigger reflow
+					void successView.offsetWidth;
+					successView.classList.add('visible');
+					
+				} else {
+					// Reset Turnstile widget on validation failure
+					if (typeof turnstile !== 'undefined') {
+						turnstile.reset();
+					}
+					throw new Error(data.error || 'Failed to create page');
+				}
+			} catch (error) {
+				// Reset Turnstile widget on error
+				if (typeof turnstile !== 'undefined') {
+					turnstile.reset();
+				}
+				alert(`Failed to create page: ${error.message}`);
+				uploadButton.disabled = false;
+			} finally {
+				uploadButton.classList.remove('loading');
+			}
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+	"rules": [
+		{
+			"id": "Expire1Day",
+			"conditions": {
+				"prefix": "1/"
+			},
+			"enabled": true,
+			"deleteObjectsTransition": {
+				"condition": {
+					"maxAge": 86400,
+					"type": "Age"
+				}
+			}
+		},
+		{
+			"id": "Expire7Days",
+			"conditions": {
+				"prefix": "7/"
+			},
+			"enabled": true,
+			"deleteObjectsTransition": {
+				"condition": {
+					"maxAge": 604800,
+					"type": "Age"
+				}
+			}
+		},
+		{
+			"id": "Expire14Days",
+			"conditions": {
+				"prefix": "E/"
+			},
+			"enabled": true,
+			"deleteObjectsTransition": {
+				"condition": {
+					"maxAge": 1209600,
+					"type": "Age"
+				}
+			}
+		},
+		{
+			"id": "Expire30Days",
+			"conditions": {
+				"prefix": "1E/"
+			},
+			"enabled": true,
+			"deleteObjectsTransition": {
+				"condition": {
+					"maxAge": 2592000,
+					"type": "Age"
+				}
+			}
+		}
+	]
+}

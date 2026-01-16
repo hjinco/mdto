@@ -1,0 +1,33 @@
+{
+	"name": "mdto",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"lint": "biome check",
+		"lint:fix": "biome check --write",
+		"test": "vitest",
+		"cf-typegen": "wrangler types",
+		"lifecycle:apply": "wrangler r2 bucket lifecycle set mdto --file r2-lifecycle.json"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.11",
+		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@types/insane": "^1.0.0",
+		"@types/jsdom": "^27.0.0",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.59.2"
+	},
+	"dependencies": {
+		"dompurify": "^3.3.1",
+		"insane": "^2.6.2",
+		"isomorphic-dompurify": "^2.35.0",
+		"jsdom": "^27.4.0",
+		"linkedom": "^0.18.12",
+		"marked": "^17.0.1",
+		"nanoid": "^5.1.6"
+	}
+}
