@@ -575,14 +575,15 @@
 					<div class="upload-title">Import Markdown</div>
 					<div class="upload-desc">
 						Drop your .md file here or click to browse<br>
-						<span style="opacity: 0.5; font-size: 11px; margin-top: 6px; display: inline-block;">Maximum 1MB</span>
+						<span style="opacity: 0.5; font-size: 11px; margin-top: 6px; display: inline-block;">Maximum 100KB</span>
 					</div>
 				</div>
 				
 				<div class="expiration-section" style="display: block; margin-top: 16px;">
 					<div class="expiration-header">
-						<div class="expiration-label" style="display: flex; align-items: center;">
-							Expiration
+						<div class="expiration-label"></div>
+						<div style="display: flex; align-items: center; gap: 4px;">
+							<div class="expiration-date" id="expirationDate"></div>
 							<div class="tooltip-container">
 								<svg class="tooltip-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<circle cx="12" cy="12" r="10"></circle>
@@ -594,7 +595,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="expiration-date" id="expirationDate"></div>
 					</div>
 					<div class="expiration-options" id="expirationOptions">
 						<button type="button" class="option-btn" data-value="1">1 Day</button>
@@ -603,8 +603,6 @@
 						<button type="button" class="option-btn active" data-value="30">1 Month</button>
 					</div>
 				</div>
-
-				<div class="cf-turnstile" data-sitekey="0x4AAAAAACMzQnf-J0EKwNYD" style="align-self: center;"></div>
 				
 				<div class="actions">
 					<button class="btn" id="uploadButton" disabled>
@@ -644,6 +642,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="cf-turnstile" data-sitekey="0x4AAAAAACMzQnf-J0EKwNYD" data-appearance="interaction-only" style="align-self: center;"></div>
 
 	<div class="footer">
 		Press <span class="kbd">⌘ O</span> to browse files
