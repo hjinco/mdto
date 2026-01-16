@@ -14,23 +14,25 @@ export async function handleView(
 ): Promise<Response> {
 	try {
 		if (!isValidSlug(slug)) {
-			return text("Invalid slug format", 400);
+			return text("Invalid slug format", 400, "no-cache");
 		}
 
-		const key = `${prefix}/${slug}`;
+		const normalizedPrefix = prefix.toUpperCase();
+		const key = `${normalizedPrefix}/${slug}`;
 		const object = await env.BUCKET.get(key);
 
 		if (!object) {
-			return text("Not found", 404);
+			return text("Not found", 404, "no-cache");
 		}
 
 		const htmlContent = await object.text();
 		const theme = object.customMetadata?.theme || "default";
 		const htmlPage = createViewHtml(slug, htmlContent, theme);
 
-		return html(htmlPage);
+		// Cache successful responses for 30 days (2592000 seconds)
+		return html(htmlPage, 200, "public, max-age=2592000");
 	} catch (error) {
 		console.error("View error:", error);
-		return text("Internal server error", 500);
+		return text("Internal server error", 500, "no-cache");
 	}
 }
