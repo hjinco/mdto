@@ -1,12 +1,4 @@
-const themes: Record<string, string> = {
-	default: "/themes/default.css",
-	resume: "/themes/resume.css",
-};
-
-const hljsThemes: Record<string, string> = {
-	default: "/themes/default.hljs.css",
-	resume: "/themes/resume.hljs.css",
-};
+import { createHtmlPage } from "@shared/templates/view.template";
 
 /**
  * Create HTML page for viewing markdown content
@@ -20,27 +12,5 @@ export function createViewHtml(
 	htmlContent: string,
 	theme: string = "default",
 ): string {
-	const themePath = themes[theme] || themes.default;
-	const hljsThemePath = hljsThemes[theme] || hljsThemes.default;
-	return `<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>${slug}</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="${themePath}">
-	<link rel="stylesheet" href="${hljsThemePath}">
-</head>
-<body>
-	<div class="content">
-		${htmlContent}
-	</div>
-	<footer>
-		<p>Powered by <a href="https://mdto.page">mdto.page</a></p>
-	</footer>
-</body>
-</html>`;
+	return createHtmlPage(slug, htmlContent, theme);
 }

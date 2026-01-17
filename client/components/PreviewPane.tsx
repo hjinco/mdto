@@ -1,5 +1,6 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { createHtmlPage } from "@shared/templates/view.template";
 import { markdownToHtml } from "@shared/utils/markdown";
 import { useEffect, useRef, useState } from "react";
 
@@ -22,30 +23,11 @@ export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
 				const markdown = await file.text();
 
 				const htmlContent = await markdownToHtml(markdown);
-				const themePath = `/themes/${theme}.css`;
-				const hljsThemePath = `/themes/${theme}.hljs.css`;
-
-				const previewHtml = `<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Preview - ${themeName}</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="${themePath}">
-	<link rel="stylesheet" href="${hljsThemePath}">
-</head>
-<body>
-	<div class="content">
-		${htmlContent}
-	</div>
-	<footer>
-		<p>Powered by <a href="https://mdto.page">mdto.page</a></p>
-	</footer>
-</body>
-</html>`;
+				const previewHtml = createHtmlPage(
+					`Preview - ${themeName}`,
+					htmlContent,
+					theme,
+				);
 
 				const iframe = iframeRef.current;
 				if (iframe) {
