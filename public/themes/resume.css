@@ -88,7 +88,6 @@ code {
 pre {
 	background-color: var(--code-bg);
 	border: 1px solid var(--code-border);
-	padding: 16px;
 	border-radius: 6px;
 	overflow-x: auto;
 	margin-bottom: 1.5em;
