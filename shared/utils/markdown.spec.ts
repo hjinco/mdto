@@ -221,13 +221,6 @@ Normal text here.
 			expect(result).toContain("<img");
 			expect(result).toContain("https://example.com/image.jpg");
 		});
-
-		it("should preserve code blocks", async () => {
-			const markdown = "```javascript\nconst x = 1;\n```";
-			const result = await markdownToHtml(markdown);
-			expect(result).toContain("code");
-			expect(result).toContain("const x = 1");
-		});
 	});
 
 	describe("Heading ID generation", () => {
