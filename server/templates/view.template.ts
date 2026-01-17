@@ -3,6 +3,11 @@ const themes: Record<string, string> = {
 	resume: "/themes/resume.css",
 };
 
+const hljsThemes: Record<string, string> = {
+	default: "/themes/default.hljs.css",
+	resume: "/themes/resume.hljs.css",
+};
+
 /**
  * Create HTML page for viewing markdown content
  * @param slug - The slug identifier for the page title
@@ -16,6 +21,7 @@ export function createViewHtml(
 	theme: string = "default",
 ): string {
 	const themePath = themes[theme] || themes.default;
+	const hljsThemePath = hljsThemes[theme] || hljsThemes.default;
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +32,7 @@ export function createViewHtml(
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="${themePath}">
+	<link rel="stylesheet" href="${hljsThemePath}">
 </head>
 <body>
 	<div class="content">

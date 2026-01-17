@@ -23,6 +23,7 @@ export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
 
 				const htmlContent = await markdownToHtml(markdown);
 				const themePath = `/themes/${theme}.css`;
+				const hljsThemePath = `/themes/${theme}.hljs.css`;
 
 				const previewHtml = `<!DOCTYPE html>
 <html>
@@ -34,6 +35,7 @@ export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="${themePath}">
+	<link rel="stylesheet" href="${hljsThemePath}">
 </head>
 <body>
 	<div class="content">

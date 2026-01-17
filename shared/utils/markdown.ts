@@ -1,3 +1,4 @@
+import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
@@ -17,6 +18,7 @@ export async function markdownToHtml(markdown: string): Promise<string> {
 		.use(remarkRehype, { allowDangerousHtml: true })
 		.use(rehypeRaw)
 		.use(rehypeSanitize)
+		.use(rehypeHighlight)
 		.use(rehypeSlug)
 		.use(rehypeStringify);
 
