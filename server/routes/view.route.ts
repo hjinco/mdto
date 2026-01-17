@@ -1,4 +1,4 @@
-import { createViewHtml } from "../templates/view.template";
+import { createHtmlPage } from "@shared/templates/view.template";
 import { html, text } from "../utils/response";
 import { isValidSlug } from "../utils/slug";
 
@@ -27,7 +27,7 @@ export async function handleView(
 
 		const htmlContent = await object.text();
 		const theme = object.customMetadata?.theme || "default";
-		const htmlPage = createViewHtml(slug, htmlContent, theme);
+		const htmlPage = createHtmlPage(slug, htmlContent, theme);
 
 		// Cache successful responses for 30 days (2592000 seconds)
 		return html(htmlPage, 200, "public, max-age=2592000");

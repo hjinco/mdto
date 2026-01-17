@@ -24,13 +24,6 @@ export default {
 				return handleView(prefix, slug, env);
 			}
 
-			// Fallback for old format (backward compatibility)
-			// Try to find the file without prefix (for existing files)
-			const slug = pathname.slice(1);
-			if (slug) {
-				return handleView("", slug, env);
-			}
-
 			return text("Not found", 404);
 		}
 
