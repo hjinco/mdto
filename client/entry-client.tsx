@@ -1,12 +1,11 @@
 import * as React from "react";
-import { createRoot } from "react-dom/client";
+import { hydrateRoot } from "react-dom/client";
 import { App } from "./App";
 import "./styles.css";
 import { PostHogProvider } from "@posthog/react";
 import posthog from "posthog-js";
 
-// 개발 모드가 아닐 때만 PostHog 초기화
-if (!import.meta.env.DEV) {
+if (typeof window !== "undefined" && !import.meta.env.DEV) {
 	posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
 		api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
 		defaults: "2025-11-30",
@@ -14,7 +13,8 @@ if (!import.meta.env.DEV) {
 	});
 }
 
-createRoot(document.getElementById("root") as HTMLElement).render(
+hydrateRoot(
+	document.getElementById("root") as HTMLElement,
 	<React.StrictMode>
 		<PostHogProvider client={posthog}>
 			<App />

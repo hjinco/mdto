@@ -34,4 +34,11 @@ export default defineConfig({
 			},
 		},
 	},
+	ssr: {
+		noExternal: [
+			"@hugeicons/react",
+			"@hugeicons/core-free-icons",
+			"react-turnstile",
+		],
+	},
 });

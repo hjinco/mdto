@@ -170,3 +170,6 @@ worker-configuration.d.ts
 # Vite bundled output
 public/assets/*
 public/index.html
+
+# SSR build output
+dist-ssr/
