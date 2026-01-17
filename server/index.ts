@@ -1,7 +1,6 @@
 import { handleUpload } from "./routes/upload.route";
 import { handleView } from "./routes/view.route";
-import { isDev } from "./utils/env";
-import { html, text } from "./utils/response";
+import { text } from "./utils/response";
 
 export default {
 	async fetch(request, env): Promise<Response> {
@@ -10,7 +9,7 @@ export default {
 		const method = request.method;
 
 		// POST /upload - Upload markdown
-		if (method === "POST" && pathname === "/upload") {
+		if (method === "POST" && pathname === "/api/upload") {
 			return handleUpload(request, env);
 		}
 

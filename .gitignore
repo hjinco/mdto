@@ -166,3 +166,7 @@ dist
 !.env.example
 .wrangler/
 worker-configuration.d.ts
+
+# Vite bundled output
+public/assets/*
+public/index.html

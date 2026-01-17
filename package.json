@@ -3,32 +3,44 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev",
+		"dev": "concurrently \"pnpm run dev:client\" \"pnpm run dev:server\"",
+		"dev:client": "vite",
+		"dev:server": "wrangler dev",
+		"build:client": "vite build",
 		"start": "wrangler dev",
 		"lint": "biome check",
 		"lint:fix": "biome check --write",
-		"test": "vitest",
+		"test": "vitest run",
 		"cf-typegen": "wrangler types",
 		"lifecycle:apply": "wrangler r2 bucket lifecycle set mdto --file r2-lifecycle.json"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.11",
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@tailwindcss/vite": "^4.1.18",
 		"@types/insane": "^1.0.0",
 		"@types/jsdom": "^27.0.0",
+		"@types/react": "^19.2.8",
+		"@types/react-dom": "^19.2.3",
+		"@vitejs/plugin-react-swc": "^4.2.2",
+		"concurrently": "^9.2.1",
+		"tailwindcss": "^4.1.18",
 		"typescript": "^5.5.2",
+		"vite": "^7.3.1",
 		"vitest": "~3.2.0",
 		"wrangler": "^4.59.2"
 	},
 	"dependencies": {
-		"dompurify": "^3.3.1",
+		"@hugeicons/core-free-icons": "^3.1.1",
+		"@hugeicons/react": "^1.1.4",
+		"@posthog/react": "^1.5.2",
 		"insane": "^2.6.2",
-		"isomorphic-dompurify": "^2.35.0",
-		"jsdom": "^27.4.0",
-		"linkedom": "^0.18.12",
 		"marked": "^17.0.1",
-		"nanoid": "^5.1.6"
+		"nanoid": "^5.1.6",
+		"posthog-js": "^1.326.0",
+		"react": "^19.2.3",
+		"react-dom": "^19.2.3",
+		"react-turnstile": "^1.1.4"
 	},
 	"packageManager": "pnpm@10.25.0"
 }

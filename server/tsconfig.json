@@ -36,8 +36,17 @@
 
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true,
-		"types": ["./worker-configuration.d.ts"]
+		"types": ["../worker-configuration.d.ts"],
+
+		"paths": {
+			"@shared/*": ["../shared/*"]
+		}
 	},
 	"exclude": ["test"],
-	"include": ["worker-configuration.d.ts", "html.d.ts", "src/**/*.ts"]
+	"include": [
+		"../worker-configuration.d.ts",
+		"../html.d.ts",
+		"../shared/**/*.ts",
+		"**/*.ts"
+	]
 }
