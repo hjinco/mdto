@@ -29,15 +29,16 @@ export function PreviewPane({
 			try {
 				const markdown = await file.text();
 
-				const htmlContent = await markdownToHtml(markdown);
+				const html = await markdownToHtml(markdown);
 				const expirationTime =
 					Date.now() + expirationDays * 24 * 60 * 60 * 1000;
-				const previewHtml = createHtmlPage(
-					`Preview - ${themeName}`,
-					htmlContent,
+				const previewHtml = createHtmlPage({
+					title: `Preview - ${themeName}`,
+					expiresAt: expirationTime.toString(),
+					html,
 					theme,
-					expirationTime.toString(),
-				);
+					markdown,
+				});
 
 				const iframe = iframeRef.current;
 				if (iframe) {

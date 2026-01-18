@@ -90,7 +90,7 @@ export async function handleUpload(
 			return exception("Markdown content is required", 400);
 		}
 
-		const htmlContent = await markdownToHtml(markdown);
+		const html = await markdownToHtml(markdown);
 
 		const slug = await retryUntil(
 			async () => generateSlug(),
@@ -109,12 +109,16 @@ export async function handleUpload(
 		}
 
 		const key = `${prefix}/${slug}`;
-		await env.BUCKET.put(key, htmlContent, {
+		const jsonData = JSON.stringify({
+			markdown,
+			html,
+		});
+		await env.BUCKET.put(key, jsonData, {
 			httpMetadata: {
-				contentType: "text/html",
+				contentType: "application/json",
 			},
 			customMetadata: {
-				theme: theme,
+				theme,
 			},
 		});
 
