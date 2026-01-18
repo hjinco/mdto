@@ -8,10 +8,16 @@ import { cn } from "../utils/styles";
 interface PreviewDialogProps {
 	file: File;
 	theme: string;
+	expirationDays: number;
 	onClose: () => void;
 }
 
-export function PreviewDialog({ file, theme, onClose }: PreviewDialogProps) {
+export function PreviewDialog({
+	file,
+	theme,
+	expirationDays,
+	onClose,
+}: PreviewDialogProps) {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -42,10 +48,13 @@ export function PreviewDialog({ file, theme, onClose }: PreviewDialogProps) {
 				const markdown = await file.text();
 
 				const htmlContent = await markdownToHtml(markdown);
+				const expirationTime =
+					Date.now() + expirationDays * 24 * 60 * 60 * 1000;
 				const previewHtml = createHtmlPage(
 					`Preview - ${themeName}`,
 					htmlContent,
 					theme,
+					expirationTime.toString(),
 				);
 
 				const iframe = iframeRef.current;
@@ -67,7 +76,7 @@ export function PreviewDialog({ file, theme, onClose }: PreviewDialogProps) {
 		};
 
 		renderPreview();
-	}, [file, theme, themeName]);
+	}, [file, theme, themeName, expirationDays]);
 
 	return (
 		// biome-ignore lint/a11y/noStaticElementInteractions: Todo

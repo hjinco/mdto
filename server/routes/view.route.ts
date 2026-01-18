@@ -28,7 +28,14 @@ export async function handleView(
 
 		const htmlContent = await object.text();
 		const theme = object.customMetadata?.theme || "default";
-		const htmlPage = createHtmlPage(slug, htmlContent, theme);
+
+		// Calculate expiration time from prefix and upload date
+		const expirationDays = parseInt(normalizedPrefix, 16);
+		const uploadTime = object.uploaded.getTime();
+		const expirationTime = uploadTime + expirationDays * 24 * 60 * 60 * 1000;
+		const expiresAt = expirationTime.toString();
+
+		const htmlPage = createHtmlPage(slug, htmlContent, theme, expiresAt);
 
 		// Cache successful responses for 30 days (2592000 seconds)
 		return html(htmlPage, 200, "public, max-age=2592000");

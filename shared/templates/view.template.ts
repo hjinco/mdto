@@ -22,12 +22,14 @@ const metaDescription =
  * @param title - Page title
  * @param htmlContent - The converted HTML content from markdown
  * @param theme - The theme name to use (default: 'default')
+ * @param expiresAt - Expiration timestamp
  * @returns Complete HTML page as string
  */
 export function createHtmlPage(
 	title: string,
 	htmlContent: string,
 	theme: string = "default",
+	expiresAt: string,
 ): string {
 	const { themePath, hljsThemePath } = getThemePaths(theme);
 
@@ -78,6 +80,19 @@ export function createHtmlPage(
 	</script>`
 		: "";
 
+	let footerHtml = "";
+	try {
+		const date = new Date(parseInt(expiresAt, 10));
+		const formattedDate = date.toLocaleDateString("en-US", {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+		});
+		footerHtml = `Expires on ${formattedDate} | <a href="https://mdto.page">mdto.page</a>`;
+	} catch (e) {
+		console.error("Failed to parse expiration date", e);
+	}
+
 	return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +112,7 @@ export function createHtmlPage(
 		${htmlContent}
 	</div>
 	<footer>
-		<p>Powered by <a href="https://mdto.page">mdto.page</a></p>
+		<p>${footerHtml}</p>
 	</footer>
 </body>
 </html>`;

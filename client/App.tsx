@@ -120,6 +120,7 @@ export function App() {
 						<PreviewPane
 							file={selectedFile}
 							theme={selectedTheme}
+							expirationDays={expirationDays}
 							onClose={() => setShowPreview(false)}
 						/>
 					</div>
@@ -220,6 +221,7 @@ export function App() {
 					<PreviewDialog
 						file={selectedFile}
 						theme={selectedTheme}
+						expirationDays={expirationDays}
 						onClose={() => setShowPreview(false)}
 					/>
 				</div>

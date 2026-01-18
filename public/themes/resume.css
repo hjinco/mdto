@@ -167,7 +167,10 @@ footer {
 	text-align: center;
 	font-size: 0.75rem;
 	color: var(--text-secondary);
-	border-top: 1px solid var(--border-subtle);
+}
+
+footer p {
+	margin: 0;
 }
 
 footer a {

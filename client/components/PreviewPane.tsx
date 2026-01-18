@@ -8,10 +8,16 @@ import { cn } from "../utils/styles";
 interface PreviewPaneProps {
 	file: File;
 	theme: string;
+	expirationDays: number;
 	onClose: () => void;
 }
 
-export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
+export function PreviewPane({
+	file,
+	theme,
+	expirationDays,
+	onClose,
+}: PreviewPaneProps) {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -24,10 +30,13 @@ export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
 				const markdown = await file.text();
 
 				const htmlContent = await markdownToHtml(markdown);
+				const expirationTime =
+					Date.now() + expirationDays * 24 * 60 * 60 * 1000;
 				const previewHtml = createHtmlPage(
 					`Preview - ${themeName}`,
 					htmlContent,
 					theme,
+					expirationTime.toString(),
 				);
 
 				const iframe = iframeRef.current;
@@ -49,7 +58,7 @@ export function PreviewPane({ file, theme, onClose }: PreviewPaneProps) {
 		};
 
 		renderPreview();
-	}, [file, theme, themeName]);
+	}, [file, theme, themeName, expirationDays]);
 
 	return (
 		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">

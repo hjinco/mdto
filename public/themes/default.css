@@ -187,10 +187,6 @@ th {
 	font-weight: 600;
 }
 
-td {
-	color: var(--text-tertiary);
-}
-
 img {
 	max-width: 100%;
 	border-radius: 8px;
@@ -215,8 +211,11 @@ footer {
 	padding-top: 2rem;
 	text-align: center;
 	font-size: 0.875rem;
-	color: var(--text-secondary);
-	border-top: 1px solid var(--border-subtle);
+	color: var(--text-tertiary);
+}
+
+footer p {
+	margin: 0;
 }
 
 footer a {
