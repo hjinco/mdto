@@ -59,7 +59,7 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 					href={url}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="w-9 h-9 p-0 flex items-center justify-center bg-surface-highlight border border-border rounded-md text-text-secondary cursor-pointer transition-all duration-200 no-underline hover:bg-[#25262a] hover:border-text-tertiary hover:text-text-primary"
+					className="w-9 h-9 p-0 shrink-0 flex items-center justify-center bg-surface-highlight border border-border rounded-md text-text-secondary cursor-pointer transition-all duration-200 no-underline hover:bg-[#25262a] hover:border-text-tertiary hover:text-text-primary"
 					title="Open Link"
 				>
 					<HugeiconsIcon icon={ExternalLink} className="w-4 h-4" />
