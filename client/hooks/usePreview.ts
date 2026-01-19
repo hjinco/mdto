@@ -19,10 +19,20 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 	);
 
 	useEffect(() => {
+		let isCancelled = false;
+		const iframe = iframeRef.current;
+
+		const handleLoad = () => {
+			if (!isCancelled) {
+				setLoading(false);
+			}
+		};
+
 		const renderPreview = async () => {
 			try {
 				setLoading(true);
 				const markdown = await file.text();
+				if (isCancelled) return;
 
 				const html = await markdownToHtml(markdown);
 				const expirationTime =
@@ -35,25 +45,37 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 					markdown,
 				});
 
-				const iframe = iframeRef.current;
 				if (iframe) {
 					const iframeDoc =
 						iframe.contentDocument || iframe.contentWindow?.document;
 					if (iframeDoc) {
+						iframe.addEventListener("load", handleLoad, { once: true });
+
 						iframeDoc.open();
 						iframeDoc.write(previewHtml);
 						iframeDoc.close();
+					} else {
+						setLoading(false);
 					}
+				} else {
+					setLoading(false);
 				}
-
-				setLoading(false);
 			} catch (err) {
-				setError(err instanceof Error ? err.message : "Unknown error");
-				setLoading(false);
+				if (!isCancelled) {
+					setError(err instanceof Error ? err.message : "Unknown error");
+					setLoading(false);
+				}
 			}
 		};
 
 		renderPreview();
+
+		return () => {
+			isCancelled = true;
+			if (iframe) {
+				iframe.removeEventListener("load", handleLoad);
+			}
+		};
 	}, [file, theme, themeName, expirationDays]);
 
 	return {
