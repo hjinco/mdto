@@ -1,8 +1,6 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { createHtmlPage } from "@shared/templates/view.template";
-import { markdownToHtml } from "@shared/utils/markdown";
-import { useEffect, useRef, useState } from "react";
+import { usePreview } from "../hooks/usePreview";
 import { cn } from "../utils/styles";
 
 interface PreviewPaneProps {
@@ -18,48 +16,11 @@ export function PreviewPane({
 	expirationDays,
 	onClose,
 }: PreviewPaneProps) {
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const iframeRef = useRef<HTMLIFrameElement>(null);
-
-	const themeName = theme.charAt(0).toUpperCase() + theme.slice(1);
-
-	useEffect(() => {
-		const renderPreview = async () => {
-			try {
-				const markdown = await file.text();
-
-				const html = await markdownToHtml(markdown);
-				const expirationTime =
-					Date.now() + expirationDays * 24 * 60 * 60 * 1000;
-				const previewHtml = createHtmlPage({
-					title: `Preview - ${themeName}`,
-					expiresAt: expirationTime.toString(),
-					html,
-					theme,
-					markdown,
-				});
-
-				const iframe = iframeRef.current;
-				if (iframe) {
-					const iframeDoc =
-						iframe.contentDocument || iframe.contentWindow?.document;
-					if (iframeDoc) {
-						iframeDoc.open();
-						iframeDoc.write(previewHtml);
-						iframeDoc.close();
-					}
-				}
-
-				setLoading(false);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Unknown error");
-				setLoading(false);
-			}
-		};
-
-		renderPreview();
-	}, [file, theme, themeName, expirationDays]);
+	const { loading, error, iframeRef, themeName } = usePreview({
+		file,
+		theme,
+		expirationDays,
+	});
 
 	return (
 		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">
