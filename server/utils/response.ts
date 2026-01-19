@@ -28,17 +28,25 @@ export function json(
  * Create an HTML response
  * @param html - HTML content string
  * @param status - HTTP status code (default: 200)
- * @param cacheControl - Optional Cache-Control header value
+ * @param options - Optional response options
+ * @param options.cacheControl - Optional Cache-Control header value
+ * @param options.etag - Optional ETag header value
  * @returns Response with HTML content
  */
 export function html(
 	html: string,
 	status: number = 200,
-	cacheControl?: string,
+	options?: {
+		cacheControl?: string;
+		etag?: string;
+	},
 ): Response {
 	const headers: HeadersInit = { "Content-Type": "text/html; charset=utf-8" };
-	if (cacheControl) {
-		headers["Cache-Control"] = cacheControl;
+	if (options?.cacheControl) {
+		headers["Cache-Control"] = options.cacheControl;
+	}
+	if (options?.etag) {
+		headers.ETag = options.etag;
 	}
 	return new Response(html, {
 		status,

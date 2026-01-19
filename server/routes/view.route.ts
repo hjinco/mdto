@@ -1,6 +1,9 @@
 import notFoundPage from "@shared/templates/not-found.html";
-import { createHtmlPage } from "@shared/templates/view.template";
-import { calculateCacheControlHeader } from "../utils/cache";
+import {
+	createHtmlPage,
+	TEMPLATE_VERSION,
+} from "@shared/templates/view.template";
+import { cacheControlHeader, generateETag } from "../utils/cache";
 import * as res from "../utils/response";
 import { isValidSlug } from "../utils/slug";
 
@@ -10,6 +13,7 @@ import { isValidSlug } from "../utils/slug";
  * URL format: /{prefix}/{slug} (e.g., /1/abc123, /E/xyz789)
  */
 export async function handleView(
+	request: Request,
 	prefix: string,
 	slug: string,
 	env: Env,
@@ -44,7 +48,23 @@ export async function handleView(
 			html = await object.text();
 		}
 
-		// Calculate expiration time from prefix and upload date
+		const etag = generateETag({
+			templateVersion: TEMPLATE_VERSION,
+			objectEtag: object.etag ?? object.httpEtag,
+		});
+
+		const ifNoneMatch = request.headers.get("If-None-Match");
+		if (ifNoneMatch === etag) {
+			const cacheHeader = cacheControlHeader(600);
+			return new Response(null, {
+				status: 304,
+				headers: {
+					"Cache-Control": cacheHeader,
+					ETag: etag,
+				},
+			});
+		}
+
 		const expirationDays = parseInt(normalizedPrefix, 16);
 		const uploadTime = object.uploaded.getTime();
 		const expirationTime = uploadTime + expirationDays * 24 * 60 * 60 * 1000;
@@ -58,10 +78,12 @@ export async function handleView(
 			markdown,
 		});
 
-		// Calculate remaining cache time
-		const cacheHeader = calculateCacheControlHeader(Date.now(), expirationTime);
+		const cacheHeader = cacheControlHeader(600);
 
-		return res.html(htmlPage, 200, cacheHeader);
+		return res.html(htmlPage, 200, {
+			cacheControl: cacheHeader,
+			etag,
+		});
 	} catch (error) {
 		console.error("View error:", error);
 		return res.text("Internal server error", 500, "no-cache");

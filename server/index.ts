@@ -21,7 +21,7 @@ export default {
 
 			if (parts.length === 2) {
 				const [prefix, slug] = parts;
-				return handleView(prefix, slug, env);
+				return handleView(request, prefix, slug, env);
 			}
 
 			return html(notFoundPage, 404);
