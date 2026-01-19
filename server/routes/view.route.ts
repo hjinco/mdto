@@ -20,7 +20,7 @@ export async function handleView(
 ): Promise<Response> {
 	try {
 		if (!isValidSlug(slug)) {
-			return res.text("Invalid slug format", 400, "no-cache");
+			return res.html(notFoundPage, 404);
 		}
 
 		const normalizedPrefix = prefix.toUpperCase();
