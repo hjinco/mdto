@@ -14,12 +14,6 @@ function getThemePaths(theme: string): {
 	};
 }
 
-/**
- * Template version for ETag generation
- * Increment this value when the template structure or content changes
- */
-export const TEMPLATE_VERSION = "2";
-
 const defaultDescription =
 	"Convert and share your markdown files as beautiful HTML pages";
 

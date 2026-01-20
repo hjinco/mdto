@@ -13,13 +13,13 @@ export function cacheControlHeader(maxAge: number): string {
  * Combines the template version with the underlying R2 object's ETag
  * to avoid cross-document collisions while remaining stable for the same document.
  *
- * @param params.templateVersion - Template version string
+ * @param params.templateHash - Template hash string
  * @param params.objectEtag - R2 object's ETag (unique per object/content)
  * @returns Weak ETag header value
  */
 export function generateETag(params: {
-	templateVersion: string;
+	templateHash: string;
 	objectEtag: string;
 }): string {
-	return `W/"tpl-v${params.templateVersion}:${params.objectEtag}"`;
+	return `W/"${params.templateHash}:${params.objectEtag}"`;
 }

@@ -1,8 +1,6 @@
 import notFoundPage from "@shared/templates/not-found.html";
-import {
-	createHtmlPage,
-	TEMPLATE_VERSION,
-} from "@shared/templates/view.template";
+import { TEMPLATE_HASH } from "@shared/templates/template-hash.generated";
+import { createHtmlPage } from "@shared/templates/view.template";
 import { cacheControlHeader, generateETag } from "../utils/cache";
 import * as res from "../utils/response";
 import { isValidSlug } from "../utils/slug";
@@ -51,7 +49,7 @@ export async function handleView(
 		}
 
 		const etag = generateETag({
-			templateVersion: TEMPLATE_VERSION,
+			templateHash: TEMPLATE_HASH,
 			objectEtag: object.etag ?? object.httpEtag,
 		});
 
