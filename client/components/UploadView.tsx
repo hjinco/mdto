@@ -80,14 +80,19 @@ export function UploadView({
 		[onFileSelect],
 	);
 
-	const handleKeyDown = useCallback(
-		(e: React.KeyboardEvent) => {
-			if (e.key === "Enter" || e.key === " ") {
-				e.preventDefault();
-				fileInputRef.current?.click();
-			}
+	const handleInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
+			if (file) onFileSelect(file);
 		},
-		[fileInputRef],
+		[onFileSelect],
+	);
+
+	const handleInputClick = useCallback(
+		(e: React.MouseEvent<HTMLInputElement>) => {
+			e.currentTarget.value = "";
+		},
+		[],
 	);
 
 	const getUploadZoneClasses = () => {
@@ -110,17 +115,22 @@ export function UploadView({
 
 	return (
 		<div className="flex flex-col gap-1.5">
-			<button
-				type="button"
-				className={`${getUploadZoneClasses()} group`}
-				tabIndex={0}
-				onClick={() => fileInputRef.current?.click()}
-				onKeyDown={handleKeyDown}
+			<div
+				className={cn(getUploadZoneClasses(), "group relative")}
 				onDragOver={handleDragOver}
 				onDragEnter={handleDragOver}
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
 			>
+				<input
+					type="file"
+					ref={fileInputRef}
+					className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+					accept=".md,.markdown,.txt"
+					onChange={handleInputChange}
+					onClick={handleInputClick}
+					title=""
+				/>
 				<div
 					className={cn(
 						getIconWrapperClasses(),
@@ -157,7 +167,7 @@ export function UploadView({
 						</>
 					)}
 				</div>
-			</button>
+			</div>
 
 			<div className="block mt-4 px-1">
 				<div className="flex justify-between items-baseline mb-2">

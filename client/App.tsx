@@ -190,20 +190,6 @@ export function App() {
 				/>
 			)}
 
-			<input
-				type="file"
-				ref={fileInputRef}
-				className="hidden"
-				accept=".md,.markdown,.txt"
-				onClick={(e) => {
-					e.currentTarget.value = "";
-				}}
-				onChange={(e) => {
-					const file = e.target.files?.[0];
-					if (file) handleFileSelect(file);
-				}}
-			/>
-
 			{/* Mobile Preview Dialog */}
 			{showPreview && selectedFile && (
 				<div className="md:hidden">
