@@ -13,6 +13,7 @@ export function App() {
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
 	const [isUploading, setIsUploading] = useState(false);
+	const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 	const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 	const [showPreview, setShowPreview] = useState(false);
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -30,6 +31,7 @@ export function App() {
 			}
 			if (e.key === "Escape" && showPreview) {
 				setShowPreview(false);
+				setIsPreviewLoading(false);
 			}
 		};
 		document.addEventListener("keydown", handleKeyDown);
@@ -122,7 +124,11 @@ export function App() {
 							file={selectedFile}
 							theme={selectedTheme}
 							expirationDays={expirationDays}
-							onClose={() => setShowPreview(false)}
+							onClose={() => {
+								setShowPreview(false);
+								setIsPreviewLoading(false);
+							}}
+							onLoadingChange={setIsPreviewLoading}
 						/>
 					</div>
 				)}
@@ -155,8 +161,16 @@ export function App() {
 								onFileSelect={handleFileSelect}
 								onExpirationChange={setExpirationDays}
 								onThemeChange={setSelectedTheme}
-								onPreview={() => setShowPreview((prev) => !prev)}
+								onPreview={() => {
+									if (showPreview) {
+										setShowPreview(false);
+										setIsPreviewLoading(false);
+									} else {
+										setShowPreview(true);
+									}
+								}}
 								isPreviewOpen={showPreview}
+								isPreviewLoading={isPreviewLoading}
 								onUpload={handleUpload}
 							/>
 						)}
@@ -227,7 +241,10 @@ export function App() {
 						file={selectedFile}
 						theme={selectedTheme}
 						expirationDays={expirationDays}
-						onClose={() => setShowPreview(false)}
+						onClose={() => {
+							setShowPreview(false);
+							setIsPreviewLoading(false);
+						}}
 					/>
 				</div>
 			)}

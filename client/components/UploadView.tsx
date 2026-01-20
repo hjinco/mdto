@@ -16,6 +16,7 @@ interface UploadViewProps {
 	isUploading: boolean;
 	fileInputRef: RefObject<HTMLInputElement | null>;
 	isPreviewOpen: boolean;
+	isPreviewLoading: boolean;
 	onFileSelect: (file: File) => void;
 	onExpirationChange: (days: number) => void;
 	onThemeChange: (theme: string) => void;
@@ -30,6 +31,7 @@ export function UploadView({
 	isUploading,
 	fileInputRef,
 	isPreviewOpen,
+	isPreviewLoading,
 	onFileSelect,
 	onExpirationChange,
 	onThemeChange,
@@ -234,8 +236,14 @@ export function UploadView({
 					disabled={!selectedFile}
 					onClick={onPreview}
 				>
-					<HugeiconsIcon icon={Eye} className="w-3.5 h-3.5 mr-1.5" />
-					<span>{isPreviewOpen ? "Close Preview" : "Preview"}</span>
+					{isPreviewLoading ? (
+						<div className="w-3.5 h-3.5 border-2 border-text-secondary/30 rounded-full border-t-text-secondary animate-spin" />
+					) : (
+						<>
+							<HugeiconsIcon icon={Eye} className="w-3.5 h-3.5 mr-1.5" />
+							<span>{isPreviewOpen ? "Close Preview" : "Preview"}</span>
+						</>
+					)}
 				</button>
 
 				<button

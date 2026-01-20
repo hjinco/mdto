@@ -1,5 +1,6 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useEffect } from "react";
 import { usePreview } from "../hooks/usePreview";
 import { cn } from "../utils/styles";
 
@@ -8,6 +9,7 @@ interface PreviewPaneProps {
 	theme: string;
 	expirationDays: number;
 	onClose: () => void;
+	onLoadingChange: (isLoading: boolean) => void;
 }
 
 export function PreviewPane({
@@ -15,15 +17,26 @@ export function PreviewPane({
 	theme,
 	expirationDays,
 	onClose,
+	onLoadingChange,
 }: PreviewPaneProps) {
-	const { loading, error, iframeRef, themeName } = usePreview({
+	const { loading, iframeRef, themeName } = usePreview({
 		file,
 		theme,
 		expirationDays,
 	});
 
+	useEffect(() => {
+		onLoadingChange?.(loading);
+	}, [loading, onLoadingChange]);
+
 	return (
-		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">
+		<div
+			className={cn(
+				"bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border",
+				"transition-opacity duration-500",
+				loading ? "opacity-0" : "opacity-100",
+			)}
+		>
 			{/* Header */}
 			<div className="flex items-center justify-between py-3 px-5 border-b border-border bg-surface-elevated">
 				<div className="text-sm font-medium text-text-primary">
@@ -44,16 +57,10 @@ export function PreviewPane({
 
 			{/* Content */}
 			<div className="flex-1 relative bg-white">
-				{loading && (
-					<div className="absolute inset-0 flex items-center justify-center text-text-secondary text-[13px] bg-surface">
-						{error || "Loading preview..."}
-					</div>
-				)}
 				<iframe
 					ref={iframeRef}
 					className="w-full h-full border-none block"
 					title="Preview"
-					style={{ display: loading ? "none" : "block" }}
 				/>
 			</div>
 		</div>
