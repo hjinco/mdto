@@ -21,10 +21,10 @@ export default {
 
 			if (parts.length === 2) {
 				const [prefix, slug] = parts;
-				return handleView(request, prefix, slug, env);
+				if (["1", "7", "E", "1E"].includes(prefix)) {
+					return handleView(request, prefix, slug, env);
+				}
 			}
-
-			return html(notFoundPage, 404);
 		}
 
 		return html(notFoundPage, 404);
