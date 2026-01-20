@@ -131,6 +131,14 @@ ol {
 	color: #333333;
 }
 
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+	margin-top: 0.4em;
+	margin-bottom: 0;
+}
+
 li:has(input[type="checkbox"]),
 li.task-list-item {
 	list-style-type: none;
@@ -142,6 +150,10 @@ ul:has(li input[type="checkbox"]) {
 
 li {
 	margin-bottom: 0.4em;
+}
+
+li p {
+	margin: 0;
 }
 
 input[type="checkbox"] {

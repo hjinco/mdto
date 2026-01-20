@@ -157,9 +157,21 @@ ol {
 	color: var(--text-tertiary);
 }
 
+ul ul,
+ul ol,
+ol ul,
+ol ol {
+	margin-top: 0.5em;
+	margin-bottom: 0;
+}
+
 li {
 	margin-bottom: 0.5em;
 	color: var(--text-primary);
+}
+
+li p {
+	margin: 0;
 }
 
 a {
