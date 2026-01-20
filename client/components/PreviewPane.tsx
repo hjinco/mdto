@@ -30,13 +30,7 @@ export function PreviewPane({
 	}, [loading, onLoadingChange]);
 
 	return (
-		<div
-			className={cn(
-				"bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border",
-				"transition-opacity duration-500",
-				loading ? "opacity-0" : "opacity-100",
-			)}
-		>
+		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">
 			{/* Header */}
 			<div className="flex items-center justify-between py-3 px-5 border-b border-border bg-surface-elevated">
 				<div className="text-sm font-medium text-text-primary">
@@ -56,7 +50,12 @@ export function PreviewPane({
 			</div>
 
 			{/* Content */}
-			<div className="flex-1 relative bg-white">
+			<div
+				className={cn(
+					"flex-1 relative bg-white transition-opacity duration-200",
+					loading ? "opacity-0" : "opacity-100",
+				)}
+			>
 				<iframe
 					ref={iframeRef}
 					className="w-full h-full border-none block"

@@ -24,17 +24,7 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 
 		const handleLoad = () => {
 			if (!isCancelled) {
-				// Use double requestAnimationFrame to ensure the browser has completed
-				// at least one full layout and paint cycle. This prevents flickering
-				// by making sure the content is actually rendered on screen before
-				// we hide the loading indicator.
-				requestAnimationFrame(() => {
-					requestAnimationFrame(() => {
-						if (!isCancelled) {
-							setLoading(false);
-						}
-					});
-				});
+				setLoading(false);
 			}
 		};
 
@@ -43,6 +33,8 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 				setLoading(true);
 				const markdown = await file.text();
 				if (isCancelled) return;
+
+				await new Promise((resolve) => setTimeout(resolve, 100));
 
 				const { html } = await markdownToHtml(markdown);
 				const expirationTime =
@@ -55,18 +47,17 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 					markdown,
 				});
 
-				if (iframe) {
-					const iframeDoc =
-						iframe.contentDocument || iframe.contentWindow?.document;
-					if (iframeDoc) {
-						iframe.addEventListener("load", handleLoad, { once: true });
+				if (!iframe) {
+					return setLoading(false);
+				}
 
-						iframeDoc.open();
-						iframeDoc.write(previewHtml);
-						iframeDoc.close();
-					} else {
-						setLoading(false);
-					}
+				const iframeDoc =
+					iframe.contentDocument || iframe.contentWindow?.document;
+				if (iframeDoc) {
+					iframe.addEventListener("load", handleLoad, { once: true });
+					iframeDoc.open();
+					iframeDoc.write(previewHtml);
+					iframeDoc.close();
 				} else {
 					setLoading(false);
 				}
@@ -78,7 +69,6 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 			}
 		};
 
-		setLoading(true);
 		renderPreview();
 
 		return () => {
