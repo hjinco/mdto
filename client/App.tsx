@@ -6,6 +6,7 @@ import { PreviewDialog } from "./components/PreviewDialog";
 import { PreviewPane } from "./components/PreviewPane";
 import { SuccessView } from "./components/SuccessView";
 import { UploadView } from "./components/UploadView";
+import { useResizablePane } from "./hooks/useResizablePane";
 import { cn } from "./utils/styles";
 
 export function App() {
@@ -105,6 +106,13 @@ export function App() {
 		}
 	}, []);
 
+	// Resize logic
+	const {
+		width: previewWidth,
+		isResizing,
+		startResizing: handleMouseDown,
+	} = useResizablePane();
+
 	return (
 		<>
 			{/* Main Container - Conditional Styles for Split View */}
@@ -114,12 +122,24 @@ export function App() {
 					"min-h-screen w-full max-w-[480px] px-5",
 					showPreview &&
 						selectedFile &&
-						"md:max-w-none md:px-0 md:h-screen md:grid md:grid-cols-2 md:items-start md:justify-start",
+						"md:max-w-none md:px-0 md:h-screen md:grid md:items-start md:justify-start",
 				)}
+				style={
+					showPreview && selectedFile && window.innerWidth >= 768
+						? {
+								gridTemplateColumns: `${previewWidth}% auto 1fr`,
+							}
+						: undefined
+				}
 			>
 				{/* Left Pane (Preview) - Desktop Only */}
 				{showPreview && selectedFile && (
-					<div className="hidden md:block h-full w-full overflow-hidden">
+					<div
+						className={cn(
+							"hidden md:block h-full w-full overflow-hidden",
+							isResizing && "pointer-events-none",
+						)}
+					>
 						<PreviewPane
 							file={selectedFile}
 							theme={selectedTheme}
@@ -133,11 +153,29 @@ export function App() {
 					</div>
 				)}
 
+				{/* Resizer Handle */}
+				{showPreview && selectedFile && (
+					<button
+						type="button"
+						className="hidden md:flex w-4 h-full cursor-col-resize items-center justify-center hover:bg-white/5 transition-colors group z-10 -ml-2 select-none"
+						onMouseDown={handleMouseDown}
+					>
+						<div
+							className={cn(
+								"w-0.5 h-8 bg-border rounded-full transition-all group-hover:h-12 group-hover:bg-text-tertiary",
+								isResizing && "bg-text-primary h-12",
+							)}
+						/>
+					</button>
+				)}
+
 				{/* Right Pane (Upload/Settings) */}
 				<div
 					className={cn(
 						"w-full flex flex-col items-center justify-center",
-						showPreview && selectedFile && "md:h-full md:p-6 md:bg-background",
+						showPreview && "md:h-full md:p-6 md:bg-background",
+						// Only apply layout styles when not in preview mode or on mobile
+						!(showPreview && selectedFile) && "max-w-[440px] mx-auto",
 					)}
 				>
 					{/* Logo */}
