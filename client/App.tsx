@@ -1,112 +1,54 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Turnstile, { useTurnstile } from "react-turnstile";
+import { useState } from "react";
+import Turnstile from "react-turnstile";
 import { PreviewDialog } from "./components/PreviewDialog";
 import { PreviewPane } from "./components/PreviewPane";
 import { SuccessView } from "./components/SuccessView";
 import { UploadView } from "./components/UploadView";
+import { useFileSelection } from "./hooks/useFileSelection";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { usePreviewState } from "./hooks/usePreviewState";
 import { useResizablePane } from "./hooks/useResizablePane";
+import { useUpload } from "./hooks/useUpload";
 import { cn } from "./utils/styles";
 
 export function App() {
-	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
-	const [isUploading, setIsUploading] = useState(false);
-	const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-	const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-	const [showPreview, setShowPreview] = useState(false);
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const turnstile = useTurnstile();
 
-	// Keyboard shortcut
-	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if ((e.metaKey || e.ctrlKey) && e.key === "o") {
-				e.preventDefault();
-				if (!uploadedUrl) {
-					fileInputRef.current?.click();
-				}
-			}
-			if (e.key === "Escape" && showPreview) {
-				setShowPreview(false);
-				setIsPreviewLoading(false);
-			}
-		};
-		document.addEventListener("keydown", handleKeyDown);
-		return () => document.removeEventListener("keydown", handleKeyDown);
-	}, [uploadedUrl, showPreview]);
+	const { selectedFile, fileInputRef, handleFileSelect, clearSelection } =
+		useFileSelection();
 
-	const handleFileSelect = useCallback((file: File) => {
-		const fileName = file.name.toLowerCase();
-		if (
-			!fileName.endsWith(".md") &&
-			!fileName.endsWith(".markdown") &&
-			!fileName.endsWith(".txt")
-		) {
-			alert("Please select a .md, .markdown, or .txt file only");
-			return;
-		}
-		setSelectedFile(file);
-	}, []);
+	const {
+		showPreview,
+		isPreviewLoading,
+		setIsPreviewLoading,
+		togglePreview,
+		closePreview,
+	} = usePreviewState();
 
-	const handleUpload = useCallback(async () => {
-		if (!selectedFile) return;
+	const { isUploading, uploadedUrl, handleUpload, handleReset } = useUpload({
+		file: selectedFile,
+		expirationDays,
+		theme: selectedTheme,
+		turnstileToken,
+		onSuccess: closePreview,
+		onClearFile: () => {
+			clearSelection();
+			setExpirationDays(30);
+			setSelectedTheme("default");
+		},
+	});
 
-		setIsUploading(true);
+	useKeyboardShortcuts({
+		onOpenFile: () => fileInputRef.current?.click(),
+		onClosePreview: closePreview,
+		canOpenFile: !uploadedUrl,
+		canClosePreview: showPreview,
+	});
 
-		try {
-			const text = await selectedFile.text();
-
-			const headers: Record<string, string> = { "Content-Type": "text/plain" };
-			if (turnstileToken) {
-				headers["X-Turnstile-Token"] = turnstileToken;
-			}
-
-			const response = await fetch(
-				`/api/upload?expiration=${expirationDays}&theme=${selectedTheme}`,
-				{
-					method: "POST",
-					headers,
-					body: text,
-				},
-			);
-
-			const data = await response.json();
-
-			if (response.ok && data.slug) {
-				const viewUrl = `${window.location.origin}/${data.slug}`;
-				setUploadedUrl(viewUrl);
-				setShowPreview(false);
-			} else {
-				turnstile.reset();
-				setTurnstileToken(null);
-				throw new Error(data.error || "Failed to create page");
-			}
-		} catch (error) {
-			turnstile.reset();
-			setTurnstileToken(null);
-			alert(
-				`Failed to create page: ${error instanceof Error ? error.message : "Unknown error"}`,
-			);
-		} finally {
-			setIsUploading(false);
-		}
-	}, [selectedFile, expirationDays, selectedTheme, turnstileToken, turnstile]);
-
-	const handleReset = useCallback(() => {
-		setSelectedFile(null);
-		setUploadedUrl(null);
-		setExpirationDays(30);
-		setSelectedTheme("default");
-		if (fileInputRef.current) {
-			fileInputRef.current.value = "";
-		}
-	}, []);
-
-	// Resize logic
 	const {
 		width: previewWidth,
 		isResizing,
@@ -144,10 +86,7 @@ export function App() {
 							file={selectedFile}
 							theme={selectedTheme}
 							expirationDays={expirationDays}
-							onClose={() => {
-								setShowPreview(false);
-								setIsPreviewLoading(false);
-							}}
+							onClose={closePreview}
 							onLoadingChange={setIsPreviewLoading}
 						/>
 					</div>
@@ -199,14 +138,7 @@ export function App() {
 								onFileSelect={handleFileSelect}
 								onExpirationChange={setExpirationDays}
 								onThemeChange={setSelectedTheme}
-								onPreview={() => {
-									if (showPreview) {
-										setShowPreview(false);
-										setIsPreviewLoading(false);
-									} else {
-										setShowPreview(true);
-									}
-								}}
+								onPreview={togglePreview}
 								isPreviewOpen={showPreview}
 								isPreviewLoading={isPreviewLoading}
 								onUpload={handleUpload}
@@ -279,10 +211,7 @@ export function App() {
 						file={selectedFile}
 						theme={selectedTheme}
 						expirationDays={expirationDays}
-						onClose={() => {
-							setShowPreview(false);
-							setIsPreviewLoading(false);
-						}}
+						onClose={closePreview}
 					/>
 				</div>
 			)}
