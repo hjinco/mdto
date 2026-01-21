@@ -1,32 +1,15 @@
 import notFoundPage from "@shared/templates/not-found.html";
-import { handleUpload } from "./routes/upload.route";
-import { handleView } from "./routes/view.route";
-import { html } from "./utils/response";
+import { Hono } from "hono";
+import { uploadRouter } from "./routes/upload.route";
+import { viewRouter } from "./routes/view.route";
 
-export default {
-	async fetch(request, env): Promise<Response> {
-		const url = new URL(request.url);
-		const pathname = url.pathname;
-		const method = request.method;
+const app = new Hono<{ Bindings: Env }>();
 
-		// POST /upload - Upload markdown
-		if (method === "POST" && pathname === "/api/upload") {
-			return handleUpload(request, env);
-		}
+app.route("/", uploadRouter);
+app.route("/", viewRouter);
 
-		// GET /:prefix/:slug - View markdown as HTML
-		if (method === "GET") {
-			// Parse /{prefix}/{slug} pattern
-			const parts = pathname.slice(1).split("/");
+app.notFound((c) => {
+	return c.html(notFoundPage, 404);
+});
 
-			if (parts.length === 2) {
-				const [prefix, slug] = parts;
-				if (["1", "7", "E", "1E"].includes(prefix)) {
-					return handleView(request, prefix, slug, env);
-				}
-			}
-		}
-
-		return html(notFoundPage, 404);
-	},
-} satisfies ExportedHandler<Env>;
+export default app;

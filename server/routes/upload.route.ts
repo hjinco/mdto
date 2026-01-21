@@ -1,35 +1,35 @@
 import { markdownToHtml } from "@shared/utils/markdown";
+import { Hono } from "hono";
 import { isDev } from "../utils/env";
-import { exception, json } from "../utils/response";
 import { retryUntil } from "../utils/retry";
 import { generateSlug } from "../utils/slug";
 import { getRemoteIp, validateTurnstile } from "../utils/turnstile";
 
 const MAX_UPLOAD_SIZE = 100_000; // 100KB
 
+export const uploadRouter = new Hono<{ Bindings: Env }>();
+
 /**
  * Handle POST /upload request
  * Receives Markdown text, generates a slug, and uploads to R2
  * Query parameter: expiration (1, 7, 14, 30 days) - defaults to 30 if not provided
  */
-export async function handleUpload(
-	request: Request,
-	env: Env,
-): Promise<Response> {
+uploadRouter.post("/api/upload", async (c) => {
 	try {
-		const url = new URL(request.url);
-		const expirationParam = url.searchParams.get("expiration");
+		const env = c.env;
+		const request = c.req.raw;
+		const expirationParam = c.req.query("expiration");
 
 		// Valid expiration days: 1, 7, 14, 30
 		const validExpirationDays = [1, 7, 14, 30];
 		const expirationDays = expirationParam ? parseInt(expirationParam, 10) : 30; // Default to 30 days
 
-		const themeParam = url.searchParams.get("theme");
+		const themeParam = c.req.query("theme");
 		const theme = themeParam || "default";
 
 		if (!validExpirationDays.includes(expirationDays)) {
-			return exception(
-				"Invalid expiration. Valid values are: 1, 7, 14, 30 (days)",
+			return c.json(
+				{ error: "Invalid expiration. Valid values are: 1, 7, 14, 30 (days)" },
 				400,
 			);
 		}
@@ -42,15 +42,15 @@ export async function handleUpload(
 			const secretKey = env.TURNSTILE_SECRET_KEY;
 			if (!secretKey) {
 				console.error("TURNSTILE_SECRET_KEY is not configured");
-				return exception("Verification service unavailable", 500);
+				return c.json({ error: "Verification service unavailable" }, 500);
 			}
 
 			const token =
-				request.headers.get("X-Turnstile-Token") ||
-				request.headers.get("cf-turnstile-response");
+				c.req.header("X-Turnstile-Token") ||
+				c.req.header("cf-turnstile-response");
 
 			if (!token) {
-				return exception("Turnstile token is required", 400);
+				return c.json({ error: "Turnstile token is required" }, 400);
 			}
 
 			const remoteIp = getRemoteIp(request);
@@ -60,34 +60,34 @@ export async function handleUpload(
 				const errorCodes = validation["error-codes"] || ["unknown-error"];
 				console.error("Turnstile validation failed:", errorCodes);
 
-				// Return user-friendly error message
-				return exception("Invalid verification. Please try again.", 400);
+				return c.json(
+					{ error: "Invalid verification. Please try again." },
+					400,
+				);
 			}
 		} else {
-			// Development mode: Turnstile validation disabled
 			console.log("Turnstile validation skipped (development mode)");
 		}
 
-		// Check Content-Length header before reading the body
-		const contentLength = request.headers.get("Content-Length");
+		const contentLength = c.req.header("Content-Length");
 		if (contentLength) {
 			const size = parseInt(contentLength, 10);
 			if (!Number.isNaN(size) && size > MAX_UPLOAD_SIZE) {
-				return exception("File size exceeds 100KB limit", 413);
+				return c.json({ error: "File size exceeds 100KB limit" }, 413);
 			}
 		}
 
-		const markdown = await request.text();
+		const markdown = await c.req.text();
 
 		// Verify actual byte size (in case Content-Length was missing or incorrect)
 		const encoder = new TextEncoder();
 		const byteSize = encoder.encode(markdown).length;
 		if (byteSize > MAX_UPLOAD_SIZE) {
-			return exception("File size exceeds 100KB limit", 413);
+			return c.json({ error: "File size exceeds 100KB limit" }, 413);
 		}
 
 		if (!markdown || markdown.trim().length === 0) {
-			return exception("Markdown content is required", 400);
+			return c.json({ error: "Markdown content is required" }, 400);
 		}
 
 		const { html, metadata } = await markdownToHtml(markdown);
@@ -102,8 +102,8 @@ export async function handleUpload(
 		);
 
 		if (!slug) {
-			return exception(
-				"Failed to generate unique slug after maximum retries",
+			return c.json(
+				{ error: "Failed to generate unique slug after maximum retries" },
 				500,
 			);
 		}
@@ -127,9 +127,9 @@ export async function handleUpload(
 			},
 		});
 
-		return json({ slug: `${prefix}/${slug}` });
+		return c.json({ slug: `${prefix}/${slug}` });
 	} catch (error) {
 		console.error("Upload error:", error);
-		return exception("Failed to upload markdown");
+		return c.json({ error: "Failed to upload markdown" }, 500);
 	}
-}
+});

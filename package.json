@@ -41,6 +41,7 @@
 		"@posthog/react": "^1.5.2",
 		"clsx": "^2.1.1",
 		"highlight.js": "^11.11.1",
+		"hono": "^4.11.4",
 		"js-yaml": "^4.1.1",
 		"mdast-util-to-string": "^4.0.0",
 		"nanoid": "^5.1.6",

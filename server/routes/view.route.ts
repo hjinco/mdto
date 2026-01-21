@@ -1,24 +1,30 @@
 import notFoundPage from "@shared/templates/not-found.html";
 import { TEMPLATE_HASH } from "@shared/templates/template-hash.generated";
 import { createHtmlPage } from "@shared/templates/view.template";
+import { Hono } from "hono";
 import { cacheControlHeader, generateETag } from "../utils/cache";
-import * as res from "../utils/response";
 import { isValidSlug } from "../utils/slug";
+
+export const viewRouter = new Hono<{ Bindings: Env }>();
 
 /**
  * Handle GET /:prefix/:slug request
  * Retrieves HTML from R2 and displays it
  * URL format: /{prefix}/{slug} (e.g., /1/abc123, /E/xyz789)
  */
-export async function handleView(
-	request: Request,
-	prefix: string,
-	slug: string,
-	env: Env,
-): Promise<Response> {
+viewRouter.get("/:prefix/:slug", async (c) => {
 	try {
+		const env = c.env;
+		const prefix = c.req.param("prefix");
+		const slug = c.req.param("slug");
+
+		// Only allow valid prefixes: 1, 7, E, 1E
+		if (!["1", "7", "E", "1E"].includes(prefix)) {
+			return c.html(notFoundPage, 404);
+		}
+
 		if (!isValidSlug(slug)) {
-			return res.html(notFoundPage, 404);
+			return c.html(notFoundPage, 404);
 		}
 
 		const normalizedPrefix = prefix.toUpperCase();
@@ -26,7 +32,7 @@ export async function handleView(
 		const object = await env.BUCKET.get(key);
 
 		if (!object) {
-			return res.html(notFoundPage, 404);
+			return c.html(notFoundPage, 404);
 		}
 
 		const contentType = object.httpMetadata?.contentType || "text/html";
@@ -56,16 +62,12 @@ export async function handleView(
 			objectEtag: object.etag ?? object.httpEtag,
 		});
 
-		const ifNoneMatch = request.headers.get("If-None-Match");
+		const ifNoneMatch = c.req.header("If-None-Match");
 		if (ifNoneMatch === etag) {
 			const cacheHeader = cacheControlHeader(600);
-			return new Response(null, {
-				status: 304,
-				headers: {
-					"Cache-Control": cacheHeader,
-					ETag: etag,
-				},
-			});
+			c.header("Cache-Control", cacheHeader);
+			c.header("ETag", etag);
+			return c.body(null, 304);
 		}
 
 		const expirationDays = parseInt(normalizedPrefix, 16);
@@ -86,12 +88,12 @@ export async function handleView(
 
 		const cacheHeader = cacheControlHeader(600);
 
-		return res.html(htmlPage, 200, {
-			cacheControl: cacheHeader,
-			etag,
-		});
+		c.header("Cache-Control", cacheHeader);
+		c.header("ETag", etag);
+		return c.html(htmlPage);
 	} catch (error) {
 		console.error("View error:", error);
-		return res.text("Internal server error", 500, "no-cache");
+		c.header("Cache-Control", "no-cache");
+		return c.text("Internal server error", 500);
 	}
-}
+});
