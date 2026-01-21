@@ -134,22 +134,6 @@ code {
 	border: 1px solid var(--code-border);
 }
 
-pre {
-	background-color: var(--code-bg);
-	border: 1px solid var(--code-border);
-	border-radius: 8px;
-	overflow-x: auto;
-	margin-bottom: 1.5em;
-}
-
-pre code {
-	background-color: transparent;
-	padding: 0;
-	color: inherit;
-	border: none;
-	font-size: 0.85em;
-}
-
 ul,
 ol {
 	margin-bottom: 1.5em;
