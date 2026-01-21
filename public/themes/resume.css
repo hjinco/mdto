@@ -168,7 +168,10 @@ blockquote {
 }
 
 table {
+	display: block;
 	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 	border-collapse: collapse;
 	margin-bottom: 1.5em;
 	font-size: 0.9em;
@@ -179,6 +182,7 @@ td {
 	padding: 10px 12px;
 	border-bottom: 1px solid var(--border-subtle);
 	text-align: left;
+	white-space: nowrap;
 }
 
 th {
