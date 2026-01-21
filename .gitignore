@@ -174,3 +174,7 @@ public/index.html
 
 # SSR build output
 dist-ssr/
+
+# Honeypots
+public/wordpress
+public/wp-admin
