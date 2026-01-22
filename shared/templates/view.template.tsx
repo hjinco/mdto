@@ -297,6 +297,36 @@ const Scripts = ({ hasMermaid }: ScriptsProps) => {
 		(function() {
 			${exportActionsBody}
 		})();
+		(function() {
+			try {
+				const content = document.querySelector(".content");
+				if (!content) return;
+
+				const SIZES = ["10px", "12px", "14px", "15px", "16px", "17px", "18px", "19px", "20px"];
+				const DEFAULT_INDEX = 4;
+				let currentIndex = DEFAULT_INDEX;
+
+				function setFontSize(index) {
+					if (index >= 0 && index < SIZES.length) {
+						currentIndex = index;
+						content.style.fontSize = SIZES[currentIndex];
+					}
+				}
+
+				document.addEventListener("keydown", function(e) {
+					if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+" || e.key === "-")) {
+						e.preventDefault();
+						if (e.key === "=" || e.key === "+") {
+							setFontSize(currentIndex + 1);
+						} else {
+							setFontSize(currentIndex - 1);
+						}
+					}
+				});
+			} catch (e) {
+				console.error("Font size control failed", e);
+			}
+		})();
 	`);
 
 	const mermaidScript = raw(`
