@@ -7,6 +7,8 @@ import { isValidSlug } from "../utils/slug";
 
 export const viewRouter = new Hono<{ Bindings: Env }>();
 
+const cacheControl = cacheControlHeader(600);
+
 /**
  * Handle GET /:prefix/:slug request
  * Retrieves HTML from R2 and displays it
@@ -25,6 +27,25 @@ viewRouter.get("/:prefix/:slug", async (c) => {
 
 		if (!isValidSlug(slug)) {
 			return c.html(notFoundPage, 404);
+		}
+
+		// Check cache first
+		const cache = (caches as unknown as { default: Cache }).default;
+		const url = new URL(c.req.url);
+		url.search = "";
+		const cacheKey = new Request(url, c.req.raw);
+		const cachedResponse = await cache.match(cacheKey);
+
+		if (cachedResponse) {
+			// Cache hit: validate ETag for conditional requests
+			const cachedETag = cachedResponse.headers.get("ETag");
+			const ifNoneMatch = c.req.header("If-None-Match");
+			if (ifNoneMatch === cachedETag) {
+				c.header("Cache-Control", cacheControl);
+				c.header("ETag", cachedETag);
+				return c.body(null, 304);
+			}
+			return cachedResponse;
 		}
 
 		const normalizedPrefix = prefix.toUpperCase();
@@ -64,8 +85,7 @@ viewRouter.get("/:prefix/:slug", async (c) => {
 
 		const ifNoneMatch = c.req.header("If-None-Match");
 		if (ifNoneMatch === etag) {
-			const cacheHeader = cacheControlHeader(600);
-			c.header("Cache-Control", cacheHeader);
+			c.header("Cache-Control", cacheControl);
 			c.header("ETag", etag);
 			return c.body(null, 304);
 		}
@@ -75,24 +95,25 @@ viewRouter.get("/:prefix/:slug", async (c) => {
 		const expirationTime = uploadTime + expirationDays * 24 * 60 * 60 * 1000;
 		const expiresAt = expirationTime.toString();
 
-		const cacheHeader = cacheControlHeader(600);
-
-		c.header("Cache-Control", cacheHeader);
+		c.header("Cache-Control", cacheControl);
 		c.header("ETag", etag);
-		return c.html(
-			`<!DOCTYPE html>${(
-				<ViewTemplate
-					title={metaTitle || slug}
-					description={metaDescription}
-					html={html}
-					expiresAt={expiresAt}
-					theme={theme}
-					markdown={markdown}
-					hasKatex={hasKatex}
-					hasMermaid={hasMermaid}
-				/>
-			)}`,
-		);
+		const htmlContent = `<!DOCTYPE html>${(
+			<ViewTemplate
+				title={metaTitle || slug}
+				description={metaDescription}
+				html={html}
+				expiresAt={expiresAt}
+				theme={theme}
+				markdown={markdown}
+				hasKatex={hasKatex}
+				hasMermaid={hasMermaid}
+			/>
+		)}`;
+		const response = c.html(htmlContent);
+
+		c.executionCtx.waitUntil(cache.put(cacheKey, response.clone()));
+
+		return response;
 	} catch (error) {
 		console.error("View error:", error);
 		c.header("Cache-Control", "no-cache");
