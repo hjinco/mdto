@@ -12,4 +12,9 @@ app.notFound((c) => {
 	return c.html(notFoundPage, 404);
 });
 
+app.onError((err, c) => {
+	console.error("Unhandled error:", err);
+	return c.text("Internal server error", 500);
+});
+
 export default app;
