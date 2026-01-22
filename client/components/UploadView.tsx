@@ -79,10 +79,6 @@ export function UploadView({
 			setIsDragover(false);
 			const file = e.dataTransfer.files[0];
 			if (file) {
-				if (file.size > 100 * 1024) {
-					alert("File size exceeds 100KB");
-					return;
-				}
 				onFileSelect(file);
 			}
 		},
@@ -93,11 +89,6 @@ export function UploadView({
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const file = e.target.files?.[0];
 			if (file) {
-				if (file.size > 100 * 1024) {
-					alert("File size exceeds 100KB");
-					e.target.value = "";
-					return;
-				}
 				onFileSelect(file);
 			}
 		},

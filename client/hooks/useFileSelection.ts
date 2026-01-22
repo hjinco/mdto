@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const ALLOWED_EXTENSIONS = [".md", ".markdown", ".txt"];
 
@@ -14,11 +14,30 @@ export function useFileSelection() {
 
 		if (!isValidExtension) {
 			alert("Please select a .md, .markdown, or .txt file only");
+			if (fileInputRef.current) {
+				fileInputRef.current.value = "";
+			}
+			return;
+		}
+
+		if (file.size > 100 * 1024) {
+			alert("File size exceeds 100KB");
+			if (fileInputRef.current) {
+				fileInputRef.current.value = "";
+			}
 			return;
 		}
 
 		setSelectedFile(file);
 	}, []);
+
+	// Check for pre-hydration file selection
+	useEffect(() => {
+		if (fileInputRef.current?.files?.length && !selectedFile) {
+			const file = fileInputRef.current.files[0];
+			handleFileSelect(file);
+		}
+	}, [handleFileSelect, selectedFile]);
 
 	const clearSelection = useCallback(() => {
 		setSelectedFile(null);
