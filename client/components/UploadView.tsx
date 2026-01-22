@@ -238,6 +238,7 @@ export function UploadView({
 					{[
 						{ value: "default", label: "Default" },
 						{ value: "resume", label: "Resume" },
+						{ value: "matrix", label: "Matrix" },
 					].map((option) => (
 						<button
 							key={option.value}

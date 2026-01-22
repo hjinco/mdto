@@ -454,7 +454,7 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 			<body>
 				<div class="top-actions">
 					<ExportButton markdown={markdown} />
-					<ThemeToggleButton show={theme !== "resume"} />
+					<ThemeToggleButton show={theme !== "resume" && theme !== "matrix"} />
 				</div>
 				<div class="content">{raw(htmlContent)}</div>
 				<Footer expiresAt={expiresAt} />

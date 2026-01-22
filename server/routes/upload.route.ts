@@ -25,7 +25,9 @@ uploadRouter.post("/api/upload", async (c) => {
 		const expirationDays = expirationParam ? parseInt(expirationParam, 10) : 30; // Default to 30 days
 
 		const themeParam = c.req.query("theme");
-		const theme = themeParam || "default";
+		const validThemes = ["default", "resume", "matrix"];
+		const theme =
+			themeParam && validThemes.includes(themeParam) ? themeParam : "default";
 
 		if (!validExpirationDays.includes(expirationDays)) {
 			return c.json(
