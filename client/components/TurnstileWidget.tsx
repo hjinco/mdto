@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Turnstile from "react-turnstile";
 import { cn } from "../utils/styles";
 
@@ -15,25 +14,16 @@ export function TurnstileWidget({
 	onError,
 	token,
 }: TurnstileWidgetProps) {
-	const [isMounted, setIsMounted] = useState(false);
-
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-
-	if (!isMounted) {
-		return null;
-	}
-
 	return (
 		<Turnstile
-			className={cn("self-center", token && "hidden")}
+			className={cn("mt-4", token && "hidden")}
 			sitekey={import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY}
 			appearance="interaction-only"
 			theme="dark"
 			onVerify={onVerify}
 			onExpire={onExpire}
 			onError={onError}
+			fixedSize
 		/>
 	);
 }

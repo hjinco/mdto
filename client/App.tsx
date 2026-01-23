@@ -68,7 +68,7 @@ export function App() {
 			{/* Main Container - Conditional Styles for Split View */}
 			<div
 				className={cn(
-					"relative z-1 w-full flex flex-col items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+					"relative z-1 w-full pt-18 md:pt-36 flex flex-col items-center transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
 					"min-h-screen px-5",
 					showPreview &&
 						selectedFile &&
@@ -118,7 +118,7 @@ export function App() {
 
 				<div
 					className={cn(
-						"w-full flex flex-col items-center my-auto justify-center",
+						"w-full flex flex-col items-center justify-center",
 						showPreview && "md:h-full md:p-6 md:bg-background",
 						// Only apply layout styles when not in preview mode or on mobile
 						!(showPreview && selectedFile) && "mx-auto",
@@ -136,33 +136,32 @@ export function App() {
 						{uploadedUrl ? (
 							<SuccessView url={uploadedUrl} onReset={handleReset} />
 						) : (
-							<div className="flex flex-col gap-2">
-								<UploadView
-									selectedFile={selectedFile}
-									expirationDays={expirationDays}
-									selectedTheme={selectedTheme}
-									isUploading={isUploading}
-									uploadError={uploadError}
-									fileInputRef={fileInputRef}
-									onFileSelect={handleFileSelect}
-									onExpirationChange={setExpirationDays}
-									onThemeChange={setSelectedTheme}
-									onPreview={togglePreview}
-									isPreviewOpen={showPreview}
-									isPreviewLoading={isPreviewLoading}
-									onUpload={handleUpload}
-								/>
-								{import.meta.env.PROD && (
-									<TurnstileWidget
-										token={turnstileToken}
-										onVerify={setTurnstileToken}
-										onExpire={() => setTurnstileToken(null)}
-										onError={() => setTurnstileToken(null)}
-									/>
-								)}
-							</div>
+							<UploadView
+								selectedFile={selectedFile}
+								expirationDays={expirationDays}
+								selectedTheme={selectedTheme}
+								isUploading={isUploading}
+								uploadError={uploadError}
+								fileInputRef={fileInputRef}
+								onFileSelect={handleFileSelect}
+								onExpirationChange={setExpirationDays}
+								onThemeChange={setSelectedTheme}
+								onPreview={togglePreview}
+								isPreviewOpen={showPreview}
+								isPreviewLoading={isPreviewLoading}
+								onUpload={handleUpload}
+							/>
 						)}
 					</div>
+
+					{import.meta.env.PROD && (
+						<TurnstileWidget
+							token={turnstileToken}
+							onVerify={setTurnstileToken}
+							onExpire={() => setTurnstileToken(null)}
+							onError={() => setTurnstileToken(null)}
+						/>
+					)}
 
 					{!uploadedUrl && <Features />}
 
