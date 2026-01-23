@@ -53,11 +53,9 @@ export function UploadView({
 			weekday: "short",
 			month: "short",
 			day: "numeric",
-			year: "numeric",
 		});
 		const timeStr = date.toLocaleTimeString("en-US", {
 			hour: "numeric",
-			minute: "numeric",
 			hour12: true,
 		});
 		setExpirationDate(`Expires on ${dateStr} at ${timeStr}`);
