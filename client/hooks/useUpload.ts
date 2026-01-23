@@ -29,7 +29,6 @@ export function useUpload({
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 	const [uploadError, setUploadError] = useState<string | null>(null);
-	const turnstile = useTurnstile();
 
 	const handleUpload = useCallback(async () => {
 		if (!file) return;
@@ -61,11 +60,9 @@ export function useUpload({
 				setUploadedUrl(viewUrl);
 				onSuccess?.();
 			} else {
-				turnstile.reset();
 				throw new Error(data.error || "Failed to create page");
 			}
 		} catch (error) {
-			turnstile.reset();
 			const message = error instanceof Error ? error.message : "Unknown error";
 			setUploadError(message);
 			// Auto clear error after 2 seconds
@@ -73,7 +70,7 @@ export function useUpload({
 		} finally {
 			setIsUploading(false);
 		}
-	}, [file, expirationDays, theme, turnstileToken, turnstile, onSuccess]);
+	}, [file, expirationDays, theme, turnstileToken, onSuccess]);
 
 	const handleReset = useCallback(() => {
 		setUploadedUrl(null);
