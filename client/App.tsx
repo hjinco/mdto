@@ -154,15 +154,6 @@ export function App() {
 						)}
 					</div>
 
-					{import.meta.env.PROD && (
-						<TurnstileWidget
-							token={turnstileToken}
-							onVerify={setTurnstileToken}
-							onExpire={() => setTurnstileToken(null)}
-							onError={() => setTurnstileToken(null)}
-						/>
-					)}
-
 					{!uploadedUrl && <Features />}
 
 					{/* Footer - Only visible in centered mode or right pane */}
@@ -188,6 +179,21 @@ export function App() {
 						</a>
 					</div>
 				</div>
+
+				{import.meta.env.PROD && (
+					<div
+						className={cn(
+							"w-fit fixed top-8 md:top-auto md:bottom-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
+							turnstileToken && "pointer-events-none opacity-0 invisible -z-50",
+						)}
+					>
+						<TurnstileWidget
+							onVerify={setTurnstileToken}
+							onExpire={() => setTurnstileToken(null)}
+							onError={() => setTurnstileToken(null)}
+						/>
+					</div>
+				)}
 			</div>
 
 			{/* Mobile Preview Dialog */}
