@@ -7,7 +7,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { RefObject } from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMetaSymbol } from "../hooks/useMetaSymbol";
 import { cn } from "../utils/styles";
 
@@ -44,8 +44,9 @@ export function UploadView({
 }: UploadViewProps) {
 	const [isDragover, setIsDragover] = useState(false);
 	const metaSymbol = useMetaSymbol();
+	const [expirationDate, setExpirationDate] = useState("");
 
-	const expirationDate = useMemo(() => {
+	useEffect(() => {
 		const date = new Date();
 		date.setDate(date.getDate() + expirationDays);
 		const dateStr = date.toLocaleDateString("en-US", {
@@ -59,7 +60,7 @@ export function UploadView({
 			minute: "numeric",
 			hour12: true,
 		});
-		return `Expires on ${dateStr} at ${timeStr}`;
+		setExpirationDate(`Expires on ${dateStr} at ${timeStr}`);
 	}, [expirationDays]);
 
 	const handleDragOver = useCallback((e: React.DragEvent) => {

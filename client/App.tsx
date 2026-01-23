@@ -1,11 +1,11 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
-import Turnstile from "react-turnstile";
 import { Features } from "./components/Features";
 import { PreviewDialog } from "./components/PreviewDialog";
 import { PreviewPane } from "./components/PreviewPane";
 import { SuccessView } from "./components/SuccessView";
+import { TurnstileWidget } from "./components/TurnstileWidget";
 import { UploadView } from "./components/UploadView";
 import { useFileSelection } from "./hooks/useFileSelection";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
@@ -75,7 +75,7 @@ export function App() {
 						"md:max-w-none md:px-0 md:h-screen md:grid md:items-start md:justify-start",
 				)}
 				style={
-					showPreview && selectedFile && window.innerWidth >= 768
+					showPreview && selectedFile
 						? {
 								gridTemplateColumns: `${previewWidth}% auto 1fr`,
 							}
@@ -153,21 +153,11 @@ export function App() {
 									onUpload={handleUpload}
 								/>
 								{import.meta.env.PROD && (
-									<Turnstile
-										className={cn("self-center", turnstileToken && "hidden")}
-										sitekey={import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY}
-										appearance="interaction-only"
-										theme="dark"
-										fixedSize
-										onVerify={(token) => {
-											setTurnstileToken(token);
-										}}
-										onExpire={() => {
-											setTurnstileToken(null);
-										}}
-										onError={() => {
-											setTurnstileToken(null);
-										}}
+									<TurnstileWidget
+										token={turnstileToken}
+										onVerify={setTurnstileToken}
+										onExpire={() => setTurnstileToken(null)}
+										onError={() => setTurnstileToken(null)}
 									/>
 								)}
 							</div>
