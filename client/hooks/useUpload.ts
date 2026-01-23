@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useTurnstile } from "react-turnstile";
 
 interface UseUploadOptions {
 	file: File | null;
@@ -28,6 +29,7 @@ export function useUpload({
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 	const [uploadError, setUploadError] = useState<string | null>(null);
+	const turnstile = useTurnstile();
 
 	const handleUpload = useCallback(async () => {
 		if (!file) return;
@@ -68,8 +70,9 @@ export function useUpload({
 			setTimeout(() => setUploadError(null), 2000);
 		} finally {
 			setIsUploading(false);
+			turnstile.reset();
 		}
-	}, [file, expirationDays, theme, turnstileToken, onSuccess]);
+	}, [file, expirationDays, theme, turnstileToken, onSuccess, turnstile]);
 
 	const handleReset = useCallback(() => {
 		setUploadedUrl(null);
