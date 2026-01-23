@@ -205,21 +205,38 @@ export function UploadView({
 					{[
 						{ value: 1, label: "1 Day" },
 						{ value: 7, label: "1 Week" },
-						{ value: 14, label: "2 Weeks" },
 						{ value: 30, label: "1 Month" },
+						{ value: -1, label: "Permanent", disabled: true, tooltip: "Coming soon" },
 					].map((option) => (
-						<button
-							key={option.value}
-							type="button"
-							className={cn(
-								"bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded cursor-pointer transition-all duration-200 font-sans flex-1 hover:text-text-secondary",
-								expirationDays === option.value &&
-									"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
+						<div key={option.value} className="relative flex-1 group">
+							<button
+								type="button"
+								className={cn(
+									"w-full bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded transition-all duration-200 font-sans",
+									!option.disabled &&
+										"cursor-pointer hover:text-text-secondary",
+									option.disabled &&
+										"cursor-not-allowed text-text-tertiary/60 select-none",
+									!option.disabled &&
+										expirationDays === option.value &&
+										"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
+								)}
+								disabled={option.disabled}
+								aria-disabled={option.disabled ? "true" : undefined}
+								onClick={
+									!option.disabled
+										? () => onExpirationChange(option.value)
+										: undefined
+								}
+							>
+								{option.label}
+							</button>
+							{option.tooltip && (
+								<div className="invisible absolute bottom-full left-1/2 -translate-x-1/2 translate-y-1 bg-surface-elevated border border-border-highlight text-text-primary py-2 px-3 rounded-md text-[11px] leading-snug w-max max-w-[200px] text-center shadow-tooltip opacity-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none z-100 group-hover:visible group-hover:opacity-100 group-hover:-translate-y-2 after:content-[''] after:absolute after:top-full after:left-1/2 after:-ml-1 after:border-4 after:border-solid after:border-t-border-highlight after:border-x-transparent after:border-b-transparent">
+									{option.tooltip}
+								</div>
 							)}
-							onClick={() => onExpirationChange(option.value)}
-						>
-							{option.label}
-						</button>
+						</div>
 					))}
 				</div>
 			</div>
