@@ -2,23 +2,29 @@ import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { Features } from "./components/Features";
+import { LoginModal } from "./components/LoginModal";
 import { PreviewDialog } from "./components/PreviewDialog";
 import { PreviewPane } from "./components/PreviewPane";
 import { SuccessView } from "./components/SuccessView";
 import { TurnstileWidget } from "./components/TurnstileWidget";
 import { UploadView } from "./components/UploadView";
+import { UserMenu } from "./components/UserMenu";
 import { useFileSelection } from "./hooks/useFileSelection";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { usePaste } from "./hooks/usePaste";
 import { usePreviewState } from "./hooks/usePreviewState";
 import { useResizablePane } from "./hooks/useResizablePane";
 import { useUpload } from "./hooks/useUpload";
+import { authClient } from "./lib/auth-client";
 import { cn } from "./utils/styles";
 
 export function App() {
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+	const { data: session } = authClient.useSession();
 
 	const { selectedFile, fileInputRef, handleFileSelect, clearSelection } =
 		useFileSelection();
@@ -154,6 +160,21 @@ export function App() {
 						)}
 					</div>
 
+					{/* Top Right Auth */}
+					<div className="absolute top-5 right-5 z-20">
+						{session?.user ? (
+							<UserMenu user={session.user} />
+						) : (
+							<button
+								type="button"
+								onClick={() => setIsLoginModalOpen(true)}
+								className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5"
+							>
+								Log in
+							</button>
+						)}
+					</div>
+
 					{!uploadedUrl && <Features />}
 
 					{/* Footer - Only visible in centered mode or right pane */}
@@ -195,6 +216,12 @@ export function App() {
 					</div>
 				)}
 			</div>
+
+			{/* Login Modal */}
+			<LoginModal
+				isOpen={isLoginModalOpen}
+				onClose={() => setIsLoginModalOpen(false)}
+			/>
 
 			{/* Mobile Preview Dialog */}
 			{showPreview && selectedFile && (

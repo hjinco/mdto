@@ -71,7 +71,7 @@ cd mdto
 pnpm install
 ```
 
-3. Set up environment variables: .env.local
+3. Set up environment variables: .env.example
 
 ### Development
 

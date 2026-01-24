@@ -206,7 +206,12 @@ export function UploadView({
 						{ value: 1, label: "1 Day" },
 						{ value: 7, label: "1 Week" },
 						{ value: 30, label: "1 Month" },
-						{ value: -1, label: "Permanent", disabled: true, tooltip: "Coming soon" },
+						{
+							value: -1,
+							label: "Permanent",
+							disabled: true,
+							tooltip: "Coming soon",
+						},
 					].map((option) => (
 						<div key={option.value} className="relative flex-1 group">
 							<button

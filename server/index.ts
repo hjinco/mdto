@@ -1,11 +1,13 @@
 import notFoundPage from "@shared/templates/not-found.html";
 import { Hono } from "hono";
+import { authRouter } from "./routes/auth.route";
 import { uploadRouter } from "./routes/upload.route";
 import { viewRouter } from "./routes/view.route";
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.route("/", uploadRouter);
+app.route("/api", authRouter);
+app.route("/api", uploadRouter);
 app.route("/", viewRouter);
 
 app.notFound((c) => {

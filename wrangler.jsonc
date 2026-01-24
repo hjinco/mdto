@@ -20,7 +20,14 @@
 	"assets": {
 		"directory": "./public",
 		"binding": "ASSETS"
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "mdto",
+			"database_id": "fd5db0ab-1029-4be5-a790-bb2fa43b574b"
+		}
+	]
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
