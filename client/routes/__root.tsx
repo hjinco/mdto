@@ -6,6 +6,10 @@ import {
 } from "@tanstack/react-router";
 import appCss from "../globals.css?url";
 
+const SITE_TITLE = "mdto.page – Convert & share Markdown as beautiful HTML & PDF";
+const SITE_DESCRIPTION =
+	"Convert Markdown to beautiful HTML/PDF pages and share instantly with clean templates — no login required on mdto.page.";
+
 export const Route = createRootRoute({
 	head: () => ({
 		meta: [
@@ -14,20 +18,18 @@ export const Route = createRootRoute({
 				name: "viewport",
 				content: "width=device-width, initial-scale=1",
 			},
-			{ title: "mdto.page – Convert & share Markdown as beautiful HTML & PDF" },
+			{ title: SITE_TITLE },
 			{
 				name: "description",
-				content:
-					"Convert Markdown to beautiful HTML/PDF pages and share instantly with clean templates — no login required on mdto.page.",
+				content: SITE_DESCRIPTION,
 			},
 			{
 				property: "og:title",
-				content: "mdto.page – Convert & share Markdown as beautiful HTML & PDF",
+				content: SITE_TITLE,
 			},
 			{
 				property: "og:description",
-				content:
-					"Convert Markdown to beautiful HTML/PDF pages and share instantly with clean templates — no login required on mdto.page.",
+				content: SITE_DESCRIPTION,
 			},
 			{
 				property: "og:type",
@@ -55,12 +57,11 @@ export const Route = createRootRoute({
 			},
 			{
 				name: "twitter:title",
-				content: "mdto.page – Convert & share Markdown as beautiful HTML & PDF",
+				content: SITE_TITLE,
 			},
 			{
 				name: "twitter:description",
-				content:
-					"Convert Markdown to beautiful HTML/PDF pages and share instantly with clean templates — no login required on mdto.page.",
+				content: SITE_DESCRIPTION,
 			},
 		],
 		links: [
