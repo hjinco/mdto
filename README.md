@@ -32,16 +32,23 @@ Transform your Markdown files into beautifully rendered web pages instantly. A f
 
 ## Project Structure
 
+> **Note**: This project is actively under development with features like authentication and various enhancements being added. The project structure may change as development progresses.
+
 ```
 mdto/
-├── client/              # React frontend
-│   ├── App.tsx         # Main application component
+├── client/              # React frontend (TanStack Start)
+│   ├── client.tsx      # Client entry point
+│   ├── router.tsx      # Router configuration
+│   ├── routes/         # Route components
 │   ├── components/     # Reusable UI components
-│   ├── entry-client.tsx # Client-side entry
-│   └── entry-server.tsx # SSR entry
+│   ├── hooks/          # Custom React hooks
+│   ├── lib/            # Client-side libraries (auth, etc.)
+│   └── utils/          # Client utilities
 ├── server/             # Cloudflare Workers backend
 │   ├── index.ts        # Worker entry point
 │   ├── routes/         # API routes
+│   ├── db/             # Database schema and client
+│   ├── lib/            # Server libraries (auth, etc.)
 │   └── utils/          # Server utilities
 ├── shared/             # Shared code between client/server
 │   ├── templates/      # HTML templates and themes
@@ -100,10 +107,13 @@ pnpm build
 ```
 
 This will:
-1. Build the client with Vite
-2. Build the SSR bundle
-3. Prerender static HTML files
-4. Output everything to the `public/` directory
+1. Generate template hash for cache busting
+2. Type-check the client codebase
+3. Build the client with Vite (TanStack Start)
+4. Prerender static HTML files
+5. Copy build output to the `.output/` directory
+
+The build process uses TanStack Start for SSR and static site generation, outputting optimized production bundles ready for deployment.
 
 ### Deployment
 
