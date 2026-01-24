@@ -1,24 +1,29 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Features } from "./components/Features";
-import { LoginModal } from "./components/LoginModal";
-import { PreviewDialog } from "./components/PreviewDialog";
-import { PreviewPane } from "./components/PreviewPane";
-import { SuccessView } from "./components/SuccessView";
-import { TurnstileWidget } from "./components/TurnstileWidget";
-import { UploadView } from "./components/UploadView";
-import { UserMenu } from "./components/UserMenu";
-import { useFileSelection } from "./hooks/useFileSelection";
-import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { usePaste } from "./hooks/usePaste";
-import { usePreviewState } from "./hooks/usePreviewState";
-import { useResizablePane } from "./hooks/useResizablePane";
-import { useUpload } from "./hooks/useUpload";
-import { authClient } from "./lib/auth-client";
-import { cn } from "./utils/styles";
+import { Features } from "../components/Features";
+import { LoginModal } from "../components/LoginModal";
+import { PreviewDialog } from "../components/PreviewDialog";
+import { PreviewPane } from "../components/PreviewPane";
+import { SuccessView } from "../components/SuccessView";
+import { TurnstileWidget } from "../components/TurnstileWidget";
+import { UploadView } from "../components/UploadView";
+import { UserMenu } from "../components/UserMenu";
+import { useFileSelection } from "../hooks/useFileSelection";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { usePaste } from "../hooks/usePaste";
+import { usePreviewState } from "../hooks/usePreviewState";
+import { useResizablePane } from "../hooks/useResizablePane";
+import { useUpload } from "../hooks/useUpload";
+import { authClient } from "../lib/auth-client";
+import { cn } from "../utils/styles";
 
-export function App() {
+export const Route = createFileRoute("/")({
+	component: Home,
+});
+
+function Home() {
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);

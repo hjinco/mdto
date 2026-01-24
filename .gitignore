@@ -169,10 +169,10 @@ dist
 worker-configuration.d.ts
 
 # Vite bundled output
-public/assets/*
-public/index.html
+dist
+.output
 
-# SSR build output
-dist-ssr/
+# Tanstack Start
+client/routeTree.gen.ts
 
 .DS_Store

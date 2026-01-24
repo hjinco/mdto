@@ -18,7 +18,7 @@
 		}
 	],
 	"assets": {
-		"directory": "./public",
+		"directory": "./.output",
 		"binding": "ASSETS"
 	},
 	"d1_databases": [
