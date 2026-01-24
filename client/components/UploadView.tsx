@@ -186,7 +186,7 @@ export function UploadView({
 					<div className="text-[13px] text-text-secondary font-medium" />
 					<div className="flex items-center gap-1">
 						<div className="text-[11px] text-text-tertiary [font-feature-settings:'tnum']">
-							{expirationDate}
+							{expirationDate || "Expires on ... at ..."}
 						</div>
 						<div className="relative inline-flex items-center ml-1 cursor-help align-middle group">
 							<HugeiconsIcon
