@@ -1,5 +1,5 @@
 import * as React from "react";
-import { hydrateRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { App } from "./App";
 import "./styles.css";
 import { PostHogProvider } from "@posthog/react";
@@ -13,11 +13,16 @@ if (import.meta.env.PROD) {
 	});
 }
 
-hydrateRoot(
-	document.getElementById("root") as HTMLElement,
+const Root = (
 	<React.StrictMode>
 		<PostHogProvider client={posthog}>
 			<App />
 		</PostHogProvider>
-	</React.StrictMode>,
+	</React.StrictMode>
 );
+
+if (import.meta.env.PROD) {
+	hydrateRoot(document.getElementById("root") as HTMLElement, Root);
+} else {
+	createRoot(document.getElementById("root") as HTMLElement).render(Root);
+}
