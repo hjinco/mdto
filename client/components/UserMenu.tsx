@@ -1,5 +1,10 @@
-import { Logout01Icon, User as UserIcon } from "@hugeicons/core-free-icons";
+import {
+	DashboardSpeed01Icon,
+	Logout01Icon,
+	User as UserIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { authClient, type User } from "../lib/auth-client";
 import { cn } from "../utils/styles";
@@ -36,7 +41,7 @@ export function UserMenu({ user }: UserMenuProps) {
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
 				className={cn(
-					"flex items-center gap-2 px-3 py-1.5 rounded-lg",
+					"flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer",
 					"text-sm font-medium text-text-secondary hover:text-text-primary",
 					"hover:bg-surface-highlight transition-all duration-200",
 					isOpen && "bg-surface-highlight text-text-primary",
@@ -64,13 +69,25 @@ export function UserMenu({ user }: UserMenuProps) {
 							{user.email}
 						</p>
 					</div>
+					<Link
+						to="/dashboard"
+						onClick={() => setIsOpen(false)}
+						className={cn(
+							"w-full flex items-center gap-2 px-3 py-2 rounded-md",
+							"text-xs text-text-secondary hover:text-text-primary hover:bg-white/5",
+							"transition-colors text-left",
+						)}
+					>
+						<HugeiconsIcon icon={DashboardSpeed01Icon} className="w-4 h-4" />
+						Dashboard
+					</Link>
 					<button
 						type="button"
 						onClick={handleLogout}
 						className={cn(
 							"w-full flex items-center gap-2 px-3 py-2 rounded-md",
 							"text-xs text-text-secondary hover:text-text-primary hover:bg-white/5",
-							"transition-colors text-left",
+							"transition-colors text-left cursor-pointer",
 						)}
 					>
 						<HugeiconsIcon icon={Logout01Icon} className="w-4 h-4" />

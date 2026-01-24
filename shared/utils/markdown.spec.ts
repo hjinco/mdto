@@ -1,3 +1,5 @@
+// biome-ignore lint/suspicious/noTsIgnore: CommonJS module
+// @ts-ignore
 import type iso6393To1 from "iso-639-3-to-1";
 import { describe, expect, it, vi } from "vitest";
 import { markdownToHtml } from "./markdown";

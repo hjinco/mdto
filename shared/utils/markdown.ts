@@ -1,4 +1,6 @@
 import { franc } from "franc-min";
+// biome-ignore lint/suspicious/noTsIgnore: CommonJS module
+// @ts-ignore
 import iso6393To1 from "iso-639-3-to-1";
 import yaml from "js-yaml";
 import type { Root } from "mdast";

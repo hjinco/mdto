@@ -70,7 +70,7 @@ export function useUpload({
 			setTimeout(() => setUploadError(null), 2000);
 		} finally {
 			setIsUploading(false);
-			turnstile.reset();
+			if (import.meta.env.PROD) turnstile.reset();
 		}
 	}, [file, expirationDays, theme, turnstileToken, onSuccess, turnstile]);
 

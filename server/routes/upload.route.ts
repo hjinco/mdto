@@ -14,7 +14,7 @@ export const uploadRouter = new Hono<{ Bindings: Env }>();
  * Receives Markdown text, generates a slug, and uploads to R2
  * Query parameter: expiration (1, 7, 14, 30 days) - defaults to 30 if not provided
  */
-uploadRouter.post("/api/upload", async (c) => {
+uploadRouter.post("/upload", async (c) => {
 	const env = c.env;
 	const request = c.req.raw;
 	const expirationParam = c.req.query("expiration");
