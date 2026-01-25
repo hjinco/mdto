@@ -172,7 +172,4 @@ worker-configuration.d.ts
 dist
 .output
 
-# Tanstack Start
-client/routeTree.gen.ts
-
 .DS_Store
