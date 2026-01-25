@@ -1,5 +1,9 @@
 # mdto.page
 
+[中文](docs/README.zh-CN.md) | [한국어](docs/README.ko.md)
+
+Live: [mdto.page](https://mdto.page)
+
 Transform your Markdown files into beautifully rendered web pages instantly. A fast, serverless Markdown-to-HTML converter built with Vite, React, and Cloudflare Workers.
 
 ## Features
@@ -155,8 +159,3 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Links
-
-- **Live Demo**: [mdto.page](https://mdto.page)
-- **GitHub**: [hjinco/mdto](https://github.com/hjinco/mdto)
