@@ -166,7 +166,6 @@ dist
 !.env.example
 !.env.local
 .wrangler/
-worker-configuration.d.ts
 
 # Vite bundled output
 dist
