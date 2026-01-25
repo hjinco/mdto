@@ -1,7 +1,31 @@
+import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useTurnstile } from "react-turnstile";
+import { trpc } from "../utils/trpc";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const VALID_PUBLIC_EXPIRATION_DAYS = [1, 7, 14, 30] as const;
+type PublicExpirationDays = (typeof VALID_PUBLIC_EXPIRATION_DAYS)[number];
+type Theme = "default" | "resume" | "matrix";
+
+function toTheme(theme: string): Theme {
+	if (theme === "default" || theme === "resume" || theme === "matrix")
+		return theme;
+	return "default";
+}
+
+function toPublicExpirationDays(days: number): PublicExpirationDays {
+	if ((VALID_PUBLIC_EXPIRATION_DAYS as readonly number[]).includes(days)) {
+		return days as PublicExpirationDays;
+	}
+	return 30;
+}
+
+function getTrpcHttpStatus(error: unknown): number | null {
+	const status = (error as { data?: { httpStatus?: unknown } } | undefined)
+		?.data?.httpStatus;
+	return typeof status === "number" ? status : null;
+}
 
 interface UseUploadOptions {
 	file: File | null;
@@ -9,8 +33,8 @@ interface UseUploadOptions {
 	theme: string;
 	turnstileToken: string | null;
 	isAuthenticated: boolean;
-	onSuccess?: () => void;
-	onClearFile?: () => void;
+	onSuccess: () => void;
+	onClearFile: () => void;
 }
 
 interface UseUploadReturn {
@@ -39,6 +63,13 @@ export function useUpload({
 	);
 	const turnstile = useTurnstile();
 
+	const publicCreateMutation = useMutation(
+		trpc.upload.publicCreate.mutationOptions(),
+	);
+	const userCreateMutation = useMutation(
+		trpc.upload.userCreate.mutationOptions(),
+	);
+
 	const handleUpload = useCallback(async () => {
 		if (!file) return;
 
@@ -47,72 +78,36 @@ export function useUpload({
 		setUploadErrorStatus(null);
 
 		try {
-			const text = await file.text();
+			const markdown = await file.text();
+			const coercedTheme = toTheme(theme);
 
-			const headers: Record<string, string> = { "Content-Type": "text/plain" };
-			if (turnstileToken) {
-				headers["X-Turnstile-Token"] = turnstileToken;
-			}
+			const path = isAuthenticated
+				? (
+						await userCreateMutation.mutateAsync({
+							markdown,
+							theme: coercedTheme,
+							expiresAtMs:
+								expirationDays === -1
+									? null
+									: Date.now() + expirationDays * DAY_MS,
+						})
+					).path
+				: (
+						await publicCreateMutation.mutateAsync({
+							markdown,
+							theme: coercedTheme,
+							expirationDays: toPublicExpirationDays(expirationDays),
+							turnstileToken,
+						})
+					).path;
 
-			const endpoint = isAuthenticated ? "/api/u/upload" : "/api/upload";
-			const query = new URLSearchParams({ theme });
-			if (isAuthenticated) {
-				if (expirationDays === -1) {
-					// Permanent: send empty expiresAt as requested (`?expiresAt=`)
-					query.set("expiresAt", "");
-				} else {
-					const expiresAtMs = Date.now() + expirationDays * DAY_MS;
-					query.set("expiresAt", expiresAtMs.toString());
-				}
-			} else {
-				query.set("expiration", expirationDays.toString());
-			}
-			const response = await fetch(`${endpoint}?${query.toString()}`, {
-				method: "POST",
-				headers,
-				body: text,
-				credentials: "include",
-			});
-
-			let data: unknown = null;
-			try {
-				data = await response.json();
-			} catch {
-				data = null;
-			}
-
-			const maybeObj = data as {
-				slug?: unknown;
-				path?: unknown;
-				error?: unknown;
-			};
-			const slugOrPath =
-				typeof maybeObj?.slug === "string"
-					? maybeObj.slug
-					: typeof maybeObj?.path === "string"
-						? maybeObj.path
-						: undefined;
-			if (response.ok && slugOrPath) {
-				const viewUrl = `${window.location.origin}/${slugOrPath}`;
-				setUploadedUrl(viewUrl);
-				onSuccess?.();
-			} else {
-				const message =
-					typeof maybeObj?.error === "string"
-						? maybeObj.error
-						: `Failed to create page (${response.status})`;
-				const err = new Error(message) as Error & { status?: number };
-				err.status = response.status;
-				throw err;
-			}
+			const viewUrl = `${window.location.origin}/${path}`;
+			setUploadedUrl(viewUrl);
+			onSuccess();
 		} catch (error) {
 			const message = error instanceof Error ? error.message : "Unknown error";
 			setUploadError(message);
-			setUploadErrorStatus(
-				typeof (error as { status?: unknown })?.status === "number"
-					? (error as { status: number }).status
-					: null,
-			);
+			setUploadErrorStatus(getTrpcHttpStatus(error));
 			// Auto clear error after 2 seconds
 			setTimeout(() => {
 				setUploadError(null);
@@ -129,6 +124,8 @@ export function useUpload({
 		turnstileToken,
 		isAuthenticated,
 		onSuccess,
+		publicCreateMutation,
+		userCreateMutation,
 		turnstile,
 	]);
 

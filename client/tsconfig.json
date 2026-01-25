@@ -26,5 +26,11 @@
 			"@shared/*": ["../shared/*"]
 		}
 	},
-	"include": ["**/*.ts", "**/*.tsx", "../shared/**/*.ts"]
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"../types.d.ts",
+		"../shared/**/*.ts",
+		"../worker-configuration.d.ts"
+	]
 }

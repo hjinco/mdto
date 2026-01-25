@@ -1,16 +1,26 @@
 import notFoundPage from "@shared/templates/not-found.html";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
 import { cleanerJob } from "./jobs/cleaner.job";
 import { authRouter } from "./routes/auth.route";
-import { pageRouter } from "./routes/page.route";
-import { uploadRouter } from "./routes/upload.route";
 import { viewRouter } from "./routes/view.route";
+import { createContext } from "./trpc/context";
+import { appRouter } from "./trpc/router";
 
 const app = new Hono<{ Bindings: Env }>();
 
 app.route("/api", authRouter);
-app.route("/api", pageRouter);
-app.route("/api", uploadRouter);
+app.all("/api/trpc/*", (c) => {
+	return fetchRequestHandler({
+		endpoint: "/api/trpc",
+		req: c.req.raw,
+		router: appRouter,
+		createContext: () => createContext({ req: c.req.raw, env: c.env }),
+		onError({ error, path }) {
+			console.error("tRPC error", path, error);
+		},
+	});
+});
 app.route("/", viewRouter);
 
 app.notFound((c) => {

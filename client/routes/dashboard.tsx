@@ -1,10 +1,12 @@
 import { Delete02Icon, MoreVerticalIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { UserMenu } from "../components/UserMenu";
 import { authClient } from "../lib/auth-client";
 import { cn } from "../utils/styles";
+import { queryClient, trpc } from "../utils/trpc";
 
 export const Route = createFileRoute("/dashboard")({
 	component: Dashboard,
@@ -15,10 +17,8 @@ type DashboardPage = {
 	path: string;
 	title: string;
 	description: string;
-	theme: string;
 	expiresAt: string | null;
 	createdAt: string;
-	updatedAt: string;
 };
 
 const formatDateTime = (ms: number) =>
@@ -172,12 +172,17 @@ function Dashboard() {
 	const { data: session, isPending } = authClient.useSession();
 	const navigate = useNavigate();
 
-	const [pages, setPages] = useState<DashboardPage[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const [filter, setFilter] = useState<"active" | "expired" | "all">("active");
 	const [now, setNow] = useState(() => Date.now());
+
+	const pageListQueryOptions = trpc.page.list.queryOptions();
+	const pagesQuery = useQuery({
+		...pageListQueryOptions,
+		enabled: !!session?.user,
+	});
+	const deletePageMutation = useMutation(trpc.page.delete.mutationOptions());
 
 	useEffect(() => {
 		if (!isPending && !session) {
@@ -194,48 +199,11 @@ function Dashboard() {
 		};
 	}, []);
 
-	useEffect(() => {
-		if (!session?.user) {
-			setPages([]);
-			setIsLoading(false);
-			setError(null);
-			return;
-		}
-
-		let cancelled = false;
-		const run = async () => {
-			setIsLoading(true);
-			setError(null);
-			try {
-				const res = await fetch("/api/pages", { credentials: "include" });
-				if (!res.ok) {
-					const data = (await res.json().catch(() => null)) as {
-						error?: string;
-					} | null;
-					throw new Error(
-						data?.error || `Failed to load pages (${res.status})`,
-					);
-				}
-
-				const data = (await res.json()) as { pages: DashboardPage[] };
-				if (!cancelled) {
-					setPages(Array.isArray(data.pages) ? data.pages : []);
-				}
-			} catch (e) {
-				if (!cancelled) {
-					setPages([]);
-					setError(e instanceof Error ? e.message : "Unknown error");
-				}
-			} finally {
-				if (!cancelled) setIsLoading(false);
-			}
-		};
-
-		void run();
-		return () => {
-			cancelled = true;
-		};
-	}, [session?.user]);
+	const pages = pagesQuery.data?.pages ?? [];
+	const isLoading = pagesQuery.isLoading;
+	const queryError =
+		pagesQuery.error instanceof Error ? pagesQuery.error.message : null;
+	const visibleError = error ?? queryError;
 
 	const visiblePages = useMemo(() => {
 		if (filter === "all") return pages;
@@ -253,17 +221,14 @@ function Dashboard() {
 		setDeletingId(pageId);
 		setError(null);
 		try {
-			const res = await fetch(`/api/pages/${encodeURIComponent(pageId)}`, {
-				method: "DELETE",
-				credentials: "include",
-			});
-			if (!res.ok) {
-				const data = (await res.json().catch(() => null)) as {
-					error?: string;
-				} | null;
-				throw new Error(data?.error || `Failed to delete page (${res.status})`);
-			}
-			setPages((prev) => prev.filter((p) => p.id !== pageId));
+			await deletePageMutation.mutateAsync({ id: pageId });
+			queryClient.setQueryData(
+				pageListQueryOptions.queryKey,
+				(prev: { pages: DashboardPage[] } | undefined) => {
+					if (!prev) return prev;
+					return { ...prev, pages: prev.pages.filter((p) => p.id !== pageId) };
+				},
+			);
 		} catch (e) {
 			setError(e instanceof Error ? e.message : "Failed to delete page");
 		} finally {
@@ -322,9 +287,9 @@ function Dashboard() {
 				</div>
 
 				{/* Content */}
-				{error && (
+				{visibleError && (
 					<div className="w-full bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg px-4 py-3 text-sm mb-4">
-						{error}
+						{visibleError}
 					</div>
 				)}
 
