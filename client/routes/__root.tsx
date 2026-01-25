@@ -71,10 +71,6 @@ export const Route = createRootRoute({
 				href: appCss,
 			},
 			{
-				rel: "canonical",
-				href: "https://mdto.page",
-			},
-			{
 				rel: "preconnect",
 				href: "https://fonts.googleapis.com",
 			},

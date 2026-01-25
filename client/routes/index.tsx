@@ -1,6 +1,6 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Features } from "../components/Features";
 import { LoginModal } from "../components/LoginModal";
@@ -27,7 +27,12 @@ const PreviewDialog = lazy(() =>
 	})),
 );
 
+const SITE_ORIGIN = "https://mdto.page";
+
 export const Route = createFileRoute("/")({
+	head: () => ({
+		links: [{ rel: "canonical", href: SITE_ORIGIN }],
+	}),
 	component: Home,
 });
 
@@ -237,13 +242,31 @@ function Home() {
 						</div>
 					)}
 
-					{/* GitHub Link */}
+					{/* Footer Links (Terms, Privacy, GitHub) */}
 					<div
 						className={cn(
-							"flex justify-center",
-							uploadedUrl ? "mt-4" : "mt-4 md:mt-16",
+							"flex items-center justify-center gap-3",
+							uploadedUrl ? "mt-8" : "mt-4 md:mt-16",
 						)}
 					>
+						<Link
+							to="/terms"
+							className="text-xs text-text-tertiary no-underline opacity-60 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-text-secondary"
+						>
+							Terms
+						</Link>
+						<span className="select-none opacity-30 text-[10px] text-text-tertiary">
+							•
+						</span>
+						<Link
+							to="/privacy"
+							className="text-xs text-text-tertiary no-underline opacity-60 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-text-secondary"
+						>
+							Privacy
+						</Link>
+						<span className="select-none opacity-30 text-[10px] text-text-tertiary">
+							•
+						</span>
 						<a
 							href="https://github.com/hjinco/mdto"
 							target="_blank"
