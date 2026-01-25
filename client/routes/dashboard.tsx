@@ -199,7 +199,7 @@ function Dashboard() {
 		};
 	}, []);
 
-	const pages = (pagesQuery.data?.pages as DashboardPage[] | undefined) ?? [];
+	const pages = pagesQuery.data?.pages ?? [];
 	const isLoading = pagesQuery.isLoading;
 	const queryError =
 		pagesQuery.error instanceof Error ? pagesQuery.error.message : null;
