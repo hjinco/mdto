@@ -73,6 +73,11 @@ uploadRouter.post("/upload", async (c) => {
 		console.log("Turnstile validation skipped (development mode)");
 	}
 
+	const contentLength = c.req.header("Content-Length");
+	if (contentLength && parseInt(contentLength, 10) > MAX_UPLOAD_SIZE) {
+		return c.json({ error: "File size exceeds 100KB limit" }, 413);
+	}
+
 	const markdown = await c.req.text();
 
 	const encoder = new TextEncoder();
