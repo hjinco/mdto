@@ -1,7 +1,7 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Features } from "../components/Features";
 import { LoginModal } from "../components/LoginModal";
 import { SuccessView } from "../components/SuccessView";
@@ -37,8 +37,18 @@ function Home() {
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);
+	const [isUploadLimitDialogOpen, setIsUploadLimitDialogOpen] = useState(false);
 
 	const { data: session } = authClient.useSession();
+
+	useEffect(() => {
+		setExpirationDays((prev) => {
+			// Logged in: default to Permanent (-1) if user hasn't changed it yet.
+			if (session?.user) return prev === 30 ? -1 : prev;
+			// Logged out: ensure we don't keep an invalid Permanent selection.
+			return prev === -1 ? 30 : prev;
+		});
+	}, [session?.user]);
 
 	const { selectedFile, fileInputRef, handleFileSelect, clearSelection } =
 		useFileSelection();
@@ -51,19 +61,31 @@ function Home() {
 		closePreview,
 	} = usePreviewState();
 
-	const { isUploading, uploadedUrl, uploadError, handleUpload, handleReset } =
-		useUpload({
-			file: selectedFile,
-			expirationDays,
-			theme: selectedTheme,
-			turnstileToken,
-			onSuccess: closePreview,
-			onClearFile: () => {
-				clearSelection();
-				setExpirationDays(30);
-				setSelectedTheme("default");
-			},
-		});
+	const {
+		isUploading,
+		uploadedUrl,
+		uploadError,
+		uploadErrorStatus,
+		handleUpload,
+		handleReset,
+	} = useUpload({
+		file: selectedFile,
+		expirationDays,
+		theme: selectedTheme,
+		turnstileToken,
+		isAuthenticated: !!session?.user,
+		onSuccess: closePreview,
+		onClearFile: () => {
+			clearSelection();
+		},
+	});
+
+	useEffect(() => {
+		// Show a dedicated guide when user hits the per-user page quota.
+		if (uploadErrorStatus === 429) {
+			setIsUploadLimitDialogOpen(true);
+		}
+	}, [uploadErrorStatus]);
 
 	useKeyboardShortcuts({
 		onOpenFile: () => fileInputRef.current?.click(),
@@ -170,6 +192,7 @@ function Home() {
 							<UploadView
 								selectedFile={selectedFile}
 								expirationDays={expirationDays}
+								isAuthenticated={!!session?.user}
 								selectedTheme={selectedTheme}
 								isUploading={isUploading}
 								uploadError={uploadError}
@@ -204,16 +227,23 @@ function Home() {
 					{!uploadedUrl && <Features />}
 
 					{/* Footer - Only visible in centered mode or right pane */}
-					<div className="hidden md:block mt-4 text-center text-xs text-text-tertiary opacity-60 transition-opacity duration-200 hover:opacity-100">
-						Press{" "}
-						<span className="bg-white/5 border border-border rounded px-1.5 py-0.5 ml-1.5 text-[10px] align-middle text-text-secondary font-inherit">
-							⌘ O
-						</span>{" "}
-						to browse files
-					</div>
+					{!uploadedUrl && (
+						<div className="hidden md:block mt-4 text-center text-xs text-text-tertiary opacity-60 transition-opacity duration-200 hover:opacity-100">
+							Press{" "}
+							<span className="bg-white/5 border border-border rounded px-1.5 py-0.5 ml-1.5 text-[10px] align-middle text-text-secondary font-inherit">
+								⌘ O
+							</span>{" "}
+							to browse files
+						</div>
+					)}
 
 					{/* GitHub Link */}
-					<div className="flex justify-center mt-4 md:mt-16">
+					<div
+						className={cn(
+							"flex justify-center",
+							uploadedUrl ? "mt-4" : "mt-4 md:mt-16",
+						)}
+					>
 						<a
 							href="https://github.com/hjinco/mdto"
 							target="_blank"
@@ -253,7 +283,28 @@ function Home() {
 			<WarningDialog
 				isOpen={isWarningDialogOpen}
 				onClose={() => setIsWarningDialogOpen(false)}
-				onLogin={() => setIsLoginModalOpen(true)}
+				onSecondary={() => setIsLoginModalOpen(true)}
+				secondaryLabel="Log in"
+				onConfirm={() => {
+					void handleUpload();
+				}}
+				title="Warning"
+				description="Once created, pages cannot be modified or deleted"
+				confirmLabel="OK"
+			/>
+
+			{/* Upload limit dialog */}
+			<WarningDialog
+				isOpen={isUploadLimitDialogOpen}
+				onClose={() => setIsUploadLimitDialogOpen(false)}
+				onConfirm={() => {
+					setIsUploadLimitDialogOpen(false);
+					window.location.assign("/dashboard");
+				}}
+				title="Page limit reached"
+				description="You can create up to 10 pages per account. Please wait until older pages expire and are cleaned up, then try again. You can review your pages in the dashboard."
+				confirmLabel="Open dashboard"
+				tone="warning"
 			/>
 
 			{/* Mobile Preview Dialog */}

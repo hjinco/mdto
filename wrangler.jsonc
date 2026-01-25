@@ -11,6 +11,9 @@
 	"observability": {
 		"enabled": true
 	},
+	"triggers": {
+		"crons": ["0 * * * *"]
+	},
 	"r2_buckets": [
 		{
 			"bucket_name": "mdto",

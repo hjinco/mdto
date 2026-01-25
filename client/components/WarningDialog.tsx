@@ -3,16 +3,38 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback } from "react";
 import { cn } from "../utils/styles";
 
-interface WarningDialogProps {
+type WarningDialogTone = "warning" | "danger";
+
+type WarningDialogBaseProps = {
 	isOpen: boolean;
 	onClose: () => void;
-	onLogin?: () => void;
-}
+	onConfirm: () => void;
+	title: string;
+	description: string;
+	confirmLabel: string;
+	tone?: WarningDialogTone;
+};
+
+type WarningDialogProps =
+	| (WarningDialogBaseProps & {
+			onSecondary?: never;
+			secondaryLabel?: never;
+	  })
+	| (WarningDialogBaseProps & {
+			onSecondary: () => void;
+			secondaryLabel: string;
+	  });
 
 export function WarningDialog({
 	isOpen,
 	onClose,
-	onLogin,
+	onSecondary,
+	onConfirm,
+	title,
+	description,
+	confirmLabel,
+	secondaryLabel,
+	tone = "warning",
 }: WarningDialogProps) {
 	const handleOverlayClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -34,6 +56,11 @@ export function WarningDialog({
 
 	if (!isOpen) return null;
 
+	const iconStyles =
+		tone === "danger"
+			? "bg-red-500/10 border-red-500/20 text-red-500"
+			: "bg-yellow-500/10 border-yellow-500/20 text-yellow-500";
+
 	return (
 		<div
 			className="fixed inset-0 bg-black/80 z-1000 flex items-center justify-center p-2.5 backdrop-blur-sm animate-fade-in"
@@ -44,27 +71,29 @@ export function WarningDialog({
 		>
 			<div className="bg-surface border border-border rounded-xl w-full max-w-[400px] flex flex-col shadow-dialog relative p-6">
 				<div className="flex items-center justify-center mb-4">
-					<div className="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 rounded-full flex items-center justify-center">
-						<HugeiconsIcon
-							icon={Alert01Icon}
-							className="w-6 h-6 text-yellow-500"
-						/>
+					<div
+						className={cn(
+							"w-12 h-12 border rounded-full flex items-center justify-center",
+							iconStyles,
+						)}
+					>
+						<HugeiconsIcon icon={Alert01Icon} className="w-6 h-6" />
 					</div>
 				</div>
 				<div className="text-lg font-medium text-text-primary mb-2 text-center">
-					Warning
+					{title}
 				</div>
 				<div className="text-sm text-text-secondary text-center mb-6">
-					Once created, pages cannot be modified or deleted.
+					{description}
 				</div>
 
 				<div className="flex gap-2">
-					{onLogin && (
+					{onSecondary && (
 						<button
 							type="button"
 							onClick={() => {
 								onClose();
-								onLogin();
+								onSecondary();
 							}}
 							className={cn(
 								"flex-1 bg-surface-highlight hover:bg-[#25262a] text-text-primary",
@@ -73,21 +102,23 @@ export function WarningDialog({
 								"hover:scale-[1.02] active:scale-[0.98]",
 							)}
 						>
-							Log in
+							{secondaryLabel}
 						</button>
 					)}
 					<button
 						type="button"
-						onClick={onClose}
+						onClick={() => {
+							onClose();
+							onConfirm();
+						}}
 						className={cn(
-							onLogin ? "flex-1" : "w-full",
-							"bg-primary hover:bg-[#4e5ac0] text-white",
+							"flex-1 bg-primary hover:bg-[#4e5ac0] text-white",
 							"border border-none py-2.5 h-10 rounded-lg text-[13px] font-medium cursor-pointer",
 							"transition-all duration-200 shadow-btn flex items-center justify-center gap-2",
 							"hover:scale-[1.02] active:scale-[0.98]",
 						)}
 					>
-						OK
+						{confirmLabel}
 					</button>
 				</div>
 			</div>

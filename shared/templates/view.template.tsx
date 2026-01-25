@@ -373,21 +373,30 @@ const Scripts = ({ hasMermaid }: ScriptsProps) => {
 };
 
 interface FooterProps {
-	expiresAt: string;
+	expiresAt?: string;
 }
 
 const Footer = ({ expiresAt }: FooterProps) => {
-	let formattedDate = "";
-	try {
-		const date = new Date(parseInt(expiresAt, 10));
-		formattedDate = date.toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		});
-	} catch (e) {
-		console.error("Failed to parse expiration date", e);
+	const poweredBy = (
+		<footer>
+			<p>
+				Powered by <a href="https://mdit.page">mdit.page</a>
+			</p>
+		</footer>
+	);
+
+	if (!expiresAt) return poweredBy;
+
+	const dateMs = Number.parseInt(expiresAt, 10);
+	if (!Number.isFinite(dateMs)) {
+		return poweredBy;
 	}
+
+	const formattedDate = new Date(dateMs).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
 
 	return (
 		<footer>
@@ -403,7 +412,7 @@ interface CreateHtmlPageOptions {
 	title: string;
 	description?: string;
 	html: string;
-	expiresAt: string;
+	expiresAt?: string;
 	markdown?: string;
 	theme?: string;
 	hasKatex?: boolean;

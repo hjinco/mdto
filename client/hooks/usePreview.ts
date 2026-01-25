@@ -38,12 +38,14 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 
 				const { html, metadata } = await markdownToHtml(markdown);
 				const expirationTime =
-					Date.now() + expirationDays * 24 * 60 * 60 * 1000;
+					expirationDays === -1
+						? null
+						: Date.now() + expirationDays * 24 * 60 * 60 * 1000;
 				const previewHtml = ViewTemplate({
 					lang: metadata.lang,
 					title: `Preview - ${themeName}`,
 					description: metadata.description,
-					expiresAt: expirationTime.toString(),
+					expiresAt: expirationTime ? expirationTime.toString() : undefined,
 					html,
 					theme,
 					markdown,

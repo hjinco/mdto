@@ -14,6 +14,7 @@ import { cn } from "../utils/styles";
 interface UploadViewProps {
 	selectedFile: File | null;
 	expirationDays: number;
+	isAuthenticated: boolean;
 	selectedTheme: string;
 	isUploading: boolean;
 	uploadError: string | null;
@@ -31,6 +32,7 @@ interface UploadViewProps {
 export function UploadView({
 	selectedFile,
 	expirationDays,
+	isAuthenticated,
 	selectedTheme,
 	isUploading,
 	uploadError,
@@ -47,8 +49,12 @@ export function UploadView({
 	const [isDragover, setIsDragover] = useState(false);
 	const metaSymbol = useMetaSymbol();
 	const [expirationDate, setExpirationDate] = useState("");
+	const isPermanent = expirationDays === -1;
 
 	useEffect(() => {
+		if (isPermanent) {
+			return;
+		}
 		const date = new Date();
 		date.setDate(date.getDate() + expirationDays);
 		const dateStr = date.toLocaleDateString("en-US", {
@@ -61,7 +67,7 @@ export function UploadView({
 			hour12: true,
 		});
 		setExpirationDate(`Expires on ${dateStr} at ${timeStr}`);
-	}, [expirationDays]);
+	}, [expirationDays, isPermanent]);
 
 	const handleDragOver = useCallback((e: React.DragEvent) => {
 		e.preventDefault();
@@ -188,7 +194,9 @@ export function UploadView({
 					<div className="text-[13px] text-text-secondary font-medium" />
 					<div className="flex items-center gap-1">
 						<div className="text-[11px] text-text-tertiary [font-feature-settings:'tnum']">
-							{expirationDate || "Expires on ... at ..."}
+							{isPermanent
+								? "Permanent"
+								: expirationDate || "Expires on ... at ..."}
 						</div>
 						<div className="relative inline-flex items-center ml-1 cursor-help align-middle group">
 							<HugeiconsIcon
@@ -196,9 +204,15 @@ export function UploadView({
 								className="w-3 h-3 text-text-tertiary transition-colors duration-200"
 							/>
 							<div className="invisible absolute bottom-full left-1/2 -translate-x-1/2 translate-y-1 bg-surface-elevated border border-border-highlight text-text-primary py-2 px-3 rounded-md text-[11px] leading-snug w-max max-w-[200px] text-center shadow-tooltip opacity-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none z-100 group-hover:visible group-hover:opacity-100 group-hover:-translate-y-2 after:content-[''] after:absolute after:top-full after:left-1/2 after:-ml-1 after:border-4 after:border-solid after:border-t-border-highlight after:border-x-transparent after:border-b-transparent">
-								Deletion occurs periodically,
-								<br />
-								so the exact time may vary.
+								{isPermanent ? (
+									"You can delete it anytime from the dashboard."
+								) : (
+									<>
+										Deletion occurs periodically,
+										<br />
+										so the exact time may vary.
+									</>
+								)}
 							</div>
 						</div>
 					</div>
@@ -210,9 +224,10 @@ export function UploadView({
 						{ value: 30, label: "1 Month" },
 						{
 							value: -1,
-							label: "Permanent",
-							disabled: true,
-							tooltip: "Coming soon",
+							label: "∞",
+							ariaLabel: "Permanent",
+							disabled: !isAuthenticated,
+							tooltip: !isAuthenticated ? "Login required" : undefined,
 						},
 					].map((option) => (
 						<div key={option.value} className="relative flex-1 group">
@@ -230,6 +245,7 @@ export function UploadView({
 								)}
 								disabled={option.disabled}
 								aria-disabled={option.disabled ? "true" : undefined}
+								aria-label={option.ariaLabel ?? option.label}
 								onClick={
 									!option.disabled
 										? () => onExpirationChange(option.value)
