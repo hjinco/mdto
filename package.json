@@ -43,8 +43,12 @@
 		"@hugeicons/core-free-icons": "^3.1.1",
 		"@hugeicons/react": "^1.1.4",
 		"@posthog/react": "^1.5.2",
+		"@tanstack/react-query": "^5.90.20",
 		"@tanstack/react-router": "^1.156.0",
 		"@tanstack/react-start": "^1.156.0",
+		"@trpc/client": "^11.8.1",
+		"@trpc/server": "^11.8.1",
+		"@trpc/tanstack-react-query": "^11.8.1",
 		"better-auth": "^1.4.17",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.45.1",
@@ -72,7 +76,8 @@
 		"remark-rehype": "^11.1.2",
 		"tailwind-merge": "^3.4.0",
 		"unified": "^11.0.5",
-		"unist-util-visit": "^5.0.0"
+		"unist-util-visit": "^5.0.0",
+		"zod": "^4.3.6"
 	},
 	"packageManager": "pnpm@10.25.0"
 }
