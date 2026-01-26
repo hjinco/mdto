@@ -9,8 +9,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/utils/styles";
 import { useMetaSymbol } from "../hooks/useMetaSymbol";
-import { cn } from "../utils/styles";
 
 interface UploadViewProps {
 	selectedFile: File | null;

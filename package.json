@@ -40,6 +40,7 @@
 		"wrangler": "^4.59.2"
 	},
 	"dependencies": {
+		"@base-ui/react": "^1.1.0",
 		"@hugeicons/core-free-icons": "^3.1.1",
 		"@hugeicons/react": "^1.1.4",
 		"@posthog/react": "^1.5.2",

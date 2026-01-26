@@ -4,7 +4,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback, useState } from "react";
-import { cn } from "../utils/styles";
+import { cn } from "@/utils/styles";
 
 interface SuccessViewProps {
 	url: string;

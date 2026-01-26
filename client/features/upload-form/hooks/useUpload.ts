@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useTurnstile } from "react-turnstile";
-import { trpc } from "../utils/trpc";
+import { trpc } from "@/utils/trpc";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const VALID_PUBLIC_EXPIRATION_DAYS = [1, 7, 14, 30] as const;

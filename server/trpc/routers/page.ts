@@ -25,16 +25,14 @@ export const pageRouter = router({
 			.limit(30)
 			.all();
 
-		return {
-			pages: pages.map((p) => ({
-				id: p.id,
-				path: `/${username}/${p.slug}`,
-				title: p.title,
-				description: p.description,
-				expiresAt: p.expiresAt ? p.expiresAt.toISOString() : null,
-				createdAt: p.createdAt.toISOString(),
-			})),
-		};
+		return pages.map((p) => ({
+			id: p.id,
+			path: `/${username}/${p.slug}`,
+			title: p.title,
+			description: p.description,
+			expiresAt: p.expiresAt ? p.expiresAt.toISOString() : null,
+			createdAt: p.createdAt.toISOString(),
+		}));
 	}),
 
 	delete: protectedProcedure

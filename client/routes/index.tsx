@@ -3,29 +3,32 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Features } from "../components/Features";
 import { LanguageSelect } from "../components/LanguageSelect";
-import { LoginModal } from "../components/LoginModal";
-import { SuccessView } from "../components/SuccessView";
-import { TurnstileWidget } from "../components/TurnstileWidget";
-import { UploadView } from "../components/UploadView";
 import { UserMenu } from "../components/UserMenu";
-import { WarningDialog } from "../components/WarningDialog";
-import { useFileSelection } from "../hooks/useFileSelection";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
-import { useMarkdownDraftPersistence } from "../hooks/useMarkdownDraftPersistence";
-import { usePaste } from "../hooks/usePaste";
-import { usePreviewState } from "../hooks/usePreviewState";
-import { useResizablePane } from "../hooks/useResizablePane";
-import { useUpload } from "../hooks/useUpload";
+import { Features } from "../features/upload-form/components/Features";
+import { LoginModal } from "../features/upload-form/components/LoginModal";
+import { SuccessView } from "../features/upload-form/components/SuccessView";
+import { TurnstileWidget } from "../features/upload-form/components/TurnstileWidget";
+import { UploadView } from "../features/upload-form/components/UploadView";
+import { WarningDialog } from "../features/upload-form/components/WarningDialog";
+import { useFileSelection } from "../features/upload-form/hooks/useFileSelection";
+import { useKeyboardShortcuts } from "../features/upload-form/hooks/useKeyboardShortcuts";
+import { useMarkdownDraftPersistence } from "../features/upload-form/hooks/useMarkdownDraftPersistence";
+import { usePaste } from "../features/upload-form/hooks/usePaste";
+import { usePreviewState } from "../features/upload-form/hooks/usePreviewState";
+import { useResizablePane } from "../features/upload-form/hooks/useResizablePane";
+import { useUpload } from "../features/upload-form/hooks/useUpload";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { authClient } from "../lib/auth-client";
 import { cn } from "../utils/styles";
 
 const PreviewPane = lazy(() =>
-	import("../components/PreviewPane").then((m) => ({ default: m.PreviewPane })),
+	import("../features/upload-form/components/PreviewPane").then((m) => ({
+		default: m.PreviewPane,
+	})),
 );
 const PreviewDialog = lazy(() =>
-	import("../components/PreviewDialog").then((m) => ({
+	import("../features/upload-form/components/PreviewDialog").then((m) => ({
 		default: m.PreviewDialog,
 	})),
 );
@@ -47,6 +50,7 @@ function Home() {
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);
 	const [isUploadLimitDialogOpen, setIsUploadLimitDialogOpen] = useState(false);
+	const isMobile = useMediaQuery("(max-width: 767px)");
 
 	const { data: session } = authClient.useSession();
 
@@ -346,17 +350,15 @@ function Home() {
 			/>
 
 			{/* Mobile Preview Dialog */}
-			{selectedFile && (
-				<div className={cn("hidden md:hidden", showPreview && "block")}>
-					<Suspense fallback={null}>
-						<PreviewDialog
-							file={selectedFile}
-							theme={selectedTheme}
-							expirationDays={expirationDays}
-							onClose={closePreview}
-						/>
-					</Suspense>
-				</div>
+			{selectedFile && isMobile && showPreview && (
+				<Suspense fallback={null}>
+					<PreviewDialog
+						file={selectedFile}
+						theme={selectedTheme}
+						expirationDays={expirationDays}
+						onClose={closePreview}
+					/>
+				</Suspense>
 			)}
 		</>
 	);

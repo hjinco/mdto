@@ -1,8 +1,8 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
+import { cn } from "@/utils/styles";
 import { usePreview } from "../hooks/usePreview";
-import { cn } from "../utils/styles";
 
 interface PreviewPaneProps {
 	file: File;
@@ -31,7 +31,6 @@ export function PreviewPane({
 
 	return (
 		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">
-			{/* Header */}
 			<div className="flex items-center justify-between py-3 px-5 border-b border-border bg-surface-elevated">
 				<div className="text-sm font-medium text-text-primary">
 					Preview - {themeName}
@@ -49,7 +48,6 @@ export function PreviewPane({
 				</button>
 			</div>
 
-			{/* Content */}
 			<div
 				className={cn(
 					"flex-1 relative bg-white transition-opacity duration-200",
