@@ -4,6 +4,7 @@ import { StartClient } from "@tanstack/react-start/client";
 import posthog from "posthog-js";
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
+import "./lib/i18n";
 import { queryClient } from "./utils/trpc";
 
 if (import.meta.env.PROD) {

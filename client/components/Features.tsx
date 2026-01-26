@@ -7,34 +7,36 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "../utils/styles";
 
-const features = [
-	{
-		label: "GFM Support",
-		desc: "Tables, Tasks, Auto-links",
-		icon: CheckListIcon,
-	},
-	{
-		label: "Math & KaTeX",
-		desc: "Scientific equations",
-		icon: BoardMathIcon,
-	},
-	{
-		label: "Mermaid",
-		desc: "Flowcharts & Diagrams",
-		icon: FlowConnectionIcon,
-	},
-	{
-		label: "Highlighting",
-		desc: "Auto language detection",
-		icon: CodeIcon,
-	},
-];
-
 export function Features() {
+	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
+
+	const features = [
+		{
+			label: t("features.gfmLabel"),
+			desc: t("features.gfmDesc"),
+			icon: CheckListIcon,
+		},
+		{
+			label: t("features.mathLabel"),
+			desc: t("features.mathDesc"),
+			icon: BoardMathIcon,
+		},
+		{
+			label: t("features.mermaidLabel"),
+			desc: t("features.mermaidDesc"),
+			icon: FlowConnectionIcon,
+		},
+		{
+			label: t("features.highlightingLabel"),
+			desc: t("features.highlightingDesc"),
+			icon: CodeIcon,
+		},
+	] as const;
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
@@ -73,7 +75,7 @@ export function Features() {
 				)}
 			>
 				<HugeiconsIcon icon={InformationCircleIcon} className="w-3.5 h-3.5" />
-				<span>Markdown Support</span>
+				<span>{t("features.markdownSupport")}</span>
 			</button>
 
 			<div

@@ -2,7 +2,9 @@ import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Features } from "../components/Features";
+import { LanguageSelect } from "../components/LanguageSelect";
 import { LoginModal } from "../components/LoginModal";
 import { SuccessView } from "../components/SuccessView";
 import { TurnstileWidget } from "../components/TurnstileWidget";
@@ -38,6 +40,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+	const { t } = useTranslation();
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -225,17 +228,20 @@ function Home() {
 
 					{/* Top Right Auth */}
 					<div className="absolute top-5 right-5 z-20">
-						{session?.user ? (
-							<UserMenu user={session.user} />
-						) : (
-							<button
-								type="button"
-								onClick={() => setIsLoginModalOpen(true)}
-								className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5"
-							>
-								Log in
-							</button>
-						)}
+						<div className="flex items-center gap-2">
+							<LanguageSelect />
+							{session?.user ? (
+								<UserMenu user={session.user} />
+							) : (
+								<button
+									type="button"
+									onClick={() => setIsLoginModalOpen(true)}
+									className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5"
+								>
+									{t("auth.login")}
+								</button>
+							)}
+						</div>
 					</div>
 
 					{!uploadedUrl && <Features />}
@@ -262,7 +268,7 @@ function Home() {
 							to="/terms"
 							className="text-xs text-text-tertiary no-underline opacity-60 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-text-secondary"
 						>
-							Terms
+							{t("nav.terms")}
 						</Link>
 						<span className="select-none opacity-30 text-[10px] text-text-tertiary">
 							•
@@ -271,7 +277,7 @@ function Home() {
 							to="/privacy"
 							className="text-xs text-text-tertiary no-underline opacity-60 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-text-secondary"
 						>
-							Privacy
+							{t("nav.privacy")}
 						</Link>
 						<span className="select-none opacity-30 text-[10px] text-text-tertiary">
 							•
@@ -316,13 +322,13 @@ function Home() {
 				isOpen={isWarningDialogOpen}
 				onClose={() => setIsWarningDialogOpen(false)}
 				onSecondary={() => setIsLoginModalOpen(true)}
-				secondaryLabel="Log in"
+				secondaryLabel={t("auth.login")}
 				onConfirm={() => {
 					void handleUpload();
 				}}
-				title="Warning"
-				description="Once created, pages cannot be modified or deleted"
-				confirmLabel="OK"
+				title={t("dialogs.warningTitle")}
+				description={t("dialogs.warningDescription")}
+				confirmLabel={t("dialogs.ok")}
 			/>
 
 			{/* Upload limit dialog */}
@@ -333,9 +339,9 @@ function Home() {
 					setIsUploadLimitDialogOpen(false);
 					window.location.assign("/dashboard");
 				}}
-				title="Page limit reached"
-				description="You can create up to 10 pages per account. Please wait until older pages expire and are cleaned up, then try again. You can review your pages in the dashboard."
-				confirmLabel="Open dashboard"
+				title={t("dialogs.pageLimitTitle")}
+				description={t("dialogs.pageLimitDescription")}
+				confirmLabel={t("dialogs.openDashboard")}
 				tone="warning"
 			/>
 
