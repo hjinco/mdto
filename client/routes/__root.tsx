@@ -4,7 +4,10 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import appCss from "../globals.css?url";
+import { initClientLanguage } from "../lib/i18n";
 
 const SITE_TITLE =
 	"mdto.page – Convert & share Markdown as beautiful HTML & PDF";
@@ -89,6 +92,34 @@ export const Route = createRootRoute({
 	notFoundComponent: () => <div>Not Found</div>,
 });
 
+function ClientI18nBootstrap() {
+	const { i18n } = useTranslation();
+
+	useEffect(() => {
+		const syncHtmlLang = () => {
+			document.documentElement.lang = (
+				i18n.resolvedLanguage ??
+				i18n.language ??
+				"en"
+			)
+				.toLowerCase()
+				.replaceAll("_", "-");
+		};
+
+		syncHtmlLang();
+		i18n.on("languageChanged", syncHtmlLang);
+
+		// Prerender is always English; switch language on the client after mount.
+		void initClientLanguage();
+
+		return () => {
+			i18n.off("languageChanged", syncHtmlLang);
+		};
+	}, [i18n]);
+
+	return null;
+}
+
 function RootLayout() {
 	return (
 		<html lang="en">
@@ -96,6 +127,7 @@ function RootLayout() {
 				<HeadContent />
 			</head>
 			<body>
+				<ClientI18nBootstrap />
 				<Outlet />
 				<Scripts />
 			</body>

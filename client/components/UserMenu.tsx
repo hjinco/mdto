@@ -6,6 +6,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { authClient, type User } from "../lib/auth-client";
 import { cn } from "../utils/styles";
 
@@ -14,6 +15,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user }: UserMenuProps) {
+	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -79,7 +81,7 @@ export function UserMenu({ user }: UserMenuProps) {
 						)}
 					>
 						<HugeiconsIcon icon={DashboardSpeed01Icon} className="w-4 h-4" />
-						Dashboard
+						{t("userMenu.dashboard")}
 					</Link>
 					<button
 						type="button"
@@ -91,7 +93,7 @@ export function UserMenu({ user }: UserMenuProps) {
 						)}
 					>
 						<HugeiconsIcon icon={Logout01Icon} className="w-4 h-4" />
-						Log out
+						{t("userMenu.logOut")}
 					</button>
 				</div>
 			)}

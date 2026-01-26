@@ -3,6 +3,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSelect } from "../components/LanguageSelect";
 import { UserMenu } from "../components/UserMenu";
 import { authClient } from "../lib/auth-client";
 import { cn } from "../utils/styles";
@@ -39,6 +41,7 @@ function PageCard({
 	isDeleting: boolean;
 	onDelete: (id: string) => void;
 }) {
+	const { t } = useTranslation();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
 
@@ -68,19 +71,19 @@ function PageCard({
 		const hour = 60 * minute;
 		const day = 24 * hour;
 
-		if (diff <= 0) return "Expired";
+		if (diff <= 0) return t("dashboard.expired");
 
 		if (diff < hour) {
 			const minutes = Math.max(1, Math.ceil(diff / minute));
-			return `Expires in ${minutes}m`;
+			return t("dashboard.expiresInMinutes", { count: minutes });
 		}
 		if (diff < day) {
 			const hours = Math.ceil(diff / hour);
-			return `Expires in ${hours}h`;
+			return t("dashboard.expiresInHours", { count: hours });
 		}
 
 		const days = Math.ceil(diff / day);
-		return `Expires in ${days}d`;
+		return t("dashboard.expiresInDays", { count: days });
 	};
 
 	const expiresLabel = getExpiresLabel();
@@ -106,7 +109,7 @@ function PageCard({
 						</div>
 					) : (
 						<div className="text-[13px] text-text-tertiary mt-1 opacity-60 min-h-[2lh]">
-							No description
+							{t("dashboard.noDescription")}
 						</div>
 					)}
 				</div>
@@ -148,7 +151,7 @@ function PageCard({
 									)}
 								>
 									<HugeiconsIcon icon={Delete02Icon} className="w-3.5 h-3.5" />
-									{isDeleting ? "Deleting..." : "Delete"}
+									{isDeleting ? t("dashboard.deleting") : t("dashboard.delete")}
 								</button>
 							</div>
 						)}
@@ -161,7 +164,9 @@ function PageCard({
 					{expiresLabel}
 				</div>
 				<div className="text-[11px] text-text-tertiary [font-feature-settings:'tnum']">
-					Created {formatDateTime(new Date(page.createdAt).getTime())}
+					{t("dashboard.created", {
+						date: formatDateTime(new Date(page.createdAt).getTime()),
+					})}
 				</div>
 			</div>
 		</a>
@@ -169,6 +174,7 @@ function PageCard({
 }
 
 function Dashboard() {
+	const { t } = useTranslation();
 	const { data: session, isPending } = authClient.useSession();
 	const navigate = useNavigate();
 
@@ -230,7 +236,9 @@ function Dashboard() {
 				},
 			);
 		} catch (e) {
-			setError(e instanceof Error ? e.message : "Failed to delete page");
+			setError(
+				e instanceof Error ? e.message : t("dashboard.failedToDeletePage"),
+			);
 		} finally {
 			setDeletingId(null);
 		}
@@ -255,20 +263,26 @@ function Dashboard() {
 						</div>
 					</a>
 
-					<UserMenu user={session.user} />
+					<div className="flex items-center gap-2">
+						<LanguageSelect />
+						<UserMenu user={session.user} />
+					</div>
 				</div>
 
 				{/* Header */}
 				<div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
 					<div className="text-xl font-semibold text-text-primary">
-						Dashboard
+						{t("dashboard.title")}
 					</div>
 
 					<div className="flex w-fit bg-surface border border-border rounded-md p-0.5 gap-0.5">
 						{[
-							{ value: "active" as const, label: "Active" },
-							{ value: "expired" as const, label: "Expired" },
-							{ value: "all" as const, label: "All" },
+							{ value: "active" as const, label: t("dashboard.filter.active") },
+							{
+								value: "expired" as const,
+								label: t("dashboard.filter.expired"),
+							},
+							{ value: "all" as const, label: t("dashboard.filter.all") },
 						].map((opt) => (
 							<button
 								key={opt.value}
@@ -294,11 +308,15 @@ function Dashboard() {
 				)}
 
 				{isLoading ? (
-					<div className="text-sm text-text-tertiary mt-6">Loading pages…</div>
+					<div className="text-sm text-text-tertiary mt-6">
+						{t("dashboard.loadingPages")}
+					</div>
 				) : visiblePages.length === 0 ? (
 					<div className="flex-1 pb-36 flex items-center justify-center">
 						<div className="text-sm text-text-tertiary">
-							{filter === "expired" ? "No expired pages found" : "No pages yet"}
+							{filter === "expired"
+								? t("dashboard.noExpiredPagesFound")
+								: t("dashboard.noPagesYet")}
 						</div>
 					</div>
 				) : (

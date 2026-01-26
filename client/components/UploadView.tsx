@@ -8,6 +8,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMetaSymbol } from "../hooks/useMetaSymbol";
 import { cn } from "../utils/styles";
 
@@ -46,6 +47,7 @@ export function UploadView({
 	onPreview,
 	onUpload,
 }: UploadViewProps) {
+	const { t, i18n } = useTranslation();
 	const [isDragover, setIsDragover] = useState(false);
 	const metaSymbol = useMetaSymbol();
 	const [expirationDate, setExpirationDate] = useState("");
@@ -57,17 +59,23 @@ export function UploadView({
 		}
 		const date = new Date();
 		date.setDate(date.getDate() + expirationDays);
-		const dateStr = date.toLocaleDateString("en-US", {
+		const intlLocale =
+			(i18n.resolvedLanguage ?? i18n.language) === "ko-kr"
+				? "ko-KR"
+				: (i18n.resolvedLanguage ?? i18n.language) === "zh-cn"
+					? "zh-CN"
+					: "en-US";
+		const dateStr = date.toLocaleDateString(intlLocale, {
 			weekday: "short",
 			month: "short",
 			day: "numeric",
 		});
-		const timeStr = date.toLocaleTimeString("en-US", {
+		const timeStr = date.toLocaleTimeString(intlLocale, {
 			hour: "numeric",
-			hour12: true,
+			hour12: intlLocale === "en-US",
 		});
-		setExpirationDate(`Expires on ${dateStr} at ${timeStr}`);
-	}, [expirationDays, isPermanent]);
+		setExpirationDate(t("upload.expiresOn", { date: dateStr, time: timeStr }));
+	}, [expirationDays, isPermanent, i18n.language, i18n.resolvedLanguage, t]);
 
 	const handleDragOver = useCallback((e: React.DragEvent) => {
 		e.preventDefault();
@@ -162,7 +170,7 @@ export function UploadView({
 				</div>
 
 				<div className="text-sm font-medium text-text-primary mb-1.5">
-					{selectedFile ? selectedFile.name : "Import Markdown"}
+					{selectedFile ? selectedFile.name : t("upload.importMarkdown")}
 				</div>
 
 				<div className="text-[13px] text-text-tertiary leading-relaxed">
@@ -171,18 +179,21 @@ export function UploadView({
 							<span className="text-text-primary">
 								{(selectedFile.size / 1024).toFixed(2)} KB
 							</span>
-							<span className="text-text-tertiary"> • Ready to publish</span>
+							<span className="text-text-tertiary">
+								{" "}
+								• {t("upload.readyToPublish")}
+							</span>
 						</>
 					) : (
 						<>
-							Drop your .md file
+							{t("upload.dropFile")}
 							<span className="hidden md:inline">
 								{" "}
-								or paste ({metaSymbol} + V)
+								{t("upload.orPaste", { shortcut: `${metaSymbol} + V` })}
 							</span>
 							<br />
 							<span className="opacity-50 text-[11px] mt-1.5 inline-block">
-								Maximum 100KB
+								{t("upload.maximumSize")}
 							</span>
 						</>
 					)}
@@ -195,8 +206,8 @@ export function UploadView({
 					<div className="flex items-center gap-1">
 						<div className="text-[11px] text-text-tertiary [font-feature-settings:'tnum']">
 							{isPermanent
-								? "Permanent"
-								: expirationDate || "Expires on ... at ..."}
+								? t("upload.permanent")
+								: expirationDate || t("upload.expiresPlaceholder")}
 						</div>
 						<div className="relative inline-flex items-center ml-1 cursor-help align-middle group">
 							<HugeiconsIcon
@@ -205,13 +216,9 @@ export function UploadView({
 							/>
 							<div className="invisible absolute bottom-full left-1/2 -translate-x-1/2 translate-y-1 bg-surface-elevated border border-border-highlight text-text-primary py-2 px-3 rounded-md text-[11px] leading-snug w-max max-w-[200px] text-center shadow-tooltip opacity-0 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none z-100 group-hover:visible group-hover:opacity-100 group-hover:-translate-y-2 after:content-[''] after:absolute after:top-full after:left-1/2 after:-ml-1 after:border-4 after:border-solid after:border-t-border-highlight after:border-x-transparent after:border-b-transparent">
 								{isPermanent ? (
-									"You can delete it anytime from the dashboard."
+									t("upload.permanentTooltip")
 								) : (
-									<>
-										Deletion occurs periodically,
-										<br />
-										so the exact time may vary.
-									</>
+									<span>{t("upload.deletionPeriodic")}</span>
 								)}
 							</div>
 						</div>
@@ -219,15 +226,15 @@ export function UploadView({
 				</div>
 				<div className="flex bg-surface border border-border rounded-md p-0.5 gap-0.5">
 					{[
-						{ value: 1, label: "1 Day" },
-						{ value: 7, label: "1 Week" },
-						{ value: 30, label: "1 Month" },
+						{ value: 1, label: t("upload.expiration.oneDay") },
+						{ value: 7, label: t("upload.expiration.oneWeek") },
+						{ value: 30, label: t("upload.expiration.oneMonth") },
 						{
 							value: -1,
 							label: "∞",
-							ariaLabel: "Permanent",
+							ariaLabel: t("upload.permanent"),
 							disabled: !isAuthenticated,
-							tooltip: !isAuthenticated ? "Login required" : undefined,
+							tooltip: !isAuthenticated ? t("upload.loginRequired") : undefined,
 						},
 					].map((option) => (
 						<div key={option.value} className="relative flex-1 group">
@@ -267,7 +274,7 @@ export function UploadView({
 			<div className="block mt-4 px-1">
 				<div className="flex justify-between items-baseline mb-2">
 					<div className="text-[13px] text-text-secondary font-medium">
-						Theme
+						{t("upload.theme")}
 					</div>
 				</div>
 				<div className="flex bg-surface border border-border rounded-md p-0.5 gap-0.5">
@@ -304,7 +311,9 @@ export function UploadView({
 					) : (
 						<>
 							<HugeiconsIcon icon={Eye} className="w-3.5 h-3.5 mr-1.5" />
-							<span>{isPreviewOpen ? "Close Preview" : "Preview"}</span>
+							<span>
+								{isPreviewOpen ? t("upload.closePreview") : t("upload.preview")}
+							</span>
 						</>
 					)}
 				</button>
@@ -333,10 +342,10 @@ export function UploadView({
 					) : uploadError ? (
 						<>
 							<HugeiconsIcon icon={Alert01Icon} className="w-3.5 h-3.5" />
-							<span>Try later</span>
+							<span>{t("upload.tryLater")}</span>
 						</>
 					) : (
-						<span>Create Page</span>
+						<span>{t("upload.createPage")}</span>
 					)}
 				</button>
 			</div>

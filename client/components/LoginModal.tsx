@@ -1,6 +1,7 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { authClient } from "../lib/auth-client";
 import { cn } from "../utils/styles";
 
@@ -10,6 +11,7 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
+	const { t } = useTranslation();
 	const handleGitHubLogin = async () => {
 		await authClient.signIn.social({
 			provider: "github",
@@ -47,10 +49,10 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 		>
 			<div className="bg-surface border border-border rounded-xl w-full max-w-[360px] flex flex-col shadow-dialog relative p-6">
 				<div className="text-lg font-medium text-text-primary mb-2 text-center">
-					Log in to mdto
+					{t("loginModal.title")}
 				</div>
 				<div className="text-sm text-text-secondary text-center mb-6">
-					Welcome back! Please log in to continue.
+					{t("loginModal.description")}
 				</div>
 
 				<button
@@ -64,7 +66,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 					)}
 				>
 					<HugeiconsIcon icon={Github} className="w-4 h-4" />
-					<span>Continue with GitHub</span>
+					<span>{t("loginModal.continueWithGithub")}</span>
 				</button>
 			</div>
 		</div>
