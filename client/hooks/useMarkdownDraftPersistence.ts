@@ -19,7 +19,7 @@ function loadMarkdownDraft(): MarkdownDraft | null {
 
 		const name =
 			typeof parsed.name === "string" && parsed.name.trim()
-				? parsed.name
+				? parsed.name.trim()
 				: "draft.md";
 
 		return {
