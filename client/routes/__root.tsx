@@ -139,12 +139,14 @@ function RootLayout() {
 				<HeadContent />
 			</head>
 			<body>
-				<PostHogProvider client={posthog}>
-					<QueryClientProvider client={queryClient}>
-						<Outlet />
-					</QueryClientProvider>
-				</PostHogProvider>
-				<ClientI18nBootstrap />
+				<div className="root">
+					<PostHogProvider client={posthog}>
+						<QueryClientProvider client={queryClient}>
+							<Outlet />
+						</QueryClientProvider>
+					</PostHogProvider>
+					<ClientI18nBootstrap />
+				</div>
 				<Scripts />
 			</body>
 		</html>

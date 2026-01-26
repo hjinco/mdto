@@ -98,6 +98,7 @@ body {
 	background-color: var(--color-background);
 	color: var(--color-text-primary);
 	font-family: var(--font-sans);
+	position: relative;
 }
 
 /* Background Ambience */
@@ -115,4 +116,8 @@ body::before {
 	left: -20%;
 	pointer-events: none;
 	z-index: 0;
+}
+
+.root {
+	isolation: isolate;
 }
