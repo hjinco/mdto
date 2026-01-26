@@ -11,6 +11,7 @@ import { UserMenu } from "../components/UserMenu";
 import { WarningDialog } from "../components/WarningDialog";
 import { useFileSelection } from "../hooks/useFileSelection";
 import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
+import { useMarkdownDraftPersistence } from "../hooks/useMarkdownDraftPersistence";
 import { usePaste } from "../hooks/usePaste";
 import { usePreviewState } from "../hooks/usePreviewState";
 import { useResizablePane } from "../hooks/useResizablePane";
@@ -58,6 +59,11 @@ function Home() {
 	const { selectedFile, fileInputRef, handleFileSelect, clearSelection } =
 		useFileSelection();
 
+	const { clearDraft } = useMarkdownDraftPersistence({
+		selectedFile,
+		onRestoreFile: handleFileSelect,
+	});
+
 	const {
 		showPreview,
 		isPreviewLoading,
@@ -79,7 +85,10 @@ function Home() {
 		theme: selectedTheme,
 		turnstileToken,
 		isAuthenticated: !!session?.user,
-		onSuccess: closePreview,
+		onSuccess: () => {
+			clearDraft();
+			closePreview();
+		},
 		onClearFile: () => {
 			clearSelection();
 		},
