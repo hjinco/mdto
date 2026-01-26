@@ -41,7 +41,6 @@ Transform your Markdown files into beautifully rendered web pages instantly. A f
 ```
 mdto/
 ├── client/              # React frontend (TanStack Start)
-│   ├── client.tsx      # Client entry point
 │   ├── router.tsx      # Router configuration
 │   ├── routes/         # Route components
 │   ├── components/     # Reusable UI components

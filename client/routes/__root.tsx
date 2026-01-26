@@ -1,13 +1,25 @@
+import { PostHogProvider } from "@posthog/react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
 	createRootRoute,
 	HeadContent,
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import posthog from "posthog-js";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import appCss from "../globals.css?url";
 import { initClientLanguage } from "../lib/i18n";
+import { queryClient } from "../utils/trpc";
+
+if (import.meta.env.PROD && !import.meta.env.SSR) {
+	posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_KEY, {
+		api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+		defaults: "2025-11-30",
+		person_profiles: "identified_only",
+	});
+}
 
 const SITE_TITLE =
 	"mdto.page – Convert & share Markdown as beautiful HTML & PDF";
@@ -127,8 +139,12 @@ function RootLayout() {
 				<HeadContent />
 			</head>
 			<body>
+				<PostHogProvider client={posthog}>
+					<QueryClientProvider client={queryClient}>
+						<Outlet />
+					</QueryClientProvider>
+				</PostHogProvider>
 				<ClientI18nBootstrap />
-				<Outlet />
 				<Scripts />
 			</body>
 		</html>
