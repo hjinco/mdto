@@ -1,3 +1,4 @@
+import wikiLinkPlugin from "@flowershow/remark-wiki-link";
 import { franc } from "franc-min";
 // biome-ignore lint/suspicious/noTsIgnore: CommonJS module
 // @ts-ignore
@@ -26,6 +27,7 @@ export interface MarkdownMetadata {
 	hasKatex?: boolean;
 	hasMermaid?: boolean;
 	hasCodeBlock?: boolean;
+	hasWikiLink?: boolean;
 }
 
 const MAX_TITLE_LENGTH = 60;
@@ -131,13 +133,22 @@ function remarkExtractMetadata(metadata: MarkdownMetadata) {
 		let foundParagraph = false;
 
 		visit(tree, (node) => {
+			const nodeType = (node as { type: string }).type;
+
+			// Detect wiki links parsed by @flowershow/remark-wiki-link
+			if (
+				nodeType === "wikiLink" ||
+				nodeType === "wikiLinkEmbed" ||
+				nodeType === "embed"
+			) {
+				metadata.hasWikiLink = true;
+			}
+
 			// Extract from frontmatter (yaml)
-			if (node.type === "yaml") {
+			if (nodeType === "yaml") {
 				try {
-					const data = yaml.load(node.value as string) as Record<
-						string,
-						unknown
-					>;
+					const yamlNode = node as { value: string };
+					const data = yaml.load(yamlNode.value) as Record<string, unknown>;
 					if (data && typeof data === "object") {
 						if (typeof data.title === "string") {
 							metadata.title = data.title;
@@ -152,7 +163,7 @@ function remarkExtractMetadata(metadata: MarkdownMetadata) {
 			}
 
 			// Fallback: first heading for title
-			if (!metadata.title && !foundHeading && node.type === "heading") {
+			if (!metadata.title && !foundHeading && nodeType === "heading") {
 				metadata.title = truncate(mdastToString(node), MAX_TITLE_LENGTH);
 				foundHeading = true;
 			}
@@ -161,7 +172,7 @@ function remarkExtractMetadata(metadata: MarkdownMetadata) {
 			if (
 				!metadata.description &&
 				!foundParagraph &&
-				node.type === "paragraph"
+				nodeType === "paragraph"
 			) {
 				metadata.description = truncate(
 					mdastToString(node),
@@ -171,12 +182,12 @@ function remarkExtractMetadata(metadata: MarkdownMetadata) {
 			}
 
 			// Detect KaTeX (math nodes created by remarkMath)
-			if (node.type === "math" || node.type === "inlineMath") {
+			if (nodeType === "math" || nodeType === "inlineMath") {
 				metadata.hasKatex = true;
 			}
 
 			// Detect code blocks
-			if (node.type === "code") {
+			if (nodeType === "code") {
 				const lang = (node as { lang?: string }).lang;
 				if (lang === "mermaid") {
 					metadata.hasMermaid = true;
@@ -215,6 +226,7 @@ export async function markdownToHtml(
 		.use(remarkFrontmatter)
 		.use(remarkGfm)
 		.use(remarkMath)
+		.use(wikiLinkPlugin)
 		.use(() => remarkExtractMetadata(metadata))
 		// @ts-expect-error - Handler signature is correct but TypeScript can't infer it
 		.use(remarkRehype, {

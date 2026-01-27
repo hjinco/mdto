@@ -11,6 +11,7 @@ export type R2CustomMetadataInput = {
 	hasCodeBlock?: boolean;
 	hasKatex?: boolean;
 	hasMermaid?: boolean;
+	hasWikiLink?: boolean;
 };
 
 function toR2Metadata(input: R2CustomMetadataInput): Record<string, string> {
@@ -22,6 +23,7 @@ function toR2Metadata(input: R2CustomMetadataInput): Record<string, string> {
 		hasCodeBlock: input.hasCodeBlock ? "1" : "",
 		hasKatex: input.hasKatex ? "1" : "",
 		hasMermaid: input.hasMermaid ? "1" : "",
+		hasWikiLink: input.hasWikiLink ? "1" : "",
 	};
 }
 

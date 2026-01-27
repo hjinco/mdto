@@ -51,6 +51,9 @@ export const resources = {
 				closePreview: "Close Preview",
 				tryLater: "Try later",
 				createPage: "Create Page",
+				wikiLinkWarningTitle: "Wiki links detected",
+				wikiLinkWarningBody:
+					"External URLs inside wiki links won't be turned into pages here.",
 			},
 			userMenu: {
 				dashboard: "Dashboard",
@@ -135,6 +138,9 @@ export const resources = {
 				closePreview: "미리보기 닫기",
 				tryLater: "나중에 다시 시도",
 				createPage: "페이지 만들기",
+				wikiLinkWarningTitle: "위키 링크가 감지되었어요",
+				wikiLinkWarningBody:
+					"위키 링크 안의 외부 URL은 여기서 페이지로 만들어지지 않아요.",
 			},
 			userMenu: {
 				dashboard: "대시보드",
@@ -217,6 +223,8 @@ export const resources = {
 				closePreview: "关闭预览",
 				tryLater: "稍后再试",
 				createPage: "创建页面",
+				wikiLinkWarningTitle: "检测到 Wiki 链接",
+				wikiLinkWarningBody: "Wiki 链接中的外部 URL 不会在这里生成页面。",
 			},
 			userMenu: {
 				dashboard: "仪表盘",

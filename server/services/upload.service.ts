@@ -150,6 +150,7 @@ export function createUploadService({ env, req, db }: UploadServiceDeps) {
 					hasCodeBlock: metadata.hasCodeBlock,
 					hasKatex: metadata.hasKatex,
 					hasMermaid: metadata.hasMermaid,
+					hasWikiLink: metadata.hasWikiLink,
 				},
 			);
 
@@ -220,6 +221,7 @@ export function createUploadService({ env, req, db }: UploadServiceDeps) {
 					hasCodeBlock: metadata.hasCodeBlock,
 					hasKatex: metadata.hasKatex,
 					hasMermaid: metadata.hasMermaid,
+					hasWikiLink: metadata.hasWikiLink,
 				},
 			).catch(async (error: unknown) => {
 				await pageRepo.deleteById(pageId);

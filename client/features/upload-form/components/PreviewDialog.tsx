@@ -3,22 +3,23 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback } from "react";
 import { cn } from "@/utils/styles";
 import { usePreview } from "../hooks/usePreview";
+import type { ParsedMarkdown } from "./MarkdownParser";
 
 interface PreviewDialogProps {
-	file: File;
+	parsed: ParsedMarkdown | null;
 	theme: string;
 	expirationDays: number;
 	onClose: () => void;
 }
 
 export function PreviewDialog({
-	file,
+	parsed,
 	theme,
 	expirationDays,
 	onClose,
 }: PreviewDialogProps) {
 	const { loading, error, iframeRef, themeName } = usePreview({
-		file,
+		parsed,
 		theme,
 		expirationDays,
 	});
