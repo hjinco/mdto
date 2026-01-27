@@ -179,7 +179,7 @@ describe("/api/trpc upload router", () => {
 				theme: "default",
 				expiresAtMs: null,
 			}),
-		).rejects.toThrow(/R2 failure/);
+		).rejects.toThrow(/Internal server error/);
 
 		const count = await countPagesByUser(testUser.id);
 		expect(count).toBe(0);
