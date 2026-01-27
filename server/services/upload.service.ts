@@ -1,4 +1,4 @@
-import { markdownToHtml } from "@shared/utils/markdown";
+import { markdownToHtml } from "@shared/markdown";
 import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";

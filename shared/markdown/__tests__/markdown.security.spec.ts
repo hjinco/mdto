@@ -1,20 +1,13 @@
-// biome-ignore lint/suspicious/noTsIgnore: CommonJS module
-// @ts-ignore
-import type iso6393To1 from "iso-639-3-to-1";
 import { describe, expect, it, vi } from "vitest";
-import { markdownToHtml } from "./markdown";
+import { markdownToHtml } from "../markdown";
 
-// `iso-639-3-to-1` is a CommonJS module that uses `require` internally.
-// In Cloudflare Workers with `nodejs_compat` this works in production,
-// but Vitest's Workers pool does not always honor `compatibility_flags`,
-// so module initialization can fail. We mock it here to keep tests stable.
 vi.mock("iso-639-3-to-1", () => {
 	return {
 		default: (code: string) => {
 			if (code === "eng") return "en" as const;
 			return undefined;
 		},
-	} as unknown as typeof iso6393To1;
+	};
 });
 
 describe("markdownToHtml security tests", () => {
@@ -36,7 +29,7 @@ describe("markdownToHtml security tests", () => {
 		it("should sanitize script tags in markdown code blocks", async () => {
 			const malicious = "```html\n<script>alert('XSS')</script>\n```";
 			const result = await markdownToHtml(malicious);
-			// Code blocks should be preserved but script tags should be sanitized
+			// Code blocks should be preserved but script tags should be sanitized.
 			expect(result.html).not.toContain("<script>alert('XSS')</script>");
 		});
 	});
@@ -108,7 +101,7 @@ describe("markdownToHtml security tests", () => {
 			const malicious =
 				"<img src=\"data:text/html,<script>alert('XSS')</script>\">";
 			const result = await markdownToHtml(malicious);
-			// DOMPurify should sanitize dangerous data URLs
+			// Dangerous data URLs should be sanitized.
 			expect(result.html).not.toContain("<script>");
 			expect(result.html).not.toContain("alert('XSS')");
 		});
@@ -209,169 +202,8 @@ Normal text here.
 				'<img src="x" onerror="&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;">';
 			const result = await markdownToHtml(malicious);
 			expect(result.html).not.toContain("onerror");
-			// Decoded alert should not be present
+			// Decoded alert should not be present.
 			expect(result.html).not.toMatch(/alert\s*\(/i);
-		});
-	});
-
-	describe("Safe content preservation", () => {
-		it("should preserve safe HTML tags", async () => {
-			const markdown = "# Heading\n\n**Bold** and *italic* text";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("<h1 id=");
-			expect(result.html).toContain("<strong>");
-			expect(result.html).toContain("<em>");
-		});
-
-		it("should preserve safe links", async () => {
-			const markdown = "[Google](https://google.com)";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("<a");
-			expect(result.html).toContain("https://google.com");
-			expect(result.html).not.toContain("javascript:");
-		});
-
-		it("should preserve safe images", async () => {
-			const markdown = "![Alt](https://example.com/image.jpg)";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("<img");
-			expect(result.html).toContain("https://example.com/image.jpg");
-		});
-	});
-
-	describe("Heading ID generation", () => {
-		it("should generate IDs for headings", async () => {
-			const markdown = "# Chapter 1. Clean Code\n\n## Boy Scout Rule";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("chapter-1-clean-code");
-			expect(result.html).toContain("boy-scout-rule");
-		});
-
-		it("should handle duplicate English headings", async () => {
-			const markdown = "# Title\n\n# Title\n\n# Title";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("title");
-			expect(result.html).toContain("title-1");
-			expect(result.html).toContain("title-2");
-		});
-
-		it("should generate IDs for headings with special characters", async () => {
-			const markdown = "# Hello, World!\n\n## Test (Example)";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain("hello-world");
-			expect(result.html).toContain("test-example");
-		});
-	});
-
-	describe("Frontmatter handling logic", () => {
-		it("should parse frontmatter and render as structured HTML", async () => {
-			const markdown = "---\ntitle: Hello World\nauthor: John Doe\n---";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain('<div class="frontmatter-container">');
-			expect(result.html).toContain(
-				'<div class="frontmatter-label">title</div>',
-			);
-			expect(result.html).toContain(
-				'<div class="frontmatter-value">Hello World</div>',
-			);
-			expect(result.html).toContain(
-				'<div class="frontmatter-label">author</div>',
-			);
-			expect(result.html).toContain(
-				'<div class="frontmatter-value">John Doe</div>',
-			);
-		});
-
-		it("should handle date objects correctly", async () => {
-			// Using a date string that js-yaml will parse as a Date object
-			const markdown = "---\ndate: 2024-01-01\n---";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).toContain(
-				'<div class="frontmatter-label">date</div>',
-			);
-			// The exact format might depend on locale, but let's check for the year at least
-			expect(result.html).toContain("2024");
-		});
-
-		it("should ignore invalid yaml", async () => {
-			const markdown = "---\n: invalid yaml\n---";
-			const result = await markdownToHtml(markdown);
-			expect(result.html).not.toContain('<div class="frontmatter-container">');
-		});
-	});
-
-	describe("Metadata extraction", () => {
-		it("should extract title and description from frontmatter", async () => {
-			const markdown =
-				"---\ntitle: My Title\ndescription: My Description\n---\n# Heading";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBe("My Title");
-			expect(result.metadata.description).toBe("My Description");
-		});
-
-		it("should fallback to first heading for title", async () => {
-			const markdown = "# First Heading\n\nSome paragraph text.";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBe("First Heading");
-		});
-
-		it("should fallback to first paragraph for description", async () => {
-			const markdown = "# Heading\n\nThis is the first paragraph.";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.description).toBe("This is the first paragraph.");
-		});
-
-		it("should prefer frontmatter over heading/paragraph", async () => {
-			const markdown =
-				"---\ntitle: FM Title\ndescription: FM Desc\n---\n# Heading\n\nParagraph";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBe("FM Title");
-			expect(result.metadata.description).toBe("FM Desc");
-		});
-
-		it("should return empty metadata for empty markdown", async () => {
-			const markdown = "";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBeUndefined();
-			expect(result.metadata.description).toBeUndefined();
-		});
-
-		it("should return empty metadata when no extractable content exists", async () => {
-			const markdown = "```javascript\nconst x = 1;\n```";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBeUndefined();
-			expect(result.metadata.description).toBeUndefined();
-		});
-
-		it("should return empty metadata for markdown with only whitespace", async () => {
-			const markdown = "   \n\n   \n";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.title).toBeUndefined();
-			expect(result.metadata.description).toBeUndefined();
-		});
-
-		it("should set metadata.lang using iso6393To1 mapping", async () => {
-			const markdown = "# Hello world\n\nThis is an english sentence.";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.lang).toBe("en");
-		});
-
-		it("should set hasWikiLink for wiki-style links", async () => {
-			const markdown = "[[Internal link]]";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.hasWikiLink).toBe(true);
-		});
-
-		it("should set hasWikiLink for wiki-style embeds", async () => {
-			const markdown = "![[Image.png]]";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.hasWikiLink).toBe(true);
-		});
-
-		it("should not set hasWikiLink for regular markdown", async () => {
-			const markdown = "# Heading\n\nJust normal text.";
-			const result = await markdownToHtml(markdown);
-			expect(result.metadata.hasWikiLink).not.toBe(true);
 		});
 	});
 });

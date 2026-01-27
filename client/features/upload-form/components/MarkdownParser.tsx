@@ -1,4 +1,4 @@
-import { type MarkdownMetadata, markdownToHtml } from "@shared/utils/markdown";
+import { type MarkdownMetadata, markdownToHtml } from "@shared/markdown";
 import { useEffect, useRef } from "react";
 
 export type ParsedMarkdown = {
