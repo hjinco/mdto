@@ -1,5 +1,5 @@
 import notFoundPage from "@shared/templates/not-found.html";
-import { TEMPLATE_HASH } from "@shared/templates/template-hash.generated";
+import { getTemplateHash } from "@shared/templates/template-hash.generated";
 import { ViewTemplate } from "@shared/templates/view.template";
 import { Hono } from "hono";
 import { db } from "../db/client";
@@ -55,9 +55,10 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 	}
 
 	const { object, html, markdown, meta } = result;
+	const templateHash = getTemplateHash(meta.theme);
 
 	const etag = generateETag({
-		templateHash: TEMPLATE_HASH,
+		templateHash,
 		objectEtag: object.etag ?? object.httpEtag,
 	});
 
@@ -134,9 +135,10 @@ viewRouter.get("/:username/:slug", async (c) => {
 	}
 
 	const { object, html, markdown, page, lang, hasKatex, hasMermaid } = result;
+	const templateHash = getTemplateHash(page.theme);
 
 	const etag = generateETag({
-		templateHash: TEMPLATE_HASH,
+		templateHash,
 		objectEtag: object.etag ?? object.httpEtag,
 	});
 
