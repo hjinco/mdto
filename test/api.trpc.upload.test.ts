@@ -52,6 +52,7 @@ describe("/api/trpc upload router", () => {
 	});
 
 	beforeEach(async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
 		await resetData(db);
 		await seedUser(db);
 	});

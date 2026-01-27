@@ -58,6 +58,7 @@ describe("/api/trpc page router", () => {
 	});
 
 	beforeEach(async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
 		await resetData(db);
 		await seedUser(db);
 		await seedUserWith(db, otherUser);
