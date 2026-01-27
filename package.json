@@ -8,7 +8,7 @@
 		"dev:server": "wrangler dev",
 		"generate:hash": "node scripts/generate-template-hash.ts",
 		"copy-output": "node scripts/copy-output.ts",
-		"build": "pnpm generate:hash && tsc -p ./client/tsconfig.json && vite build && pnpm copy-output",
+		"build": "pnpm generate:hash && tsc -p ./client/tsconfig.json && tsc -p ./server/tsconfig.json && vite build && pnpm copy-output",
 		"start": "wrangler dev",
 		"lint": "biome check",
 		"lint:fix": "biome check --write",

@@ -1,10 +1,9 @@
 import notFoundPage from "@shared/templates/not-found.html";
 import { TEMPLATE_HASH } from "@shared/templates/template-hash.generated";
 import { ViewTemplate } from "@shared/templates/view.template";
-import { and, eq, isNull } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../db/client";
-import * as schema from "../db/schema";
+import { createViewService } from "../services/view.service";
 import { cacheControlHeader, generateETag } from "../utils/cache";
 
 export const viewRouter = new Hono<{ Bindings: Env }>();
@@ -14,6 +13,7 @@ const PUBLIC_SLUG_REGEX = /^[a-zA-Z0-9_-]{5}$/;
 const USER_SLUG_REGEX = /^[a-zA-Z0-9_-]{4}$/;
 const isValidPublicSlug = (slug: string) => PUBLIC_SLUG_REGEX.test(slug);
 const isValidUserSlug = (slug: string) => USER_SLUG_REGEX.test(slug);
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Handle GET /:prefix/:slug request
@@ -21,13 +21,14 @@ const isValidUserSlug = (slug: string) => USER_SLUG_REGEX.test(slug);
  * URL format: /{prefix}/{slug} (e.g., /1/abc123, /E/xyz789)
  */
 viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
-	const env = c.env;
 	const prefix = c.req.param("prefix").toUpperCase();
 	const slug = c.req.param("slug");
 
 	if (!isValidPublicSlug(slug)) {
 		return c.html(notFoundPage, 404);
 	}
+
+	const viewService = createViewService({ env: c.env, db });
 
 	// Check cache first
 	const cache = (caches as unknown as { default: Cache }).default;
@@ -48,35 +49,12 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 		return cachedResponse;
 	}
 
-	const key = `${prefix}/${slug}`;
-	const object = await env.BUCKET.get(key);
-
-	if (!object) {
+	const result = await viewService.getPublicView(prefix, slug);
+	if (result.kind === "not_found") {
 		return c.html(notFoundPage, 404);
 	}
 
-	const contentType = object.httpMetadata?.contentType || "text/html";
-	const theme = object.customMetadata?.theme || "default";
-	const lang = object.customMetadata?.lang || "";
-	const metaTitle = object.customMetadata?.title || "";
-	const metaDescription = object.customMetadata?.description || "";
-	// const hasCodeBlock = object.customMetadata?.hasCodeBlock === "1";
-	const hasKatex = object.customMetadata?.hasKatex === "1";
-	const hasMermaid = object.customMetadata?.hasMermaid === "1";
-
-	let markdown: string | undefined;
-	let html: string;
-
-	// Handle both old format (text/html) and new format (application/json)
-	if (contentType === "application/json") {
-		const jsonData = await object.json<{ html: string; markdown: string }>();
-		markdown = jsonData.markdown;
-		html = jsonData.html;
-	} else {
-		// Legacy format: HTML only
-		markdown = undefined;
-		html = await object.text();
-	}
+	const { object, html, markdown, meta } = result;
 
 	const etag = generateETag({
 		templateHash: TEMPLATE_HASH,
@@ -92,22 +70,22 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 
 	const expirationDays = parseInt(prefix, 16);
 	const uploadTime = object.uploaded.getTime();
-	const expirationTime = uploadTime + expirationDays * 24 * 60 * 60 * 1000;
+	const expirationTime = uploadTime + expirationDays * DAY_MS;
 	const expiresAt = expirationTime.toString();
 
 	c.header("Cache-Control", cacheControl);
 	c.header("ETag", etag);
 	const htmlContent = `<!DOCTYPE html>${(
 		<ViewTemplate
-			title={metaTitle || slug}
-			description={metaDescription}
+			title={meta.title || slug}
+			description={meta.description}
 			html={html}
 			expiresAt={expiresAt}
-			theme={theme}
+			theme={meta.theme}
 			markdown={markdown}
-			lang={lang}
-			hasKatex={hasKatex}
-			hasMermaid={hasMermaid}
+			lang={meta.lang}
+			hasKatex={meta.hasKatex}
+			hasMermaid={meta.hasMermaid}
 		/>
 	)}`;
 	const response = c.html(htmlContent);
@@ -122,13 +100,14 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
  * Looks up `user` + `page` in D1, then fetches content from R2 at `u/{userId}/{pageId}`.
  */
 viewRouter.get("/:username/:slug", async (c) => {
-	const env = c.env;
 	const username = c.req.param("username");
 	const slug = c.req.param("slug");
 
 	if (!isValidUserSlug(slug)) {
 		return c.html(notFoundPage, 404);
 	}
+
+	const viewService = createViewService({ env: c.env, db });
 
 	// Check cache first
 	const cache = (caches as unknown as { default: Cache }).default;
@@ -149,55 +128,12 @@ viewRouter.get("/:username/:slug", async (c) => {
 		return cachedResponse;
 	}
 
-	const [user] = await db
-		.select({ id: schema.user.id })
-		.from(schema.user)
-		.where(eq(schema.user.name, username))
-		.limit(1)
-		.all();
-
-	if (!user) {
+	const result = await viewService.getUserView(username, slug);
+	if (result.kind === "not_found") {
 		return c.html(notFoundPage, 404);
 	}
 
-	const [page] = await db
-		.select({
-			id: schema.page.id,
-			theme: schema.page.theme,
-			expiresAt: schema.page.expiresAt,
-			title: schema.page.title,
-			description: schema.page.description,
-			deletedAt: schema.page.deletedAt,
-		})
-		.from(schema.page)
-		.where(
-			and(
-				eq(schema.page.userId, user.id),
-				eq(schema.page.slug, slug),
-				isNull(schema.page.deletedAt),
-			),
-		)
-		.limit(1)
-		.all();
-
-	if (!page) {
-		return c.html(notFoundPage, 404);
-	}
-
-	const key = `u/${user.id}/${page.id}`;
-	const object = await env.BUCKET.get(key);
-
-	if (!object) {
-		return c.html(notFoundPage, 404);
-	}
-
-	const lang = object.customMetadata?.lang || "";
-	const hasKatex = object.customMetadata?.hasKatex === "1";
-	const hasMermaid = object.customMetadata?.hasMermaid === "1";
-
-	const jsonData = await object.json<{ html: string; markdown: string }>();
-	const markdown = jsonData.markdown;
-	const html = jsonData.html;
+	const { object, html, markdown, page, lang, hasKatex, hasMermaid } = result;
 
 	const etag = generateETag({
 		templateHash: TEMPLATE_HASH,

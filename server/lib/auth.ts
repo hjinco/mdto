@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../db/client";
@@ -21,5 +22,5 @@ export const auth = betterAuth({
 			},
 		},
 	},
-	trustedOrigins: [new URL(process.env.BETTER_AUTH_URL as string).origin],
+	trustedOrigins: [new URL(env.BETTER_AUTH_URL).origin],
 });

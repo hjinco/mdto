@@ -5,7 +5,7 @@
 		/* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
 		"target": "es2024",
 		/* Specify a set of bundled library declaration files that describe the target runtime environment. */
-		"lib": ["es2024"],
+		"lib": ["es2024", "esnext.disposable"],
 		/* Specify what JSX code is generated. */
 		"jsx": "react-jsx",
 		"jsxImportSource": "hono/jsx",
@@ -40,7 +40,7 @@
 		"types": ["../worker-configuration.d.ts"],
 
 		"paths": {
-			"@/*": ["./*"],
+			"@server/*": ["./*"],
 			"@shared/*": ["../shared/*"]
 		}
 	},

@@ -10,14 +10,14 @@ import { appRouter } from "./trpc/router";
 const app = new Hono<{ Bindings: Env }>();
 
 app.route("/api", authRouter);
-app.all("/api/trpc/*", (c) => {
-	return fetchRequestHandler({
+app.all("/api/trpc/*", async (c) => {
+	return await fetchRequestHandler({
 		endpoint: "/api/trpc",
 		req: c.req.raw,
 		router: appRouter,
 		createContext: () => createContext({ req: c.req.raw, env: c.env }),
 		onError({ error, path }) {
-			console.error("tRPC error", path, error);
+			console.error("tRPC error", { path, error });
 		},
 	});
 });

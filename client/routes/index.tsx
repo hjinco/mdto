@@ -240,7 +240,7 @@ function Home() {
 								<button
 									type="button"
 									onClick={() => setIsLoginModalOpen(true)}
-									className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5"
+									className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-3 py-1.5 cursor-pointer"
 								>
 									{t("auth.login")}
 								</button>
