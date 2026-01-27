@@ -19,6 +19,7 @@ interface UploadViewProps {
 	selectedTheme: string;
 	isUploading: boolean;
 	uploadError: string | null;
+	hasWikiLink: boolean;
 	fileInputRef: RefObject<HTMLInputElement | null>;
 	isPreviewOpen: boolean;
 	isPreviewLoading: boolean;
@@ -37,6 +38,7 @@ export function UploadView({
 	selectedTheme,
 	isUploading,
 	uploadError,
+	hasWikiLink,
 	fileInputRef,
 	isPreviewOpen,
 	isPreviewLoading,
@@ -199,6 +201,25 @@ export function UploadView({
 					)}
 				</div>
 			</div>
+
+			{hasWikiLink && (
+				<div className="mt-2.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3.5 py-2.5 text-left">
+					<div className="flex items-start gap-2.5">
+						<HugeiconsIcon
+							icon={Alert01Icon}
+							className="mt-0.5 h-4 w-4 text-amber-400"
+						/>
+						<div className="text-[12.5px] leading-relaxed text-amber-100/95">
+							<div className="font-medium text-amber-200">
+								{t("upload.wikiLinkWarningTitle")}
+							</div>
+							<div className="text-amber-100/85">
+								{t("upload.wikiLinkWarningBody")}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
 			<div className="block mt-4 px-1">
 				<div className="flex justify-between items-baseline mb-2">

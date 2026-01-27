@@ -1,14 +1,14 @@
 import { ViewTemplate } from "@shared/templates/view.template";
-import { markdownToHtml } from "@shared/utils/markdown";
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { ParsedMarkdown } from "../components/MarkdownParser";
 
 interface UsePreviewProps {
-	file: File;
+	parsed: ParsedMarkdown | null;
 	theme: string;
 	expirationDays: number;
 }
 
-export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
+export function usePreview({ parsed, theme, expirationDays }: UsePreviewProps) {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -29,14 +29,18 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 		};
 
 		const renderPreview = async () => {
+			if (!parsed) {
+				setLoading(true);
+				return;
+			}
+
 			try {
 				setLoading(true);
-				const markdown = await file.text();
-				if (isCancelled) return;
+				setError(null);
 
 				await new Promise((resolve) => setTimeout(resolve, 100));
 
-				const { html, metadata } = await markdownToHtml(markdown);
+				const { markdown, html, metadata } = parsed;
 				const expirationTime =
 					expirationDays === -1
 						? null
@@ -83,7 +87,7 @@ export function usePreview({ file, theme, expirationDays }: UsePreviewProps) {
 				iframe.removeEventListener("load", handleLoad);
 			}
 		};
-	}, [file, theme, themeName, expirationDays]);
+	}, [parsed, theme, themeName, expirationDays]);
 
 	return {
 		loading,

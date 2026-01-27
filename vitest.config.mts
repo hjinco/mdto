@@ -10,7 +10,7 @@ export default defineWorkersConfig(async () => {
 	return {
 		resolve: {
 			alias: {
-				"@": resolve(__dirname, "./server"),
+				"@server": resolve(__dirname, "./server"),
 				"@shared": resolve(__dirname, "./shared"),
 			},
 		},

@@ -3,9 +3,10 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
 import { cn } from "@/utils/styles";
 import { usePreview } from "../hooks/usePreview";
+import type { ParsedMarkdown } from "./MarkdownParser";
 
 interface PreviewPaneProps {
-	file: File;
+	parsed: ParsedMarkdown | null;
 	theme: string;
 	expirationDays: number;
 	onClose: () => void;
@@ -13,14 +14,14 @@ interface PreviewPaneProps {
 }
 
 export function PreviewPane({
-	file,
+	parsed,
 	theme,
 	expirationDays,
 	onClose,
 	onLoadingChange,
 }: PreviewPaneProps) {
 	const { loading, iframeRef, themeName } = usePreview({
-		file,
+		parsed,
 		theme,
 		expirationDays,
 	});

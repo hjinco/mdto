@@ -19,7 +19,9 @@ export function createPageRepo(db: Db) {
 					createdAt: schema.page.createdAt,
 				})
 				.from(schema.page)
-				.where(and(eq(schema.page.userId, userId), isNull(schema.page.deletedAt)))
+				.where(
+					and(eq(schema.page.userId, userId), isNull(schema.page.deletedAt)),
+				)
 				.orderBy(desc(schema.page.createdAt))
 				.limit(30)
 				.all();
@@ -58,7 +60,9 @@ export function createPageRepo(db: Db) {
 			const rows = await db
 				.select({ count: sql<number>`count(*)`.as("count") })
 				.from(schema.page)
-				.where(and(eq(schema.page.userId, userId), isNull(schema.page.deletedAt)))
+				.where(
+					and(eq(schema.page.userId, userId), isNull(schema.page.deletedAt)),
+				)
 				.limit(1)
 				.all();
 			return Number(rows[0]?.count ?? 0);

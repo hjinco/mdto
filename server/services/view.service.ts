@@ -12,6 +12,7 @@ type ViewMetadata = {
 	description: string;
 	hasKatex: boolean;
 	hasMermaid: boolean;
+	hasWikiLink: boolean;
 };
 
 type PublicViewResult =
@@ -81,6 +82,7 @@ export function createViewService({ env, db }: { env: Env; db: Db }) {
 				description: object.customMetadata?.description || "",
 				hasKatex: object.customMetadata?.hasKatex === "1",
 				hasMermaid: object.customMetadata?.hasMermaid === "1",
+				hasWikiLink: object.customMetadata?.hasWikiLink === "1",
 			};
 
 			return { kind: "ok", object, html, markdown, meta };

@@ -355,5 +355,23 @@ Normal text here.
 			const result = await markdownToHtml(markdown);
 			expect(result.metadata.lang).toBe("en");
 		});
+
+		it("should set hasWikiLink for wiki-style links", async () => {
+			const markdown = "[[Internal link]]";
+			const result = await markdownToHtml(markdown);
+			expect(result.metadata.hasWikiLink).toBe(true);
+		});
+
+		it("should set hasWikiLink for wiki-style embeds", async () => {
+			const markdown = "![[Image.png]]";
+			const result = await markdownToHtml(markdown);
+			expect(result.metadata.hasWikiLink).toBe(true);
+		});
+
+		it("should not set hasWikiLink for regular markdown", async () => {
+			const markdown = "# Heading\n\nJust normal text.";
+			const result = await markdownToHtml(markdown);
+			expect(result.metadata.hasWikiLink).not.toBe(true);
+		});
 	});
 });

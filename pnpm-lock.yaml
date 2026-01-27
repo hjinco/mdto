@@ -11,6 +11,9 @@ importers:
       '@base-ui/react':
         specifier: ^1.1.0
         version: 1.1.0(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@flowershow/remark-wiki-link':
+        specifier: ^3.3.1
+        version: 3.3.1
       '@hugeicons/core-free-icons':
         specifier: ^3.1.1
         version: 3.1.1
@@ -1144,6 +1147,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@flowershow/remark-wiki-link@3.3.1':
+    resolution: {integrity: sha512-kIIbGXZigPU+X3pRn9tgrrnbVAwXi1a6gT9G4NcohJF0+WiReBPOaxa4d7G75+wfXdvw+8dkMUfn1m68qQuPKg==}
 
   '@hugeicons/core-free-icons@3.1.1':
     resolution: {integrity: sha512-UpS2lUQFi5sKyJSWwM6rO+BnPLvVz1gsyCpPHeZyVuZqi89YH8ksliza4cwaODqKOZyeXmG8juo1ty4QtQofkg==}
@@ -4693,6 +4699,12 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@flowershow/remark-wiki-link@3.3.1':
+    dependencies:
+      github-slugger: 2.0.0
+      mdast-util-to-markdown: 2.1.2
+      micromark-util-symbol: 2.0.1
 
   '@hugeicons/core-free-icons@3.1.1': {}
 
