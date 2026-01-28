@@ -19,7 +19,6 @@ export default defineWorkersConfig(async () => {
 				workers: {
 					miniflare: {
 						bindings: {
-							ENV: "dev",
 							DISCORD_WEBHOOK_URL: "https://discord.test/webhook",
 							TURNSTILE_SECRET_KEY: "test-turnstile-secret",
 							BETTER_AUTH_SECRET: "test-secret",
