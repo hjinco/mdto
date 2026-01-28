@@ -32,5 +32,33 @@ export function createPageService({ db }: { db: Db }) {
 			await pageRepo.softDelete(pageId, new Date());
 			return { ok: true as const };
 		},
+		async changeSlug(
+			user: { id: string; name: string },
+			pageId: string,
+			slug: string,
+		) {
+			const page = await pageRepo.findActiveById(pageId);
+			if (!page) {
+				throw new TRPCError({ code: "NOT_FOUND" });
+			}
+
+			if (page.userId !== user.id) {
+				throw new TRPCError({ code: "FORBIDDEN" });
+			}
+
+			if (page.slug !== slug) {
+				const exists = await pageRepo.slugExistsForUser(user.id, slug);
+				if (exists) {
+					throw new TRPCError({
+						code: "CONFLICT",
+						message: "Slug already exists",
+					});
+				}
+
+				await pageRepo.updateSlug(pageId, slug);
+			}
+
+			return { ok: true as const, slug, path: `/${user.name}/${slug}` };
+		},
 	};
 }

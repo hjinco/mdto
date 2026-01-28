@@ -1,12 +1,17 @@
 import { Menu } from "@base-ui/react/menu";
-import { Delete02Icon, MoreVerticalIcon } from "@hugeicons/core-free-icons";
+import {
+	Delete02Icon,
+	Edit01Icon,
+	MoreVerticalIcon,
+} from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/styles";
+import { ChangeSlugDialog } from "./ChangeSlugDialog";
 
-const formatDateTime = (ms: number) =>
-	new Intl.DateTimeFormat("en-US", {
+const formatDateTime = (ms: number, locale: string) =>
+	new Intl.DateTimeFormat(locale, {
 		month: "short",
 		day: "2-digit",
 		hour: "2-digit",
@@ -28,7 +33,12 @@ export function PageCard({
 	now: number;
 	onDelete: ({ id }: { id: string }) => void;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const [isChangeSlugOpen, setIsChangeSlugOpen] = useState(false);
+	const [username, slug] = useMemo(() => {
+		const parts = page.path.split("/").filter(Boolean);
+		return [parts[0], parts[1]];
+	}, [page.path]);
 
 	const expiresLabel = useMemo(() => {
 		if (page.expiresAt === null) return null;
@@ -85,7 +95,7 @@ export function PageCard({
 				<div className="shrink-0 flex items-center gap-2">
 					<Menu.Root modal={false}>
 						<Menu.Trigger
-							aria-label="Page actions"
+							aria-label={t("dashboard.pageActions")}
 							render={(props) => {
 								const { onClick, ...rest } = props;
 								return (
@@ -120,6 +130,18 @@ export function PageCard({
 									)}
 								>
 									<Menu.Item
+										onClick={() => setIsChangeSlugOpen(true)}
+										className={cn(
+											"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
+											"text-xs text-text-secondary hover:text-text-primary transition-colors text-left cursor-pointer",
+											"data-highlighted:bg-surface-highlight",
+										)}
+									>
+										<HugeiconsIcon icon={Edit01Icon} className="w-3.5 h-3.5" />
+										{t("dashboard.changeSlug.action")}
+									</Menu.Item>
+									<div className="h-px bg-border mx-1 my-0.5" />
+									<Menu.Item
 										onClick={() => onDelete({ id: page.id })}
 										className={cn(
 											"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
@@ -146,10 +168,21 @@ export function PageCard({
 				</div>
 				<div className="text-[11px] text-text-tertiary [font-feature-settings:'tnum']">
 					{t("dashboard.created", {
-						date: formatDateTime(new Date(page.createdAt).getTime()),
+						date: formatDateTime(
+							new Date(page.createdAt).getTime(),
+							i18n.language,
+						),
 					})}
 				</div>
 			</div>
+
+			<ChangeSlugDialog
+				id={page.id}
+				isOpen={isChangeSlugOpen}
+				onClose={() => setIsChangeSlugOpen(false)}
+				currentSlug={slug}
+				username={username}
+			/>
 		</a>
 	);
 }

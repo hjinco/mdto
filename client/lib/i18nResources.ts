@@ -8,6 +8,11 @@ export const resources = {
 				terms: "Terms",
 				privacy: "Privacy",
 			},
+			common: {
+				cancel: "Cancel",
+				save: "Save",
+				saving: "Saving...",
+			},
 			dialogs: {
 				warningTitle: "Warning",
 				warningDescription: "Once created, pages cannot be modified or deleted",
@@ -73,6 +78,7 @@ export const resources = {
 				},
 				noDescription: "No description",
 				delete: "Delete",
+				pageActions: "Page actions",
 				loadingPages: "Loading pages…",
 				noExpiredPagesFound: "No expired pages found",
 				noPagesYet: "No pages yet",
@@ -82,6 +88,18 @@ export const resources = {
 				expiresInHours: "Expires in {{count}}h",
 				expiresInDays: "Expires in {{count}}d",
 				failedToDeletePage: "Failed to delete page",
+				changeSlug: {
+					action: "Change slug",
+					title: "Change slug",
+					description: "This will break existing links to this page.",
+					placeholder: "new-slug",
+					validation: {
+						empty: "Slug cannot be empty",
+						tooLong: "Slug must be 64 characters or less",
+						invalidChars:
+							"Slug can only contain letters, numbers, hyphens, and underscores",
+					},
+				},
 			},
 		},
 	},
@@ -93,6 +111,11 @@ export const resources = {
 			nav: {
 				terms: "이용약관",
 				privacy: "개인정보처리방침",
+			},
+			common: {
+				cancel: "취소",
+				save: "저장",
+				saving: "저장 중...",
 			},
 			dialogs: {
 				warningTitle: "경고",
@@ -160,6 +183,7 @@ export const resources = {
 				},
 				noDescription: "설명이 없습니다",
 				delete: "삭제",
+				pageActions: "페이지 작업",
 				loadingPages: "페이지 불러오는 중…",
 				noExpiredPagesFound: "만료된 페이지가 없습니다",
 				noPagesYet: "아직 페이지가 없습니다",
@@ -169,6 +193,18 @@ export const resources = {
 				expiresInHours: "{{count}}시간 후 만료",
 				expiresInDays: "{{count}}일 후 만료",
 				failedToDeletePage: "페이지 삭제에 실패했어요",
+				changeSlug: {
+					action: "슬러그 변경",
+					title: "슬러그 변경",
+					description: "이 페이지로 향하는 기존 링크가 끊어집니다.",
+					placeholder: "new-slug",
+					validation: {
+						empty: "슬러그를 입력해주세요",
+						tooLong: "슬러그는 64자 이하여야 해요",
+						invalidChars:
+							"슬러그에는 영문, 숫자, 하이픈, 언더스코어만 사용할 수 있어요",
+					},
+				},
 			},
 		},
 	},
@@ -180,6 +216,11 @@ export const resources = {
 			nav: {
 				terms: "条款",
 				privacy: "隐私",
+			},
+			common: {
+				cancel: "取消",
+				save: "保存",
+				saving: "正在保存…",
 			},
 			dialogs: {
 				warningTitle: "警告",
@@ -244,6 +285,7 @@ export const resources = {
 				},
 				noDescription: "暂无描述",
 				delete: "删除",
+				pageActions: "页面操作",
 				loadingPages: "正在加载页面…",
 				noExpiredPagesFound: "未找到已过期页面",
 				noPagesYet: "还没有页面",
@@ -253,6 +295,17 @@ export const resources = {
 				expiresInHours: "{{count}} 小时后过期",
 				expiresInDays: "{{count}} 天后过期",
 				failedToDeletePage: "删除页面失败",
+				changeSlug: {
+					action: "更改 slug",
+					title: "更改 slug",
+					description: "这会导致现有页面链接失效。",
+					placeholder: "new-slug",
+					validation: {
+						empty: "Slug 不能为空",
+						tooLong: "Slug 不能超过 64 个字符",
+						invalidChars: "Slug 只能包含字母、数字、连字符和下划线",
+					},
+				},
 			},
 		},
 	},

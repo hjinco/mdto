@@ -10,9 +10,7 @@ export const viewRouter = new Hono<{ Bindings: Env }>();
 
 const cacheControl = cacheControlHeader(600);
 const PUBLIC_SLUG_REGEX = /^[a-zA-Z0-9_-]{5}$/;
-const USER_SLUG_REGEX = /^[a-zA-Z0-9_-]{4}$/;
 const isValidPublicSlug = (slug: string) => PUBLIC_SLUG_REGEX.test(slug);
-const isValidUserSlug = (slug: string) => USER_SLUG_REGEX.test(slug);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -103,10 +101,6 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 viewRouter.get("/:username/:slug", async (c) => {
 	const username = c.req.param("username");
 	const slug = c.req.param("slug");
-
-	if (!isValidUserSlug(slug)) {
-		return c.html(notFoundPage, 404);
-	}
 
 	const viewService = createViewService({ env: c.env, db });
 

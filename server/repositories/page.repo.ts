@@ -28,7 +28,11 @@ export function createPageRepo(db: Db) {
 		},
 		async findActiveById(pageId: string) {
 			const [page] = await db
-				.select({ id: schema.page.id, userId: schema.page.userId })
+				.select({
+					id: schema.page.id,
+					userId: schema.page.userId,
+					slug: schema.page.slug,
+				})
 				.from(schema.page)
 				.where(and(eq(schema.page.id, pageId), isNull(schema.page.deletedAt)))
 				.limit(1)
@@ -84,6 +88,12 @@ export function createPageRepo(db: Db) {
 		},
 		async insert(values: PageInsert) {
 			await db.insert(schema.page).values(values);
+		},
+		async updateSlug(pageId: string, slug: string) {
+			await db
+				.update(schema.page)
+				.set({ slug })
+				.where(eq(schema.page.id, pageId));
 		},
 		async softDelete(pageId: string, deletedAt: Date) {
 			await db
