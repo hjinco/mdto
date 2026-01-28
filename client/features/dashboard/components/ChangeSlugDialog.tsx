@@ -95,13 +95,7 @@ export function ChangeSlugDialog({
 	};
 
 	const isError = !!validationError || !!mutationError;
-	const errorMessage =
-		validationError ||
-		(mutationError instanceof Error
-			? mutationError.message
-			: mutationError
-				? String(mutationError)
-				: null);
+	const errorMessage = validationError || mutationError?.message || null;
 
 	return (
 		<Dialog.Root
