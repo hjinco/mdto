@@ -1,6 +1,10 @@
 # mdto.page
 
+[English](../README.md) | [中文](README.zh-CN.md)
+
 라이브 데모: [mdto.page](https://mdto.page)
+
+> 이 프로젝트는 제가 필요해서 만든 거라 요청이 없으면 굳이 기능을 추가할 계획은 없어요. **기능 아이디어가 있으시면 [기능 요청 이슈](https://github.com/hjinco/mdto/issues/new)를 편하게 올려 주세요**—검토해 볼게요.
 
 마크다운 파일을 아름답게 렌더링된 웹 페이지로 즉시 변환하세요. Vite, React, Cloudflare Workers로 구축된 빠르고 서버리스한 Markdown-to-HTML 변환기입니다.
 

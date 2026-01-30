@@ -1,6 +1,10 @@
 # mdto.page
 
+[English](../README.md) | [한국어](README.ko.md)
+
 在线演示: [mdto.page](https://mdto.page)
+
+> 本项目为个人需求而做，没有需求时不会主动加功能。**如有功能想法，欢迎随时提交 [功能请求 issue](https://github.com/hjinco/mdto/issues/new)**，我会考虑。
 
 瞬间将您的 Markdown 文件转换为精美渲染的网页。这是一个基于 Vite、React 和 Cloudflare Workers 构建的快速、无服务器的 Markdown 到 HTML 转换器。
 

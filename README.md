@@ -4,6 +4,8 @@
 
 Live: [mdto.page](https://mdto.page)
 
+> This project was built for my own needs, so I don’t plan to add features unless there’s a request. **Feel free to open a [feature request issue](https://github.com/hjinco/mdto/issues/new)** if you have ideas—I’m happy to consider them.
+
 Transform your Markdown files into beautifully rendered web pages instantly. A fast, serverless Markdown-to-HTML converter built with Vite, React, and Cloudflare Workers.
 
 ## Features
