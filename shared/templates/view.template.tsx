@@ -486,7 +486,7 @@ const Footer = ({ expiresAt }: FooterProps) => {
 	const poweredBy = (
 		<footer>
 			<p>
-				Powered by <a href="https://mdit.page">mdit.page</a>
+				Powered by <a href="https://mdto.page">mdto.page</a>
 			</p>
 		</footer>
 	);
