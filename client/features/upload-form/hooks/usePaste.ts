@@ -11,6 +11,13 @@ export function usePaste({ onPaste, canPaste = true }: UsePasteOptions) {
 		const handlePaste = (e: ClipboardEvent) => {
 			if (!canPaste) return;
 
+			const target = e.target;
+			const isEditableTarget =
+				target instanceof HTMLElement &&
+				(target.isContentEditable ||
+					target.tagName === "INPUT" ||
+					target.tagName === "TEXTAREA");
+
 			if (e.clipboardData?.files.length) {
 				const file = e.clipboardData.files[0];
 
@@ -23,7 +30,20 @@ export function usePaste({ onPaste, canPaste = true }: UsePasteOptions) {
 					e.preventDefault();
 					onPaste(file);
 				}
+				return;
 			}
+
+			if (isEditableTarget) return;
+
+			const rawText =
+				e.clipboardData?.getData("text/plain") ||
+				e.clipboardData?.getData("text/markdown") ||
+				"";
+			const text = rawText.trim();
+			if (!text) return;
+
+			e.preventDefault();
+			onPaste(new File([rawText], "pasted.md", { type: "text/markdown" }));
 		};
 
 		document.addEventListener("paste", handlePaste);
