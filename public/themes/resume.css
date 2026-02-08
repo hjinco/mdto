@@ -33,6 +33,7 @@ body {
 .content {
 	flex: 1;
 }
+
 .frontmatter-container {
 	margin-bottom: 2rem;
 	padding-bottom: 1rem;
@@ -171,6 +172,12 @@ blockquote {
 	color: var(--text-primary);
 	font-style: italic;
 	border-radius: 0 4px 4px 0;
+}
+
+img {
+	max-width: 100%;
+	border-radius: 4px;
+	margin-bottom: 1.5em;
 }
 
 table {
