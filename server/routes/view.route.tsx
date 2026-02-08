@@ -53,7 +53,7 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 	}
 
 	const { object, html, markdown, meta } = result;
-	const templateHash = getTemplateHash(meta.theme);
+	const templateHash = getTemplateHash();
 
 	const etag = generateETag({
 		templateHash,
@@ -129,7 +129,7 @@ viewRouter.get("/:username/:slug", async (c) => {
 	}
 
 	const { object, html, markdown, page, lang, hasKatex, hasMermaid } = result;
-	const templateHash = getTemplateHash(page.theme);
+	const templateHash = getTemplateHash();
 
 	const etag = generateETag({
 		templateHash,
