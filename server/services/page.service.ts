@@ -25,7 +25,7 @@ export function createPageService({ db }: { db: Db }) {
 			const username = rawUsername.trim().toLowerCase();
 			const user = await userRepo.findByName(username);
 
-			if (!user) {
+			if (!user || !user.isDashboardPublic) {
 				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
 			}
 

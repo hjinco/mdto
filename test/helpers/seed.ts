@@ -27,11 +27,15 @@ export async function resetData(db: ReturnType<typeof createTestDb>) {
 	await db.delete(schema.user);
 }
 
-export async function seedUser(db: ReturnType<typeof createTestDb>) {
+export async function seedUser(
+	db: ReturnType<typeof createTestDb>,
+	input?: { isDashboardPublic?: boolean },
+) {
 	const now = new Date();
 	await db.insert(schema.user).values({
 		id: testUser.id,
 		name: testUser.name,
+		isDashboardPublic: input?.isDashboardPublic ?? false,
 		email: testUser.email,
 		emailVerified: false,
 		createdAt: now,
@@ -41,12 +45,18 @@ export async function seedUser(db: ReturnType<typeof createTestDb>) {
 
 export async function seedUserWith(
 	db: ReturnType<typeof createTestDb>,
-	user: { id: string; name: string; email: string },
+	user: {
+		id: string;
+		name: string;
+		email: string;
+		isDashboardPublic?: boolean;
+	},
 ) {
 	const now = new Date();
 	await db.insert(schema.user).values({
 		id: user.id,
 		name: user.name,
+		isDashboardPublic: user.isDashboardPublic ?? false,
 		email: user.email,
 		emailVerified: false,
 		createdAt: now,

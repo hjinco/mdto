@@ -15,6 +15,13 @@
 			"when": 1769327005067,
 			"tag": "0001_mixed_rattler",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1771322640592,
+			"tag": "0002_previous_iron_lad",
+			"breakpoints": true
 		}
 	]
 }

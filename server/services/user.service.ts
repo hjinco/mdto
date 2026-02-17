@@ -16,6 +16,26 @@ export function createUserService({ db }: { db: Db }) {
 	const userRepo = createUserRepo(db);
 
 	return {
+		async getDashboardVisibility(userId: string) {
+			const isDashboardPublic =
+				await userRepo.findDashboardVisibilityById(userId);
+
+			if (isDashboardPublic === null) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
+			}
+
+			return { isDashboardPublic };
+		},
+		async setDashboardVisibility(userId: string, isDashboardPublic: boolean) {
+			const existing = await userRepo.findById(userId);
+			if (!existing) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
+			}
+
+			await userRepo.updateDashboardVisibilityById(userId, isDashboardPublic);
+
+			return { ok: true as const, isDashboardPublic };
+		},
 		async changeName(user: { id: string; name: string }, rawName: string) {
 			const normalized = rawName.trim().toLowerCase();
 

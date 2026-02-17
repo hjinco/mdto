@@ -61,6 +61,16 @@ async function getSlugForPage(pageId: string) {
 	return rows[0]?.slug ?? null;
 }
 
+async function setDashboardVisibility(
+	userId: string,
+	isDashboardPublic: boolean,
+) {
+	await db
+		.update(schema.user)
+		.set({ isDashboardPublic })
+		.where(eq(schema.user.id, userId));
+}
+
 describe("/api/trpc page router", () => {
 	beforeAll(async () => {
 		// @ts-expect-error - test migrations binding
@@ -103,6 +113,7 @@ describe("/api/trpc page router", () => {
 
 	it("page.listByUsername returns only active pages for the username", async () => {
 		const now = Date.now();
+		await setDashboardVisibility(testUser.id, true);
 		await seedPageForUser(db, {
 			id: "page_public_active",
 			userId: testUser.id,
@@ -134,6 +145,19 @@ describe("/api/trpc page router", () => {
 
 		expect(pages).toHaveLength(1);
 		expect(pages[0]?.path).toBe(`/${testUser.name}/active-1`);
+	});
+
+	it("page.listByUsername returns NOT_FOUND for private dashboards", async () => {
+		await setDashboardVisibility(testUser.id, false);
+		await seedPageForUser(db, {
+			id: "page_private_active",
+			userId: testUser.id,
+			slug: "active-1",
+		});
+
+		await expect(
+			trpc.page.listByUsername.query({ username: testUser.name }),
+		).rejects.toThrow(/Not found/);
 	});
 
 	it("page.listByUsername returns NOT_FOUND for unknown username", async () => {

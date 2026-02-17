@@ -10,6 +10,9 @@ import {
 export const user = sqliteTable("user", {
 	id: text("id").primaryKey(),
 	name: text("name").notNull().unique(),
+	isDashboardPublic: integer("is_dashboard_public", { mode: "boolean" })
+		.default(false)
+		.notNull(),
 	email: text("email").notNull().unique(),
 	emailVerified: integer("email_verified", { mode: "boolean" })
 		.default(false)
