@@ -57,34 +57,28 @@ export function DashboardContent() {
 
 	return (
 		<>
-			<div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
-				<div className="text-xl font-semibold text-text-primary">
-					{t("dashboard.title")}
-				</div>
-
-				<div className="flex w-fit bg-surface border border-border rounded-md p-0.5 gap-0.5">
-					{[
-						{ value: "active" as const, label: t("dashboard.filter.active") },
-						{
-							value: "expired" as const,
-							label: t("dashboard.filter.expired"),
-						},
-						{ value: "all" as const, label: t("dashboard.filter.all") },
-					].map((opt) => (
-						<button
-							key={opt.value}
-							type="button"
-							className={cn(
-								"bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded cursor-pointer transition-all duration-200 font-sans hover:text-text-secondary",
-								filter === opt.value &&
-									"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
-							)}
-							onClick={() => setFilter(opt.value)}
-						>
-							{opt.label}
-						</button>
-					))}
-				</div>
+			<div className="flex w-fit bg-surface border border-border rounded-md p-0.5 gap-0.5 mb-4">
+				{[
+					{ value: "active" as const, label: t("dashboard.filter.active") },
+					{
+						value: "expired" as const,
+						label: t("dashboard.filter.expired"),
+					},
+					{ value: "all" as const, label: t("dashboard.filter.all") },
+				].map((opt) => (
+					<button
+						key={opt.value}
+						type="button"
+						className={cn(
+							"bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded cursor-pointer transition-all duration-200 font-sans hover:text-text-secondary",
+							filter === opt.value &&
+								"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
+						)}
+						onClick={() => setFilter(opt.value)}
+					>
+						{opt.label}
+					</button>
+				))}
 			</div>
 
 			{/* Content */}
