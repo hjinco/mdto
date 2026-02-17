@@ -99,8 +99,8 @@ export function ChangeUsernameInline({ username }: ChangeUsernameInlineProps) {
 		}
 	}, [isOpen, isPending, mutationError]);
 
-	const mutationMessage =
-		mutationError?.message === "Username already exists"
+const mutationMessage =
+		mutationError?.data?.code === "CONFLICT"
 			? t("dashboard.changeUsername.validation.taken")
 			: mutationError?.message || null;
 
