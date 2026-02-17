@@ -29,7 +29,7 @@ export function DashboardContent({
 	} = useQuery(
 		isOwner
 			? trpc.page.list.queryOptions()
-			: trpc.page.listByUsername.queryOptions({ username }),
+			: trpc.page.listByUsername.queryOptions({ username }, { retry: false }),
 	);
 
 	useEffect(() => {
