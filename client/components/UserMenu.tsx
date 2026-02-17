@@ -72,7 +72,8 @@ export function UserMenu({ user }: UserMenuProps) {
 						</p>
 					</div>
 					<Link
-						to="/dashboard"
+						to="/$username"
+						params={{ username: user.name }}
 						onClick={() => setIsOpen(false)}
 						className={cn(
 							"w-full flex items-center gap-2 px-3 py-2 rounded-md",

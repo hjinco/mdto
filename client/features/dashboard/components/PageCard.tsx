@@ -21,6 +21,7 @@ export function PageCard({
 	page,
 	now,
 	onDelete,
+	editable = true,
 }: {
 	page: {
 		id: string;
@@ -32,6 +33,7 @@ export function PageCard({
 	};
 	now: number;
 	onDelete: ({ id }: { id: string }) => void;
+	editable?: boolean;
 }) {
 	const { t, i18n } = useTranslation();
 	const [isChangeSlugOpen, setIsChangeSlugOpen] = useState(false);
@@ -92,74 +94,79 @@ export function PageCard({
 					)}
 				</div>
 
-				<div className="shrink-0 flex items-center gap-2">
-					<Menu.Root modal={false}>
-						<Menu.Trigger
-							aria-label={t("dashboard.pageActions")}
-							render={(props) => {
-								const { onClick, ...rest } = props;
-								return (
-									<button
-										{...rest}
-										type="button"
-										onClick={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-											onClick?.(e);
-										}}
+				{editable && (
+					<div className="shrink-0 flex items-center gap-2">
+						<Menu.Root modal={false}>
+							<Menu.Trigger
+								aria-label={t("dashboard.pageActions")}
+								render={(props) => {
+									const { onClick, ...rest } = props;
+									return (
+										<button
+											{...rest}
+											type="button"
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+												onClick?.(e);
+											}}
+											className={cn(
+												"flex items-center justify-center w-6 h-6 rounded-md transition-colors",
+												"text-text-tertiary hover:text-text-primary hover:bg-surface-elevated",
+												"data-popup-open:bg-surface-elevated data-popup-open:text-text-primary",
+											)}
+										>
+											<HugeiconsIcon
+												icon={MoreVerticalIcon}
+												className="w-4 h-4"
+											/>
+										</button>
+									);
+								}}
+							/>
+							<Menu.Portal>
+								<Menu.Positioner align="end" sideOffset={4}>
+									<Menu.Popup
 										className={cn(
-											"flex items-center justify-center w-6 h-6 rounded-md transition-colors",
-											"text-text-tertiary hover:text-text-primary hover:bg-surface-elevated",
-											"data-popup-open:bg-surface-elevated data-popup-open:text-text-primary",
+											"w-32 bg-surface-elevated border border-border rounded-lg shadow-card p-1",
+											"animate-fade-in",
 										)}
 									>
-										<HugeiconsIcon
-											icon={MoreVerticalIcon}
-											className="w-4 h-4"
-										/>
-									</button>
-								);
-							}}
-						/>
-						<Menu.Portal>
-							<Menu.Positioner align="end" sideOffset={4}>
-								<Menu.Popup
-									className={cn(
-										"w-32 bg-surface-elevated border border-border rounded-lg shadow-card p-1",
-										"animate-fade-in",
-									)}
-								>
-									<Menu.Item
-										onClick={() => setIsChangeSlugOpen(true)}
-										className={cn(
-											"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
-											"text-xs text-text-secondary hover:text-text-primary transition-colors text-left cursor-pointer",
-											"data-highlighted:bg-surface-highlight",
-										)}
-									>
-										<HugeiconsIcon icon={Edit01Icon} className="w-3.5 h-3.5" />
-										{t("dashboard.changeSlug.action")}
-									</Menu.Item>
-									<div className="h-px bg-border mx-1 my-0.5" />
-									<Menu.Item
-										onClick={() => onDelete({ id: page.id })}
-										className={cn(
-											"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
-											"text-xs text-red-400 transition-colors text-left cursor-pointer",
-											"data-highlighted:bg-red-500/10 data-highlighted:text-red-300",
-										)}
-									>
-										<HugeiconsIcon
-											icon={Delete02Icon}
-											className="w-3.5 h-3.5"
-										/>
-										{t("dashboard.delete")}
-									</Menu.Item>
-								</Menu.Popup>
-							</Menu.Positioner>
-						</Menu.Portal>
-					</Menu.Root>
-				</div>
+										<Menu.Item
+											onClick={() => setIsChangeSlugOpen(true)}
+											className={cn(
+												"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
+												"text-xs text-text-secondary hover:text-text-primary transition-colors text-left cursor-pointer",
+												"data-highlighted:bg-surface-highlight",
+											)}
+										>
+											<HugeiconsIcon
+												icon={Edit01Icon}
+												className="w-3.5 h-3.5"
+											/>
+											{t("dashboard.changeSlug.action")}
+										</Menu.Item>
+										<div className="h-px bg-border mx-1 my-0.5" />
+										<Menu.Item
+											onClick={() => onDelete({ id: page.id })}
+											className={cn(
+												"w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
+												"text-xs text-red-400 transition-colors text-left cursor-pointer",
+												"data-highlighted:bg-red-500/10 data-highlighted:text-red-300",
+											)}
+										>
+											<HugeiconsIcon
+												icon={Delete02Icon}
+												className="w-3.5 h-3.5"
+											/>
+											{t("dashboard.delete")}
+										</Menu.Item>
+									</Menu.Popup>
+								</Menu.Positioner>
+							</Menu.Portal>
+						</Menu.Root>
+					</div>
+				)}
 			</div>
 
 			<div className="flex items-center justify-between gap-3 mt-auto pt-4">
@@ -176,13 +183,15 @@ export function PageCard({
 				</div>
 			</div>
 
-			<ChangeSlugDialog
-				id={page.id}
-				isOpen={isChangeSlugOpen}
-				onClose={() => setIsChangeSlugOpen(false)}
-				currentSlug={slug}
-				username={username}
-			/>
+			{editable && (
+				<ChangeSlugDialog
+					id={page.id}
+					isOpen={isChangeSlugOpen}
+					onClose={() => setIsChangeSlugOpen(false)}
+					currentSlug={slug}
+					username={username}
+				/>
+			)}
 		</a>
 	);
 }

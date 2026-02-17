@@ -1,15 +1,36 @@
 import { TRPCError } from "@trpc/server";
 import type { db as dbType } from "../db/client";
 import { createPageRepo } from "../repositories/page.repo";
+import { createUserRepo } from "../repositories/user.repo";
 
 type Db = typeof dbType;
 
 export function createPageService({ db }: { db: Db }) {
 	const pageRepo = createPageRepo(db);
+	const userRepo = createUserRepo(db);
 
 	return {
 		async list(user: { id: string; name: string }) {
 			const pages = await pageRepo.listByUser(user.id);
+			return pages.map((page) => ({
+				id: page.id,
+				path: `/${user.name}/${page.slug}`,
+				title: page.title,
+				description: page.description,
+				expiresAt: page.expiresAt ? page.expiresAt.toISOString() : null,
+				createdAt: page.createdAt.toISOString(),
+			}));
+		},
+		async listPublicByUsername(rawUsername: string) {
+			const username = rawUsername.trim().toLowerCase();
+			const user = await userRepo.findByName(username);
+
+			if (!user) {
+				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
+			}
+
+			const pages = await pageRepo.listActiveByUser(user.id, new Date());
+
 			return pages.map((page) => ({
 				id: page.id,
 				path: `/${user.name}/${page.slug}`,
