@@ -88,6 +88,14 @@ export const resources = {
 				expiresInHours: "Expires in {{count}}h",
 				expiresInDays: "Expires in {{count}}d",
 				failedToDeletePage: "Failed to delete page",
+				visibility: {
+					label: "Visibility",
+					public: "Public",
+					private: "Private",
+					tooltip:
+						"When enabled, anyone can view your pages at /{{username}} without logging in.",
+					failedToUpdate: "Failed to update visibility",
+				},
 				changeSlug: {
 					action: "Change slug",
 					title: "Change slug",
@@ -208,6 +216,14 @@ export const resources = {
 				expiresInHours: "{{count}}시간 후 만료",
 				expiresInDays: "{{count}}일 후 만료",
 				failedToDeletePage: "페이지 삭제에 실패했어요",
+				visibility: {
+					label: "공개 설정",
+					public: "공개",
+					private: "비공개",
+					tooltip:
+						"허용하면 로그인하지 않아도 /{{username}} 으로 접속해 페이지를 볼 수 있어요.",
+					failedToUpdate: "공개 설정 변경에 실패했어요",
+				},
 				changeSlug: {
 					action: "슬러그 변경",
 					title: "슬러그 변경",
@@ -326,6 +342,13 @@ export const resources = {
 				expiresInHours: "{{count}} 小时后过期",
 				expiresInDays: "{{count}} 天后过期",
 				failedToDeletePage: "删除页面失败",
+				visibility: {
+					label: "可见性",
+					public: "公开",
+					private: "私密",
+					tooltip: "启用后，无需登录也可以通过 /{{username}} 查看你的页面。",
+					failedToUpdate: "更新可见性失败",
+				},
 				changeSlug: {
 					action: "更改 slug",
 					title: "更改 slug",

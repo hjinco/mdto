@@ -4,6 +4,25 @@ import { createUserService } from "../../services/user.service";
 import { protectedProcedure, router } from "../trpc";
 
 export const userRouter = router({
+	dashboardVisibility: protectedProcedure.query(async ({ ctx }) => {
+		const userService = createUserService({ db });
+		return userService.getDashboardVisibility(ctx.session.user.id);
+	}),
+
+	setDashboardVisibility: protectedProcedure
+		.input(
+			z.object({
+				isDashboardPublic: z.boolean(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const userService = createUserService({ db });
+			return userService.setDashboardVisibility(
+				ctx.session.user.id,
+				input.isDashboardPublic,
+			);
+		}),
+
 	changeName: protectedProcedure
 		.input(
 			z.object({

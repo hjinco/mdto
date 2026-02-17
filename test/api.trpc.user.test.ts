@@ -51,6 +51,17 @@ async function getUserNameById(userId: string) {
 	return rows[0]?.name ?? null;
 }
 
+async function getDashboardVisibilityById(userId: string) {
+	const rows = await db
+		.select({ isDashboardPublic: schema.user.isDashboardPublic })
+		.from(schema.user)
+		.where(eq(schema.user.id, userId))
+		.limit(1)
+		.all();
+
+	return rows[0]?.isDashboardPublic ?? null;
+}
+
 describe("/api/trpc user router", () => {
 	beforeAll(async () => {
 		// @ts-expect-error - test migrations binding
@@ -72,6 +83,42 @@ describe("/api/trpc user router", () => {
 		await expect(
 			trpc.user.changeName.mutate({ name: "tester2" }),
 		).rejects.toThrow(/UNAUTHORIZED/);
+	});
+
+	it("user.dashboardVisibility rejects when unauthenticated", async () => {
+		await expect(trpc.user.dashboardVisibility.query()).rejects.toThrow(
+			/UNAUTHORIZED/,
+		);
+	});
+
+	it("user.dashboardVisibility returns current visibility", async () => {
+		vi.spyOn(auth.api, "getSession").mockResolvedValue(
+			createMockSession(testUser),
+		);
+
+		const result = await trpc.user.dashboardVisibility.query();
+
+		expect(result.isDashboardPublic).toBe(false);
+	});
+
+	it("user.setDashboardVisibility rejects when unauthenticated", async () => {
+		await expect(
+			trpc.user.setDashboardVisibility.mutate({ isDashboardPublic: true }),
+		).rejects.toThrow(/UNAUTHORIZED/);
+	});
+
+	it("user.setDashboardVisibility updates visibility in DB", async () => {
+		vi.spyOn(auth.api, "getSession").mockResolvedValue(
+			createMockSession(testUser),
+		);
+
+		const result = await trpc.user.setDashboardVisibility.mutate({
+			isDashboardPublic: true,
+		});
+
+		expect(result.ok).toBe(true);
+		expect(result.isDashboardPublic).toBe(true);
+		expect(await getDashboardVisibilityById(testUser.id)).toBe(true);
 	});
 
 	it("user.changeName rejects invalid usernames", async () => {

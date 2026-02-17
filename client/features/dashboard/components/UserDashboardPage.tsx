@@ -7,6 +7,7 @@ import { authClient } from "../../../lib/auth-client";
 import { LoginModal } from "../../upload-form/components/LoginModal";
 import { ChangeUsernameInline } from "./ChangeUsernameInline";
 import { DashboardContent } from "./DashboardContent";
+import { DashboardVisibilityToggle } from "./DashboardVisibilityToggle";
 
 const USERNAME_REGEX = /^[a-z0-9_-]{3,32}$/;
 
@@ -42,7 +43,8 @@ export function UserDashboardPage({
 }: UserDashboardPageProps) {
 	const { t } = useTranslation();
 	const username = normalizeUsername(rawUsername);
-	const { data: session } = authClient.useSession();
+	const { data: session, isPending: isSessionPending } =
+		authClient.useSession();
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [notFoundUsername, setNotFoundUsername] = useState<string | null>(null);
 
@@ -76,6 +78,7 @@ export function UserDashboardPage({
 					)}
 
 					<div className="flex items-center gap-2">
+						{isOwner && <DashboardVisibilityToggle username={username} />}
 						<LanguageSelect />
 						{session?.user ? (
 							<UserMenu user={session.user} />
@@ -90,11 +93,13 @@ export function UserDashboardPage({
 						)}
 					</div>
 				</div>
-				<DashboardContent
-					username={username}
-					isOwner={isOwner}
-					onUserNotFound={() => setNotFoundUsername(username)}
-				/>
+				{isSessionPending ? null : (
+					<DashboardContent
+						username={username}
+						isOwner={isOwner}
+						onUserNotFound={() => setNotFoundUsername(username)}
+					/>
+				)}
 			</div>
 			<LoginModal
 				isOpen={isLoginModalOpen}

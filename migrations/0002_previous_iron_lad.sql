@@ -1,0 +1,1 @@
+ALTER TABLE `user` ADD `is_dashboard_public` integer DEFAULT false NOT NULL;
