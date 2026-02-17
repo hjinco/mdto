@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { cleanerJob } from "./jobs/cleaner.job";
 import { sendDiscordAlert } from "./lib/discord";
 import { authRouter } from "./routes/auth.route";
+import { dashboardRouter } from "./routes/dashboard.route";
 import { viewRouter } from "./routes/view.route";
 import { createContext } from "./trpc/context";
 import { appRouter } from "./trpc/router";
@@ -36,6 +37,7 @@ app.all("/api/trpc/*", async (c) => {
 		},
 	});
 });
+app.route("/", dashboardRouter);
 app.route("/", viewRouter);
 
 app.notFound((c) => {
