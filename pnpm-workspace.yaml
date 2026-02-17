@@ -1,0 +1,8 @@
+onlyBuiltDependencies:
+  - '@swc/core'
+  - better-sqlite3
+  - core-js
+  - esbuild
+  - protobufjs
+  - sharp
+  - workerd
