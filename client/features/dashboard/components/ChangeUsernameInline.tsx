@@ -99,7 +99,7 @@ export function ChangeUsernameInline({ username }: ChangeUsernameInlineProps) {
 		}
 	}, [isOpen, isPending, mutationError]);
 
-const mutationMessage =
+	const mutationMessage =
 		mutationError?.data?.code === "CONFLICT"
 			? t("dashboard.changeUsername.validation.taken")
 			: mutationError?.message || null;
