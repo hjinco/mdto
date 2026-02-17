@@ -101,6 +101,47 @@ describe("/api/trpc page router", () => {
 		expect(pages[0]?.path).toBe(`/${testUser.name}/${testPage.slug}`);
 	});
 
+	it("page.listByUsername returns only active pages for the username", async () => {
+		const now = Date.now();
+		await seedPageForUser(db, {
+			id: "page_public_active",
+			userId: testUser.id,
+			slug: "active-1",
+			title: "Active page",
+			description: "Visible",
+			expiresAt: null,
+		});
+		await seedPageForUser(db, {
+			id: "page_public_expired",
+			userId: testUser.id,
+			slug: "expired-1",
+			title: "Expired page",
+			description: "Hidden",
+			expiresAt: new Date(now - 60_000),
+		});
+		await seedPageForUser(db, {
+			id: "page_public_deleted",
+			userId: testUser.id,
+			slug: "deleted-1",
+			title: "Deleted page",
+			description: "Hidden",
+			deletedAt: new Date(now - 60_000),
+		});
+
+		const pages = await trpc.page.listByUsername.query({
+			username: testUser.name,
+		});
+
+		expect(pages).toHaveLength(1);
+		expect(pages[0]?.path).toBe(`/${testUser.name}/active-1`);
+	});
+
+	it("page.listByUsername returns NOT_FOUND for unknown username", async () => {
+		await expect(
+			trpc.page.listByUsername.query({ username: "missing-user" }),
+		).rejects.toThrow(/Not found/);
+	});
+
 	it("page.delete rejects when unauthenticated", async () => {
 		await seedPage(db);
 		await expect(trpc.page.delete.mutate({ id: testPage.id })).rejects.toThrow(

@@ -362,7 +362,11 @@ function Home() {
 				onClose={() => setIsUploadLimitDialogOpen(false)}
 				onConfirm={() => {
 					setIsUploadLimitDialogOpen(false);
-					window.location.assign("/dashboard");
+					if (session?.user?.name) {
+						window.location.assign(`/${session.user.name}`);
+						return;
+					}
+					window.location.assign("/");
 				}}
 				title={t("dialogs.pageLimitTitle")}
 				description={t("dialogs.pageLimitDescription")}

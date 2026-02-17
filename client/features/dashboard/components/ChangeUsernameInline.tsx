@@ -2,7 +2,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Edit01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMutation } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { authClient } from "../../../lib/auth-client";
@@ -22,6 +22,7 @@ function normalizeUsername(value: string) {
 export function ChangeUsernameInline({ username }: ChangeUsernameInlineProps) {
 	const { t } = useTranslation();
 	const session = authClient.useSession();
+	const navigate = useNavigate();
 
 	const [currentName, setCurrentName] = useState(username);
 	const [isOpen, setIsOpen] = useState(false);
@@ -83,12 +84,50 @@ export function ChangeUsernameInline({ username }: ChangeUsernameInlineProps) {
 				void queryClient.invalidateQueries({
 					queryKey: queryOptions.queryKey,
 				});
+				const previousPublicListQueryOptions =
+					trpc.page.listByUsername.queryOptions({
+						username: previousName,
+					});
+				const currentPublicListQueryOptions =
+					trpc.page.listByUsername.queryOptions({
+						username: data.name,
+					});
+				queryClient.setQueryData(
+					currentPublicListQueryOptions.queryKey,
+					(prev) => {
+						if (prev) return prev;
+						const previous = queryClient.getQueryData(
+							previousPublicListQueryOptions.queryKey,
+						);
+						if (!previous) return previous;
+
+						return previous.map((page) => {
+							const parts = page.path.split("/").filter(Boolean);
+							if (parts.length !== 2) return page;
+							return {
+								...page,
+								path: `/${data.name}/${parts[1]}`,
+							};
+						});
+					},
+				);
+				void queryClient.invalidateQueries({
+					queryKey: previousPublicListQueryOptions.queryKey,
+				});
+				void queryClient.invalidateQueries({
+					queryKey: currentPublicListQueryOptions.queryKey,
+				});
 				void session.refetch({
 					query: { disableCookieCache: true },
 				});
 				setCurrentName(data.name);
 				setDraft(data.name);
 				setIsOpen(false);
+				void navigate({
+					to: "/$username",
+					params: { username: data.name },
+					replace: true,
+				});
 			},
 		}),
 	);

@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, lte, or, sql } from "drizzle-orm";
 import type { db as dbType } from "../db/client";
 import * as schema from "../db/schema";
 
@@ -21,6 +21,28 @@ export function createPageRepo(db: Db) {
 				.from(schema.page)
 				.where(
 					and(eq(schema.page.userId, userId), isNull(schema.page.deletedAt)),
+				)
+				.orderBy(desc(schema.page.createdAt))
+				.limit(30)
+				.all();
+		},
+		async listActiveByUser(userId: string, now: Date) {
+			return db
+				.select({
+					id: schema.page.id,
+					slug: schema.page.slug,
+					title: schema.page.title,
+					description: schema.page.description,
+					expiresAt: schema.page.expiresAt,
+					createdAt: schema.page.createdAt,
+				})
+				.from(schema.page)
+				.where(
+					and(
+						eq(schema.page.userId, userId),
+						isNull(schema.page.deletedAt),
+						or(isNull(schema.page.expiresAt), gt(schema.page.expiresAt, now)),
+					),
 				)
 				.orderBy(desc(schema.page.createdAt))
 				.limit(30)

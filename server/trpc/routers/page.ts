@@ -1,9 +1,24 @@
 import { z } from "zod";
 import { db } from "../../db/client";
 import { createPageService } from "../../services/page.service";
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const pageRouter = router({
+	listByUsername: publicProcedure
+		.input(
+			z.object({
+				username: z
+					.string()
+					.min(3)
+					.max(32)
+					.regex(/^[a-zA-Z0-9_-]+$/),
+			}),
+		)
+		.query(async ({ input }) => {
+			const pageService = createPageService({ db });
+			return pageService.listPublicByUsername(input.username);
+		}),
+
 	list: protectedProcedure.query(async ({ ctx }) => {
 		const pageService = createPageService({ db });
 		return pageService.list(ctx.session.user);
