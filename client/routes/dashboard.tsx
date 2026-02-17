@@ -1,7 +1,8 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { LanguageSelect } from "../components/LanguageSelect";
 import { UserMenu } from "../components/UserMenu";
+import { ChangeUsernameInline } from "../features/dashboard/components/ChangeUsernameInline";
 import { DashboardContent } from "../features/dashboard/components/DashboardContent";
 import { authClient } from "../lib/auth-client";
 
@@ -32,11 +33,7 @@ function Dashboard() {
 			<div className="w-full flex-1 flex flex-col max-w-5xl mx-auto">
 				{/* Top Bar */}
 				<div className="flex items-center justify-between mb-10">
-					<Link to="/" className="no-underline">
-						<div className="text-lg font-semibold tracking-[-0.02em] bg-linear-to-b from-white to-[#a0a0a0] bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
-							mdto.page
-						</div>
-					</Link>
+					<ChangeUsernameInline username={session.user.name} />
 
 					<div className="flex items-center gap-2">
 						<LanguageSelect />

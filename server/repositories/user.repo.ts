@@ -6,6 +6,15 @@ type Db = typeof dbType;
 
 export function createUserRepo(db: Db) {
 	return {
+		async findById(id: string) {
+			const [user] = await db
+				.select({ id: schema.user.id, name: schema.user.name })
+				.from(schema.user)
+				.where(eq(schema.user.id, id))
+				.limit(1)
+				.all();
+			return user ?? null;
+		},
 		async findByName(name: string) {
 			const [user] = await db
 				.select({ id: schema.user.id, name: schema.user.name })
@@ -14,6 +23,9 @@ export function createUserRepo(db: Db) {
 				.limit(1)
 				.all();
 			return user ?? null;
+		},
+		async updateNameById(id: string, name: string) {
+			await db.update(schema.user).set({ name }).where(eq(schema.user.id, id));
 		},
 	};
 }

@@ -99,7 +99,7 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
  * Looks up `user` + `page` in D1, then fetches content from R2 at `u/{userId}/{pageId}`.
  */
 viewRouter.get("/:username/:slug", async (c) => {
-	const username = c.req.param("username");
+	const username = c.req.param("username").toLowerCase();
 	const slug = c.req.param("slug");
 
 	const viewService = createViewService({ env: c.env, db });
