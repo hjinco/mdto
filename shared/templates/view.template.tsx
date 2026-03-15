@@ -21,6 +21,34 @@ function getThemePaths(theme: string): {
 const defaultDescription =
 	"Convert and share your markdown files as beautiful HTML pages";
 
+function escapeHtmlAttribute(value: string): string {
+	return value
+		.replaceAll("&", "&amp;")
+		.replaceAll('"', "&quot;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;");
+}
+
+function renderAlternateLinks(
+	alternateLinks?: Array<{
+		hreflang: string;
+		href: string;
+	}>,
+) {
+	if (!alternateLinks?.length) {
+		return null;
+	}
+
+	return raw(
+		alternateLinks
+			.map(
+				(link) =>
+					`<link rel="alternate" hreflang="${escapeHtmlAttribute(link.hreflang)}" href="${escapeHtmlAttribute(link.href)}" />`,
+			)
+			.join(""),
+	);
+}
+
 /**
  * Extract function body from a function, removing the function declaration
  * @param fn - Function to extract body from
@@ -268,14 +296,16 @@ const ExportButton = ({ markdown }: ExportButtonProps) => {
 interface MetaTagsProps {
 	title: string;
 	description: string;
+	url?: string;
 }
 
-const MetaTags = ({ title, description }: MetaTagsProps) => (
+const MetaTags = ({ title, description, url }: MetaTagsProps) => (
 	<>
 		<meta name="description" content={description} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="article" />
+		{url && <meta property="og:url" content={url} />}
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
@@ -523,6 +553,11 @@ interface CreateHtmlPageOptions {
 	theme?: string;
 	hasKatex?: boolean;
 	hasMermaid?: boolean;
+	canonicalUrl?: string;
+	alternateLinks?: Array<{
+		hreflang: string;
+		href: string;
+	}>;
 }
 
 export function ViewTemplate(options: CreateHtmlPageOptions) {
@@ -536,6 +571,8 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 		theme = "default",
 		hasKatex,
 		hasMermaid,
+		canonicalUrl,
+		alternateLinks,
 	} = options;
 	const { themePath, hljsThemePath } = getThemePaths(theme);
 	const metaDescription = description || defaultDescription;
@@ -547,7 +584,13 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 				<meta charset="UTF-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 				<title>{title}</title>
-				<MetaTags title={title} description={metaDescription} />
+				<MetaTags
+					title={title}
+					description={metaDescription}
+					url={canonicalUrl}
+				/>
+				{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+				{renderAlternateLinks(alternateLinks)}
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
 				<link
 					rel="preconnect"
