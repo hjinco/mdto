@@ -83,7 +83,7 @@ pageApiRouter.use("*", async (c, next) => {
 		});
 	} catch (error) {
 		console.error("Failed to verify API key", error);
-		return c.json({ message: "Unauthorized" }, 401);
+		return c.json({ message: "Internal server error" }, 500);
 	}
 
 	await next();
