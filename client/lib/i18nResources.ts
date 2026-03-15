@@ -13,6 +13,10 @@ export const resources = {
 				save: "Save",
 				saving: "Saving...",
 			},
+			home: {
+				new: "New",
+				apiBanner: "Manage pages with API keys →",
+			},
 			dialogs: {
 				warningTitle: "Warning",
 				warningDescription: "Once created, pages cannot be modified or deleted",
@@ -161,6 +165,10 @@ export const resources = {
 				cancel: "취소",
 				save: "저장",
 				saving: "저장 중...",
+			},
+			home: {
+				new: "New",
+				apiBanner: "API 키로 페이지를 관리해보세요 →",
 			},
 			dialogs: {
 				warningTitle: "경고",
@@ -312,6 +320,10 @@ export const resources = {
 				cancel: "取消",
 				save: "保存",
 				saving: "正在保存…",
+			},
+			home: {
+				new: "New",
+				apiBanner: "使用 API 密钥管理页面 →",
 			},
 			dialogs: {
 				warningTitle: "警告",

@@ -1,5 +1,6 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { getApiDocsHref } from "@shared/docs/api-docs";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -219,11 +220,26 @@ function Home() {
 					)}
 				>
 					{/* Logo */}
-					<div className="flex items-center justify-center mb-10 opacity-100">
+					<div className="flex items-center justify-center mb-6 opacity-100">
 						<div className="text-lg font-semibold tracking-[-0.02em] bg-linear-to-b from-white to-[#a0a0a0] bg-clip-text [-webkit-background-clip:text] [-webkit-text-fill-color:transparent]">
 							mdto.page
 						</div>
 					</div>
+
+					{/* API Banner */}
+					{!uploadedUrl && (
+						<a
+							href={getApiDocsHref(i18n.language)}
+							target="_blank"
+							rel="noreferrer"
+							className="mb-8 px-4 py-2 rounded-full bg-surface-card border border-border text-sm text-text-secondary hover:text-text-primary hover:border-[#2a2b30] hover:shadow-card-hover transition-all flex items-center gap-2"
+						>
+							<span className="text-[10px] uppercase font-bold text-[#a0a0a0] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded leading-none">
+								{t("home.new")}
+							</span>
+							<span>{t("home.apiBanner")}</span>
+						</a>
+					)}
 
 					{/* Card */}
 					<div className="w-full max-w-[440px] bg-surface-card border border-border rounded-xl p-1.5 shadow-card transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] relative hover:border-[#2a2b30] hover:shadow-card-hover">
