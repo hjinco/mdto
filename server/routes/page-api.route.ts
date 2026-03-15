@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 import { db } from "../db/client";
 import { auth } from "../lib/auth";
+import { createUserRepo } from "../repositories/user.repo";
 import { createManagedPageService } from "../services/managed-page.service";
 import { pageSlugSchema, themeSchema } from "../services/page-content.service";
 import { purgePathsFromCache } from "../utils/cache";
@@ -60,17 +61,28 @@ pageApiRouter.use("*", async (c, next) => {
 	}
 
 	try {
-		const session = await auth.api.getSession(c.req.raw);
-		if (!session) {
+		const verification = await auth.api.verifyApiKey({
+			body: {
+				key: apiKey,
+			},
+		});
+		const referenceId = verification.key?.referenceId;
+		if (!verification.valid || !referenceId) {
+			return c.json({ message: "Unauthorized" }, 401);
+		}
+
+		const userRepo = createUserRepo(db);
+		const user = await userRepo.findById(referenceId);
+		if (!user) {
 			return c.json({ message: "Unauthorized" }, 401);
 		}
 
 		c.set("apiKeyUser", {
-			id: session.user.id,
-			name: session.user.name,
+			id: user.id,
+			name: user.name,
 		});
 	} catch (error) {
-		console.error("Failed to retrieve API key session", error);
+		console.error("Failed to verify API key", error);
 		return c.json({ message: "Unauthorized" }, 401);
 	}
 
