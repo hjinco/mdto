@@ -34,7 +34,7 @@ Details here.
 			'rel="alternate" hreflang="en" href="https://mdto.page/docs/api-v1.html"',
 		);
 		expect(html).toContain(
-			'rel="alternate" hreflang="ko-kr" href="https://mdto.page/docs/ko-kr/api-v1.html"',
+			'rel="alternate" hreflang="ko-KR" href="https://mdto.page/docs/ko-kr/api-v1.html"',
 		);
 		expect(html).toContain(
 			'rel="alternate" hreflang="x-default" href="https://mdto.page/docs/api-v1.html"',

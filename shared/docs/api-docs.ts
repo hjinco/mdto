@@ -1,7 +1,7 @@
 export const SITE_ORIGIN = "https://mdto.page";
 export const API_DOCS_DEFAULT_LOCALE = "en";
 
-export type ApiDocsLocale = "en" | "ko-kr" | "zh-cn";
+export type ApiDocsLocale = "en" | "ko-KR" | "zh-CN";
 
 export type ApiDocsPage = {
 	locale: ApiDocsLocale;
@@ -25,14 +25,14 @@ export const apiDocsPages: ApiDocsPage[] = [
 		publicPath: "/docs/api-v1.html",
 	},
 	{
-		locale: "ko-kr",
+		locale: "ko-KR",
 		lang: "ko-KR",
 		sourcePath: "docs/api-v1.ko-kr.md",
 		outputPath: "docs/ko-kr/api-v1.html",
 		publicPath: "/docs/ko-kr/api-v1.html",
 	},
 	{
-		locale: "zh-cn",
+		locale: "zh-CN",
 		lang: "zh-CN",
 		sourcePath: "docs/api-v1.zh-cn.md",
 		outputPath: "docs/zh-cn/api-v1.html",
@@ -48,11 +48,11 @@ function normalizeLocale(locale?: string): ApiDocsLocale {
 	}
 
 	if (normalized.startsWith("ko")) {
-		return "ko-kr";
+		return "ko-KR";
 	}
 
 	if (normalized.startsWith("zh")) {
-		return "zh-cn";
+		return "zh-CN";
 	}
 
 	return API_DOCS_DEFAULT_LOCALE;
