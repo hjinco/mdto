@@ -270,10 +270,12 @@ function Home() {
 					{/* Top Right Auth */}
 					<div className="absolute top-5 right-5 z-20">
 						<div className="flex items-center gap-2">
-							<LanguageSelect />
 							{session?.user ? (
 								<UserMenu user={session.user} />
 							) : (
+								<LanguageSelect />
+							)}
+							{session?.user ? null : (
 								<button
 									type="button"
 									onClick={() => setIsLoginModalOpen(true)}

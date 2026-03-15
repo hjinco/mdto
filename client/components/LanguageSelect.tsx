@@ -10,21 +10,29 @@ type LanguageOption = {
 	label: string;
 };
 
-const OPTIONS: LanguageOption[] = [
+export const LANGUAGE_OPTIONS: LanguageOption[] = [
 	{ value: "en", label: "English" },
 	{ value: "ko-kr", label: "한국어" },
 	{ value: "zh-cn", label: "简体中文" },
 ];
 
+export function getResolvedLanguage(
+	language?: string,
+	resolvedLanguage?: string,
+): SupportedLanguage {
+	const lang = (resolvedLanguage ?? language ?? "en").toLowerCase();
+	if (lang === "ko-kr") return "ko-kr";
+	if (lang === "zh-cn") return "zh-cn";
+	return "en";
+}
+
 export function LanguageSelect({ className }: { className?: string }) {
 	const { i18n } = useTranslation();
 
-	const value = useMemo<SupportedLanguage>(() => {
-		const lang = (i18n.resolvedLanguage ?? i18n.language ?? "en").toLowerCase();
-		if (lang === "ko-kr") return "ko-kr";
-		if (lang === "zh-cn") return "zh-cn";
-		return "en";
-	}, [i18n.language, i18n.resolvedLanguage]);
+	const value = useMemo<SupportedLanguage>(
+		() => getResolvedLanguage(i18n.language, i18n.resolvedLanguage),
+		[i18n.language, i18n.resolvedLanguage],
+	);
 
 	return (
 		<div className={cn("relative inline-flex items-center", className)}>
@@ -40,7 +48,7 @@ export function LanguageSelect({ className }: { className?: string }) {
 					"focus:outline-none focus:ring-2 focus:ring-white/10",
 				)}
 			>
-				{OPTIONS.map((opt) => (
+				{LANGUAGE_OPTIONS.map((opt) => (
 					<option key={opt.value} value={opt.value}>
 						{opt.label}
 					</option>

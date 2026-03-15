@@ -66,6 +66,7 @@ export const resources = {
 			},
 			userMenu: {
 				dashboard: "Dashboard",
+				language: "Language",
 				logOut: "Log out",
 			},
 			loginModal: {
@@ -220,6 +221,7 @@ export const resources = {
 			},
 			userMenu: {
 				dashboard: "대시보드",
+				language: "언어",
 				logOut: "로그아웃",
 			},
 			loginModal: {
@@ -372,6 +374,7 @@ export const resources = {
 			},
 			userMenu: {
 				dashboard: "仪表盘",
+				language: "语言",
 				logOut: "退出登录",
 			},
 			loginModal: {
