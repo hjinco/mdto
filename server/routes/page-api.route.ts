@@ -121,7 +121,7 @@ pageApiRouter.post("/", async (c) => {
 	}
 });
 
-pageApiRouter.put("/:slug", async (c) => {
+pageApiRouter.put("/:id", async (c) => {
 	const parsed = updatePageBodySchema.safeParse(
 		await c.req.json().catch(() => null),
 	);
@@ -134,7 +134,7 @@ pageApiRouter.put("/:slug", async (c) => {
 		const managedPageService = createManagedPageService({ env: c.env, db });
 		const result = await managedPageService.updatePage(
 			{
-				currentSlug: c.req.param("slug"),
+				pageId: c.req.param("id"),
 				...parsed.data,
 			},
 			user,
@@ -156,13 +156,13 @@ pageApiRouter.put("/:slug", async (c) => {
 	}
 });
 
-pageApiRouter.delete("/:slug", async (c) => {
+pageApiRouter.delete("/:id", async (c) => {
 	try {
 		const user = c.get("apiKeyUser");
 		const managedPageService = createManagedPageService({ env: c.env, db });
-		const result = await managedPageService.deletePageBySlug(
+		const result = await managedPageService.deletePage(
 			user.id,
-			c.req.param("slug"),
+			c.req.param("id"),
 		);
 		await purgePathsFromCache(c.req.url, [`/${user.name}/${result.slug}`]);
 		return c.json(result);

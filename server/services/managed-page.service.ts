@@ -40,7 +40,7 @@ type CreateManagedPageInput = {
 };
 
 type UpdateManagedPageInput = {
-	currentSlug: string;
+	pageId: string;
 	markdown: string;
 	newSlug?: string;
 	theme?: z.infer<typeof themeSchema>;
@@ -188,12 +188,7 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 		},
 
 		async updatePage(input: UpdateManagedPageInput, user: PageOwner) {
-			const currentSlug = input.currentSlug.trim();
-			const page = await pageRepo.findActiveByUserAndSlug(user.id, currentSlug);
-			if (!page) {
-				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
-			}
-
+			const page = await findOwnedPageByIdOrThrow(user.id, input.pageId.trim());
 			const targetSlug = input.newSlug?.trim() || page.slug;
 			pageSlugSchema.parse(targetSlug);
 			if (targetSlug !== page.slug) {
@@ -252,10 +247,7 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 				throw error;
 			});
 
-			const updatedPage = await pageRepo.findActiveByUserAndSlug(
-				user.id,
-				targetSlug,
-			);
+			const updatedPage = await pageRepo.findActiveById(page.id);
 			if (!updatedPage) {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
@@ -270,17 +262,7 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 		},
 
 		async deletePage(userId: string, pageId: string) {
-			const page = await findOwnedPageByIdOrThrow(userId, pageId);
-			await pageRepo.softDelete(page.id, new Date());
-			return { ok: true as const, slug: page.slug };
-		},
-
-		async deletePageBySlug(userId: string, slug: string) {
-			const page = await pageRepo.findActiveByUserAndSlug(userId, slug);
-			if (!page) {
-				throw new TRPCError({ code: "NOT_FOUND", message: "Not found" });
-			}
-
+			const page = await findOwnedPageByIdOrThrow(userId, pageId.trim());
 			await pageRepo.softDelete(page.id, new Date());
 			return { ok: true as const, slug: page.slug };
 		},
