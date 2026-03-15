@@ -1,34 +1,34 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1769171201010,
-      "tag": "0000_misty_marrow",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1769327005067,
-      "tag": "0001_mixed_rattler",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1771322640592,
-      "tag": "0002_previous_iron_lad",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1773540438981,
-      "tag": "0003_abnormal_red_ghost",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1769171201010,
+			"tag": "0000_misty_marrow",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1769327005067,
+			"tag": "0001_mixed_rattler",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1771322640592,
+			"tag": "0002_previous_iron_lad",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "6",
+			"when": 1773540438981,
+			"tag": "0003_abnormal_red_ghost",
+			"breakpoints": true
+		}
+	]
 }

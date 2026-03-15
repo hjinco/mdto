@@ -3,7 +3,7 @@ import type { z } from "zod";
 import type { db as dbType } from "../db/client";
 import { createPageRepo } from "../repositories/page.repo";
 import { createUserRepo } from "../repositories/user.repo";
-import { type themeSchema } from "./page-content.service";
+import type { themeSchema } from "./page-content.service";
 
 type Db = typeof dbType;
 
