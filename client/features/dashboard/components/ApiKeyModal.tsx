@@ -2,7 +2,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../../utils/styles";
 
@@ -66,7 +66,22 @@ export function ApiKeyModal({ isOpen, onClose }: ApiKeyModalProps) {
 	const [copyState, setCopyState] = useState<"idle" | "copied">("idle");
 	const [createdKey, setCreatedKey] = useState<CreatedApiKey | null>(null);
 
+	useEffect(() => {
+		if (copyState !== "copied") {
+			return;
+		}
+
+		const timeoutId = window.setTimeout(() => {
+			setCopyState("idle");
+		}, 1500);
+
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
+	}, [copyState]);
+
 	const handleClose = () => {
+		setCopyState("idle");
 		setCreatedKey(null);
 		onClose();
 	};
@@ -106,7 +121,6 @@ export function ApiKeyModal({ isOpen, onClose }: ApiKeyModalProps) {
 		if (!createdKey?.key) return;
 		await navigator.clipboard.writeText(createdKey.key);
 		setCopyState("copied");
-		window.setTimeout(() => setCopyState("idle"), 1500);
 	};
 
 	return (
