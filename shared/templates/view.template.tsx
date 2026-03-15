@@ -449,7 +449,7 @@ const Scripts = ({ hasMermaid, hasToc }: ScriptsProps) => {
 			const containers = document.querySelectorAll('.mermaid[data-source]');
 			containers.forEach((el) => {
 				el.removeAttribute('data-processed');
-				el.innerHTML = el.getAttribute('data-source');
+				el.textContent = el.getAttribute('data-source') ?? '';
 			});
 			mermaid.initialize({ startOnLoad: false, theme: getIsDark() ? 'dark' : 'default', gannt: { useMaxWidth: false } });
 			await mermaid.run();
