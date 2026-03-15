@@ -12,6 +12,7 @@ export default defineConfig({
 			srcDirectory: "client",
 			prerender: {
 				enabled: true,
+				filter: ({ path }) => !path.startsWith("/docs/"),
 			},
 		}),
 		react(),
