@@ -95,10 +95,12 @@ export function UserDashboardPage({
 								<DashboardVisibilityToggle username={username} />
 							</>
 						)}
-						<LanguageSelect />
 						{session?.user ? (
 							<UserMenu user={session.user} />
 						) : (
+							<LanguageSelect />
+						)}
+						{session?.user ? null : (
 							<button
 								type="button"
 								onClick={() => setIsLoginModalOpen(true)}

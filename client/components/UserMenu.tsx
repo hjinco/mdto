@@ -1,52 +1,43 @@
+import { Menu } from "@base-ui/react/menu";
 import {
+	ArrowRight01Icon,
 	DashboardSpeed01Icon,
+	LanguageCircleIcon,
 	Logout01Icon,
 	User as UserIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { authClient, type User } from "../lib/auth-client";
+import { changeLanguage, type SupportedLanguage } from "../lib/i18n";
 import { cn } from "../utils/styles";
+import { getResolvedLanguage, LANGUAGE_OPTIONS } from "./LanguageSelect";
 
 interface UserMenuProps {
 	user: User;
 }
 
 export function UserMenu({ user }: UserMenuProps) {
-	const { t } = useTranslation();
-	const [isOpen, setIsOpen] = useState(false);
-	const menuRef = useRef<HTMLDivElement>(null);
+	const { t, i18n } = useTranslation();
+	const currentLanguage = useMemo(
+		() => getResolvedLanguage(i18n.language, i18n.resolvedLanguage),
+		[i18n.language, i18n.resolvedLanguage],
+	);
 
 	const handleLogout = async () => {
 		await authClient.signOut();
-		setIsOpen(false);
 	};
 
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, []);
-
 	return (
-		<div className="relative" ref={menuRef}>
-			<button
-				type="button"
-				onClick={() => setIsOpen(!isOpen)}
+		<Menu.Root modal={false}>
+			<Menu.Trigger
 				className={cn(
 					"flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer",
 					"text-sm font-medium text-text-secondary hover:text-text-primary",
 					"hover:bg-surface-highlight transition-all duration-200",
-					isOpen && "bg-surface-highlight text-text-primary",
+					"data-popup-open:bg-surface-highlight data-popup-open:text-text-primary",
 				)}
 			>
 				{user.image ? (
@@ -59,45 +50,126 @@ export function UserMenu({ user }: UserMenuProps) {
 					<HugeiconsIcon icon={UserIcon} className="w-5 h-5" />
 				)}
 				<span>{user.name}</span>
-			</button>
+			</Menu.Trigger>
 
-			{isOpen && (
-				<div className="absolute right-0 top-full mt-2 w-48 bg-surface-elevated border border-border rounded-lg shadow-card p-1 z-50 animate-fade-in">
-					<div className="px-3 py-2 border-b border-border/50 mb-1">
-						<p className="text-xs font-medium text-text-primary truncate">
-							{user.name}
-						</p>
-						<p className="text-[11px] text-text-tertiary truncate">
-							{user.email}
-						</p>
-					</div>
-					<Link
-						to="/$username"
-						params={{ username: user.name }}
-						onClick={() => setIsOpen(false)}
+			<Menu.Portal>
+				<Menu.Positioner align="end" sideOffset={8}>
+					<Menu.Popup
 						className={cn(
-							"w-full flex items-center gap-2 px-3 py-2 rounded-md",
-							"text-xs text-text-secondary hover:text-text-primary hover:bg-white/5",
-							"transition-colors text-left",
+							"z-50 w-48 bg-surface-elevated border border-border rounded-lg shadow-card p-1",
+							"animate-fade-in",
 						)}
 					>
-						<HugeiconsIcon icon={DashboardSpeed01Icon} className="w-4 h-4" />
-						{t("userMenu.dashboard")}
-					</Link>
-					<button
-						type="button"
-						onClick={handleLogout}
-						className={cn(
-							"w-full flex items-center gap-2 px-3 py-2 rounded-md",
-							"text-xs text-text-secondary hover:text-text-primary hover:bg-white/5",
-							"transition-colors text-left cursor-pointer",
-						)}
-					>
-						<HugeiconsIcon icon={Logout01Icon} className="w-4 h-4" />
-						{t("userMenu.logOut")}
-					</button>
-				</div>
-			)}
-		</div>
+						<div className="px-3 py-2 border-b border-border/50 mb-1">
+							<p className="text-xs font-medium text-text-primary truncate">
+								{user.name}
+							</p>
+							<p className="text-[11px] text-text-tertiary truncate">
+								{user.email}
+							</p>
+						</div>
+
+						<Menu.Item
+							render={<Link to="/$username" params={{ username: user.name }} />}
+							className={cn(
+								"w-full flex items-center gap-2 px-3 py-2 rounded-md",
+								"text-xs text-text-secondary transition-colors text-left cursor-pointer",
+								"data-highlighted:bg-surface-highlight data-highlighted:text-text-primary",
+							)}
+						>
+							<HugeiconsIcon icon={DashboardSpeed01Icon} className="w-4 h-4" />
+							{t("userMenu.dashboard")}
+						</Menu.Item>
+
+						<Menu.SubmenuRoot>
+							<Menu.SubmenuTrigger
+								className={cn(
+									"w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md",
+									"text-xs text-text-secondary transition-colors text-left cursor-pointer",
+									"data-highlighted:bg-surface-highlight data-highlighted:text-text-primary",
+									"data-popup-open:bg-surface-highlight data-popup-open:text-text-primary",
+								)}
+							>
+								<span className="flex items-center gap-2">
+									<HugeiconsIcon
+										icon={LanguageCircleIcon}
+										className="w-4 h-4"
+									/>
+									<span>{t("userMenu.language")}</span>
+								</span>
+								<HugeiconsIcon
+									icon={ArrowRight01Icon}
+									className="w-3.5 h-3.5"
+								/>
+							</Menu.SubmenuTrigger>
+
+							<Menu.Portal>
+								<Menu.Positioner align="start" side="right" sideOffset={6}>
+									<Menu.Popup
+										className={cn(
+											"z-50 min-w-36 bg-surface-elevated border border-border rounded-lg shadow-card p-1",
+											"animate-fade-in",
+										)}
+									>
+										<Menu.RadioGroup
+											value={currentLanguage}
+											aria-label={t("userMenu.language")}
+										>
+											{LANGUAGE_OPTIONS.map((option) => (
+												<Menu.RadioItem
+													key={option.value}
+													value={option.value}
+													closeOnClick
+													onClick={() => {
+														void changeLanguage(
+															option.value as SupportedLanguage,
+														);
+													}}
+													className={cn(
+														"w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md",
+														"text-xs text-text-secondary transition-colors text-left cursor-pointer",
+														"data-highlighted:bg-surface-highlight data-highlighted:text-text-primary",
+														"data-checked:text-text-primary",
+													)}
+												>
+													<span>{option.label}</span>
+													<span
+														aria-hidden="true"
+														className={cn(
+															"text-[10px] leading-none text-text-primary transition-opacity",
+															currentLanguage === option.value
+																? "opacity-100"
+																: "opacity-0",
+														)}
+													>
+														●
+													</span>
+												</Menu.RadioItem>
+											))}
+										</Menu.RadioGroup>
+									</Menu.Popup>
+								</Menu.Positioner>
+							</Menu.Portal>
+						</Menu.SubmenuRoot>
+
+						<div className="h-px bg-border mx-1 my-0.5" />
+
+						<Menu.Item
+							onClick={() => {
+								void handleLogout();
+							}}
+							className={cn(
+								"w-full flex items-center gap-2 px-3 py-2 rounded-md",
+								"text-xs text-text-secondary transition-colors text-left cursor-pointer",
+								"data-highlighted:bg-surface-highlight data-highlighted:text-text-primary",
+							)}
+						>
+							<HugeiconsIcon icon={Logout01Icon} className="w-4 h-4" />
+							{t("userMenu.logOut")}
+						</Menu.Item>
+					</Menu.Popup>
+				</Menu.Positioner>
+			</Menu.Portal>
+		</Menu.Root>
 	);
 }
