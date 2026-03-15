@@ -69,7 +69,8 @@ pageApiRouter.use("*", async (c, next) => {
 			id: session.user.id,
 			name: session.user.name,
 		});
-	} catch {
+	} catch (error) {
+		console.error("Failed to retrieve API key session", error);
 		return c.json({ message: "Unauthorized" }, 401);
 	}
 
