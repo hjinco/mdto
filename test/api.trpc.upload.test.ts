@@ -62,6 +62,8 @@ describe("/api/trpc upload router", () => {
 	});
 
 	it("publicCreate rejects empty markdown", async () => {
+		vi.spyOn(envUtils, "isDev").mockReturnValue(true);
+
 		await expect(
 			trpc.upload.publicCreate.mutate({
 				markdown: "   ",
@@ -73,6 +75,8 @@ describe("/api/trpc upload router", () => {
 	});
 
 	it("publicCreate rejects markdown larger than 100KB", async () => {
+		vi.spyOn(envUtils, "isDev").mockReturnValue(true);
+
 		const markdown = "a".repeat(100_001);
 		await expect(
 			trpc.upload.publicCreate.mutate({
@@ -82,6 +86,19 @@ describe("/api/trpc upload router", () => {
 				turnstileToken: null,
 			}),
 		).rejects.toThrow(/File size exceeds 100KB limit/);
+	});
+
+	it("publicCreate requires a Turnstile token outside dev", async () => {
+		vi.spyOn(envUtils, "isDev").mockReturnValue(false);
+
+		await expect(
+			trpc.upload.publicCreate.mutate({
+				markdown: "# Hello world",
+				expirationDays: 1,
+				theme: "default",
+				turnstileToken: null,
+			}),
+		).rejects.toThrow(/Turnstile token is required/);
 	});
 
 	it("publicCreate enforces Turnstile outside dev", async () => {

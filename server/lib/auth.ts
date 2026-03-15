@@ -1,4 +1,5 @@
 import { env } from "cloudflare:workers";
+import { apiKey } from "@better-auth/api-key";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
@@ -53,5 +54,20 @@ export const auth = betterAuth({
 			},
 		},
 	},
+	plugins: [
+		apiKey({
+			configId: "default",
+			references: "user",
+			requireName: true,
+			enableSessionForAPIKeys: true,
+			keyExpiration: {
+				defaultExpiresIn: null,
+				disableCustomExpiresTime: true,
+			},
+			rateLimit: {
+				enabled: false,
+			},
+		}),
+	],
 	trustedOrigins: [new URL(env.BETTER_AUTH_URL).origin],
 });

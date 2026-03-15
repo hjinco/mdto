@@ -1,3 +1,5 @@
+import { Key01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Link, Navigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -5,6 +7,7 @@ import { LanguageSelect } from "../../../components/LanguageSelect";
 import { UserMenu } from "../../../components/UserMenu";
 import { authClient } from "../../../lib/auth-client";
 import { LoginModal } from "../../upload-form/components/LoginModal";
+import { ApiKeyModal } from "./ApiKeyModal";
 import { ChangeUsernameInline } from "./ChangeUsernameInline";
 import { DashboardContent } from "./DashboardContent";
 import { DashboardVisibilityToggle } from "./DashboardVisibilityToggle";
@@ -46,6 +49,7 @@ export function UserDashboardPage({
 	const { data: session, isPending: isSessionPending } =
 		authClient.useSession();
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+	const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
 	const [notFoundUsername, setNotFoundUsername] = useState<string | null>(null);
 
 	const isOwner = useMemo(() => {
@@ -78,7 +82,19 @@ export function UserDashboardPage({
 					)}
 
 					<div className="flex items-center gap-2">
-						{isOwner && <DashboardVisibilityToggle username={username} />}
+						{isOwner && (
+							<>
+								<button
+									type="button"
+									onClick={() => setIsApiKeyModalOpen(true)}
+									className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-2 py-1.5 cursor-pointer rounded-lg hover:bg-surface-highlight flex items-center justify-center h-8"
+									title={t("dashboard.apiKeys.title")}
+								>
+									<HugeiconsIcon icon={Key01Icon} className="w-5 h-5" />
+								</button>
+								<DashboardVisibilityToggle username={username} />
+							</>
+						)}
 						<LanguageSelect />
 						{session?.user ? (
 							<UserMenu user={session.user} />
@@ -105,6 +121,12 @@ export function UserDashboardPage({
 				isOpen={isLoginModalOpen}
 				onClose={() => setIsLoginModalOpen(false)}
 			/>
+			{isOwner && (
+				<ApiKeyModal
+					isOpen={isApiKeyModalOpen}
+					onClose={() => setIsApiKeyModalOpen(false)}
+				/>
+			)}
 		</div>
 	);
 }

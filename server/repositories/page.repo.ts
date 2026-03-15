@@ -13,10 +13,12 @@ export function createPageRepo(db: Db) {
 				.select({
 					id: schema.page.id,
 					slug: schema.page.slug,
+					theme: schema.page.theme,
 					title: schema.page.title,
 					description: schema.page.description,
 					expiresAt: schema.page.expiresAt,
 					createdAt: schema.page.createdAt,
+					updatedAt: schema.page.updatedAt,
 				})
 				.from(schema.page)
 				.where(
@@ -31,10 +33,12 @@ export function createPageRepo(db: Db) {
 				.select({
 					id: schema.page.id,
 					slug: schema.page.slug,
+					theme: schema.page.theme,
 					title: schema.page.title,
 					description: schema.page.description,
 					expiresAt: schema.page.expiresAt,
 					createdAt: schema.page.createdAt,
+					updatedAt: schema.page.updatedAt,
 				})
 				.from(schema.page)
 				.where(
@@ -54,6 +58,12 @@ export function createPageRepo(db: Db) {
 					id: schema.page.id,
 					userId: schema.page.userId,
 					slug: schema.page.slug,
+					theme: schema.page.theme,
+					title: schema.page.title,
+					description: schema.page.description,
+					expiresAt: schema.page.expiresAt,
+					createdAt: schema.page.createdAt,
+					updatedAt: schema.page.updatedAt,
 				})
 				.from(schema.page)
 				.where(and(eq(schema.page.id, pageId), isNull(schema.page.deletedAt)))
@@ -65,10 +75,14 @@ export function createPageRepo(db: Db) {
 			const [page] = await db
 				.select({
 					id: schema.page.id,
+					userId: schema.page.userId,
+					slug: schema.page.slug,
 					theme: schema.page.theme,
 					expiresAt: schema.page.expiresAt,
 					title: schema.page.title,
 					description: schema.page.description,
+					createdAt: schema.page.createdAt,
+					updatedAt: schema.page.updatedAt,
 				})
 				.from(schema.page)
 				.where(
@@ -114,13 +128,30 @@ export function createPageRepo(db: Db) {
 		async updateSlug(pageId: string, slug: string) {
 			await db
 				.update(schema.page)
-				.set({ slug })
+				.set({ slug, updatedAt: new Date() })
+				.where(eq(schema.page.id, pageId));
+		},
+		async updateById(
+			pageId: string,
+			values: Partial<
+				Pick<
+					typeof schema.page.$inferInsert,
+					"slug" | "theme" | "title" | "description" | "expiresAt"
+				>
+			>,
+		) {
+			await db
+				.update(schema.page)
+				.set({
+					...values,
+					updatedAt: new Date(),
+				})
 				.where(eq(schema.page.id, pageId));
 		},
 		async softDelete(pageId: string, deletedAt: Date) {
 			await db
 				.update(schema.page)
-				.set({ deletedAt })
+				.set({ deletedAt, updatedAt: new Date() })
 				.where(eq(schema.page.id, pageId));
 		},
 		async deleteById(pageId: string) {

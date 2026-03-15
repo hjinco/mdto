@@ -23,3 +23,20 @@ export function generateETag(params: {
 }): string {
 	return `W/"${params.templateHash}:${params.objectEtag}"`;
 }
+
+export async function purgePathsFromCache(
+	baseUrl: string,
+	paths: Array<string | null | undefined>,
+) {
+	const cache = (caches as unknown as { default?: Cache }).default;
+	if (!cache) return;
+
+	await Promise.all(
+		paths
+			.filter((path): path is string => Boolean(path))
+			.map((path) => {
+				const url = new URL(path, baseUrl);
+				return cache.delete(new Request(url.toString(), { method: "GET" }));
+			}),
+	);
+}
