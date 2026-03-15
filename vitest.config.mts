@@ -17,6 +17,9 @@ export default defineWorkersConfig(async () => {
 		test: {
 			poolOptions: {
 				workers: {
+					// Filtered runs intermittently fail in the Cloudflare worker pool
+					// with local loopback connection errors unless suites share one worker.
+					singleWorker: true,
 					miniflare: {
 						bindings: {
 							DISCORD_WEBHOOK_URL: "https://discord.test/webhook",
