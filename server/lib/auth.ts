@@ -59,7 +59,6 @@ export const auth = betterAuth({
 			configId: "default",
 			references: "user",
 			requireName: true,
-			enableSessionForAPIKeys: true,
 			keyExpiration: {
 				defaultExpiresIn: null,
 				disableCustomExpiresTime: true,
