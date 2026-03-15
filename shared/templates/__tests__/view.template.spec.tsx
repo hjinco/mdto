@@ -17,6 +17,8 @@ describe("ViewTemplate mermaid rendering", () => {
 		expect(html).toContain(
 			"el.textContent = el.getAttribute('data-source') ?? '';",
 		);
-		expect(html).not.toContain("el.innerHTML = el.getAttribute('data-source');");
+		expect(html).not.toContain(
+			"el.innerHTML = el.getAttribute('data-source');",
+		);
 	});
 });
