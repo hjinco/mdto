@@ -13,6 +13,10 @@ export const resources = {
 				save: "Save",
 				saving: "Saving...",
 			},
+			home: {
+				new: "New",
+				apiBanner: "Manage pages with API keys →",
+			},
 			dialogs: {
 				warningTitle: "Warning",
 				warningDescription: "Once created, pages cannot be modified or deleted",
@@ -100,6 +104,7 @@ export const resources = {
 					title: "API keys",
 					description:
 						"Create account-scoped keys for scripts and automations that manage your pages.",
+					docsLink: "Read API v1 docs",
 					namePlaceholder: "Deploy key",
 					defaultName: "Default key",
 					create: "Create key",
@@ -160,6 +165,10 @@ export const resources = {
 				cancel: "취소",
 				save: "저장",
 				saving: "저장 중...",
+			},
+			home: {
+				new: "New",
+				apiBanner: "API 키로 페이지를 관리해보세요 →",
 			},
 			dialogs: {
 				warningTitle: "경고",
@@ -249,6 +258,7 @@ export const resources = {
 					title: "API 키",
 					description:
 						"스크립트와 자동화에서 내 페이지를 관리할 수 있는 계정 전용 키를 생성해요.",
+					docsLink: "API v1 문서 보기",
 					namePlaceholder: "배포 키",
 					defaultName: "기본 키",
 					create: "키 만들기",
@@ -310,6 +320,10 @@ export const resources = {
 				cancel: "取消",
 				save: "保存",
 				saving: "正在保存…",
+			},
+			home: {
+				new: "New",
+				apiBanner: "使用 API 密钥管理页面 →",
 			},
 			dialogs: {
 				warningTitle: "警告",
@@ -394,6 +408,7 @@ export const resources = {
 				apiKeys: {
 					title: "API 密钥",
 					description: "创建账号级密钥，用于脚本和自动化管理你的页面。",
+					docsLink: "查看 API v1 文档",
 					namePlaceholder: "部署密钥",
 					defaultName: "默认密钥",
 					create: "创建密钥",

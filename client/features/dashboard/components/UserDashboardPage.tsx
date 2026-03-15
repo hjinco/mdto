@@ -87,10 +87,10 @@ export function UserDashboardPage({
 								<button
 									type="button"
 									onClick={() => setIsApiKeyModalOpen(true)}
-									className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors px-2 py-1.5 cursor-pointer rounded-lg hover:bg-surface-highlight flex items-center justify-center h-8"
-									title={t("dashboard.apiKeys.title")}
+									className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border bg-surface-highlight text-xs text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
 								>
-									<HugeiconsIcon icon={Key01Icon} className="w-5 h-5" />
+									<HugeiconsIcon icon={Key01Icon} className="w-3.5 h-3.5" />
+									<span>{t("dashboard.apiKeys.title")}</span>
 								</button>
 								<DashboardVisibilityToggle username={username} />
 							</>
