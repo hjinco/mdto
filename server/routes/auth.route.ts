@@ -3,6 +3,6 @@ import { auth } from "../lib/auth";
 
 export const authRouter = new Hono<{ Bindings: Env }>();
 
-authRouter.on(["POST", "GET"], "/auth/*", (c) => {
+authRouter.on(["POST", "GET"], "*", (c) => {
 	return auth.handler(c.req.raw);
 });

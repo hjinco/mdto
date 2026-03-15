@@ -22,7 +22,7 @@ function getLocalD1DB() {
 
 export default defineConfig({
 	dialect: "sqlite",
-	schema: "./server/db/schema.ts",
+	schema: "./server/db/schema/index.ts",
 	out: "./migrations",
 	dbCredentials: {
 		url: getLocalD1DB() ?? "",

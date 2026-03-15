@@ -1,11 +1,6 @@
-import { isNull, relations, sql } from "drizzle-orm";
-import {
-	index,
-	integer,
-	sqliteTable,
-	text,
-	uniqueIndex,
-} from "drizzle-orm/sqlite-core";
+import { relations, sql } from "drizzle-orm";
+import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { page } from "./page-schema";
 
 export const user = sqliteTable("user", {
 	id: text("id").primaryKey(),
@@ -96,17 +91,32 @@ export const verification = sqliteTable(
 	(table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const page = sqliteTable(
-	"page",
+export const apikey = sqliteTable(
+	"apikey",
 	{
 		id: text("id").primaryKey(),
-		userId: text("user_id")
+		configId: text("config_id").default("default").notNull(),
+		name: text("name"),
+		start: text("start"),
+		referenceId: text("reference_id")
 			.notNull()
 			.references(() => user.id, { onDelete: "cascade" }),
-		slug: text("slug").notNull(),
-		theme: text("theme").notNull(),
-		title: text("title").notNull(),
-		description: text("description").notNull(),
+		prefix: text("prefix"),
+		key: text("key").notNull(),
+		refillInterval: integer("refill_interval"),
+		refillAmount: integer("refill_amount"),
+		lastRefillAt: integer("last_refill_at", { mode: "timestamp_ms" }),
+		enabled: integer("enabled", { mode: "boolean" }).default(true).notNull(),
+		rateLimitEnabled: integer("rate_limit_enabled", { mode: "boolean" })
+			.default(true)
+			.notNull(),
+		rateLimitTimeWindow: integer("rate_limit_time_window")
+			.default(1000 * 60 * 60 * 24)
+			.notNull(),
+		rateLimitMax: integer("rate_limit_max").default(10).notNull(),
+		requestCount: integer("request_count").default(0).notNull(),
+		remaining: integer("remaining"),
+		lastRequest: integer("last_request", { mode: "timestamp_ms" }),
 		expiresAt: integer("expires_at", { mode: "timestamp_ms" }),
 		createdAt: integer("created_at", { mode: "timestamp_ms" })
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
@@ -115,25 +125,20 @@ export const page = sqliteTable(
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 			.$onUpdate(() => /* @__PURE__ */ new Date())
 			.notNull(),
-		deletedAt: integer("deleted_at", { mode: "timestamp_ms" }),
+		permissions: text("permissions"),
+		metadata: text("metadata"),
 	},
 	(table) => [
-		// Allow slug reuse after soft-delete: only active rows are unique
-		uniqueIndex("page_userId_slug_idx")
-			.on(table.userId, table.slug)
-			.where(isNull(table.deletedAt)),
-		// Used by expiry cleanup jobs to scan active, expiring pages efficiently
-		index("page_expiresAt_idx")
-			.on(table.expiresAt)
-			.where(
-				sql`${table.deletedAt} is null and ${table.expiresAt} is not null`,
-			),
+		index("apikey_configId_idx").on(table.configId),
+		index("apikey_key_idx").on(table.key),
+		index("apikey_referenceId_idx").on(table.referenceId),
 	],
 );
 
 export const userRelations = relations(user, ({ many }) => ({
 	sessions: many(session),
 	accounts: many(account),
+	apiKeys: many(apikey),
 	pages: many(page),
 }));
 
@@ -151,9 +156,9 @@ export const accountRelations = relations(account, ({ one }) => ({
 	}),
 }));
 
-export const pageRelations = relations(page, ({ one }) => ({
+export const apikeyRelations = relations(apikey, ({ one }) => ({
 	user: one(user, {
-		fields: [page.userId],
+		fields: [apikey.referenceId],
 		references: [user.id],
 	}),
 }));

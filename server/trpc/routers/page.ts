@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { db } from "../../db/client";
-import { createPageService } from "../../services/page.service";
+import { createManagedPageService } from "../../services/managed-page.service";
+import { createPageQueryService } from "../../services/page-query.service";
+import { purgePathsFromCache } from "../../utils/cache";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const pageRouter = router({
@@ -15,20 +17,27 @@ export const pageRouter = router({
 			}),
 		)
 		.query(async ({ input }) => {
-			const pageService = createPageService({ db });
-			return pageService.listPublicByUsername(input.username);
+			const pageQueryService = createPageQueryService({ db });
+			return pageQueryService.listPublicByUsername(input.username);
 		}),
 
 	list: protectedProcedure.query(async ({ ctx }) => {
-		const pageService = createPageService({ db });
-		return pageService.list(ctx.session.user);
+		const managedPageService = createManagedPageService({ env: ctx.env, db });
+		return managedPageService.listForUser(ctx.session.user);
 	}),
 
 	delete: protectedProcedure
 		.input(z.object({ id: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			const pageService = createPageService({ db });
-			return pageService.deletePage(ctx.session.user.id, input.id);
+			const managedPageService = createManagedPageService({ env: ctx.env, db });
+			const result = await managedPageService.deletePage(
+				ctx.session.user.id,
+				input.id,
+			);
+			await purgePathsFromCache(ctx.req.url, [
+				`/${ctx.session.user.name}/${result.slug}`,
+			]);
+			return result;
 		}),
 
 	changeSlug: protectedProcedure
@@ -43,7 +52,16 @@ export const pageRouter = router({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const pageService = createPageService({ db });
-			return pageService.changeSlug(ctx.session.user, input.id, input.slug);
+			const managedPageService = createManagedPageService({ env: ctx.env, db });
+			const result = await managedPageService.changeSlug(
+				ctx.session.user,
+				input.id,
+				input.slug,
+			);
+			await purgePathsFromCache(ctx.req.url, [
+				`/${ctx.session.user.name}/${result.previousSlug}`,
+				result.path,
+			]);
+			return result;
 		}),
 });
