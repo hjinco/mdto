@@ -11,7 +11,8 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { authClient, type User } from "../lib/auth-client";
-import { changeLanguage, type SupportedLanguage } from "../lib/i18n";
+import { changeLanguage } from "../lib/i18n";
+import type { SupportedLanguage } from "../lib/language";
 import { cn } from "../utils/styles";
 import { getResolvedLanguage, LANGUAGE_OPTIONS } from "./LanguageSelect";
 

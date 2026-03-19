@@ -2,7 +2,8 @@ import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { changeLanguage, type SupportedLanguage } from "../lib/i18n";
+import { changeLanguage } from "../lib/i18n";
+import { normalizeLanguage, type SupportedLanguage } from "../lib/language";
 import { cn } from "../utils/styles";
 
 type LanguageOption = {
@@ -14,20 +15,18 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 	{ value: "en", label: "English" },
 	{ value: "ko-kr", label: "한국어" },
 	{ value: "zh-cn", label: "简体中文" },
+	{ value: "ja-jp", label: "日本語" },
 ];
 
 export function getResolvedLanguage(
 	language?: string,
 	resolvedLanguage?: string,
 ): SupportedLanguage {
-	const lang = (resolvedLanguage ?? language ?? "en").toLowerCase();
-	if (lang === "ko-kr") return "ko-kr";
-	if (lang === "zh-cn") return "zh-cn";
-	return "en";
+	return normalizeLanguage(resolvedLanguage ?? language);
 }
 
 export function LanguageSelect({ className }: { className?: string }) {
-	const { i18n } = useTranslation();
+	const { i18n, t } = useTranslation();
 
 	const value = useMemo<SupportedLanguage>(
 		() => getResolvedLanguage(i18n.language, i18n.resolvedLanguage),
@@ -36,7 +35,7 @@ export function LanguageSelect({ className }: { className?: string }) {
 
 	return (
 		<div className={cn("relative inline-flex items-center", className)}>
-			<span className="sr-only">Language</span>
+			<span className="sr-only">{t("languageSelect.ariaLabel")}</span>
 			<select
 				value={value}
 				onChange={(e) => {

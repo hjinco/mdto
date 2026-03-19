@@ -1,6 +1,7 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/styles";
 import { usePreview } from "../hooks/usePreview";
 import type { ParsedMarkdown } from "./MarkdownParser";
@@ -18,6 +19,7 @@ export function PreviewDialog({
 	expirationDays,
 	onClose,
 }: PreviewDialogProps) {
+	const { t } = useTranslation();
 	const { loading, error, iframeRef, themeName } = usePreview({
 		parsed,
 		theme,
@@ -53,7 +55,7 @@ export function PreviewDialog({
 				{/* Header */}
 				<div className="flex items-center justify-between py-4 px-5 border-b border-border">
 					<div className="text-sm font-medium text-text-primary">
-						Preview - {themeName}
+						{t("previewDialog.title", { theme: themeName })}
 					</div>
 					<button
 						className={cn(
@@ -62,7 +64,7 @@ export function PreviewDialog({
 						)}
 						onClick={onClose}
 						type="button"
-						aria-label="Close preview"
+						aria-label={t("previewDialog.closeAria")}
 					>
 						<HugeiconsIcon icon={Close} className="w-4 h-4" />
 					</button>
@@ -72,13 +74,13 @@ export function PreviewDialog({
 				<div className="flex-1 overflow-auto relative min-h-[400px]">
 					{loading && (
 						<div className="flex items-center justify-center py-15 px-5 text-text-secondary text-[13px]">
-							{error || "Loading preview..."}
+							{error || t("previewDialog.loading")}
 						</div>
 					)}
 					<iframe
 						ref={iframeRef}
 						className="w-full h-full min-h-[400px] border-none block"
-						title="Preview"
+						title={t("previewDialog.iframeTitle")}
 						style={{ display: loading ? "none" : "block" }}
 					/>
 				</div>

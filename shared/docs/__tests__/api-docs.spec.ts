@@ -5,6 +5,8 @@ describe("getApiDocsHref", () => {
 	it("returns the localized docs path for supported locales", () => {
 		expect(getApiDocsHref("ko-KR")).toBe("/docs/ko-kr/api-v1.html");
 		expect(getApiDocsHref("zh_CN")).toBe("/docs/zh-cn/api-v1.html");
+		expect(getApiDocsHref("ja-JP")).toBe("/docs/ja-jp/api-v1.html");
+		expect(getApiDocsHref("ja")).toBe("/docs/ja-jp/api-v1.html");
 	});
 
 	it("falls back to english for unsupported locales", () => {

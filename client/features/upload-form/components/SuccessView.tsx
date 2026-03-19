@@ -4,6 +4,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/styles";
 
 interface SuccessViewProps {
@@ -12,6 +13,7 @@ interface SuccessViewProps {
 }
 
 export function SuccessView({ url, onReset }: SuccessViewProps) {
+	const { t } = useTranslation();
 	const [copied, setCopied] = useState(false);
 
 	const handleCopy = useCallback(() => {
@@ -28,10 +30,10 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 			</div>
 
 			<h3 className="text-base font-medium text-text-primary mb-2">
-				Page Created
+				{t("success.title")}
 			</h3>
 			<p className="text-[13px] text-text-tertiary mb-6">
-				Your page is now live.
+				{t("success.description")}
 			</p>
 
 			{/* URL Container */}
@@ -54,14 +56,14 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 					)}
 					onClick={handleCopy}
 				>
-					{copied ? "Copied!" : "Copy"}
+					{copied ? t("success.copiedAction") : t("success.copyAction")}
 				</button>
 				<a
 					href={url}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="w-9 h-9 p-0 shrink-0 flex items-center justify-center bg-surface-highlight border border-border rounded-md text-text-secondary cursor-pointer transition-all duration-200 no-underline hover:bg-[#25262a] hover:border-text-tertiary hover:text-text-primary"
-					title="Open Link"
+					title={t("success.openLinkTitle")}
 				>
 					<HugeiconsIcon icon={ExternalLink} className="w-4 h-4" />
 				</a>
@@ -79,7 +81,7 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 					"
 					onClick={onReset}
 				>
-					Create another page
+					{t("success.createAnother")}
 				</button>
 			</div>
 		</div>
