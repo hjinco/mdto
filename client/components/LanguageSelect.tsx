@@ -14,6 +14,7 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 	{ value: "en", label: "English" },
 	{ value: "ko-kr", label: "한국어" },
 	{ value: "zh-cn", label: "简体中文" },
+	{ value: "ja-jp", label: "日本語" },
 ];
 
 export function getResolvedLanguage(
@@ -21,13 +22,20 @@ export function getResolvedLanguage(
 	resolvedLanguage?: string,
 ): SupportedLanguage {
 	const lang = (resolvedLanguage ?? language ?? "en").toLowerCase();
-	if (lang === "ko-kr") return "ko-kr";
-	if (lang === "zh-cn") return "zh-cn";
+	if (lang === "ko" || lang === "ko-kr" || lang.startsWith("ko-")) {
+		return "ko-kr";
+	}
+	if (lang === "zh" || lang === "zh-cn" || lang.startsWith("zh-")) {
+		return "zh-cn";
+	}
+	if (lang === "ja" || lang === "ja-jp" || lang.startsWith("ja-")) {
+		return "ja-jp";
+	}
 	return "en";
 }
 
 export function LanguageSelect({ className }: { className?: string }) {
-	const { i18n } = useTranslation();
+	const { i18n, t } = useTranslation();
 
 	const value = useMemo<SupportedLanguage>(
 		() => getResolvedLanguage(i18n.language, i18n.resolvedLanguage),
@@ -36,7 +44,7 @@ export function LanguageSelect({ className }: { className?: string }) {
 
 	return (
 		<div className={cn("relative inline-flex items-center", className)}>
-			<span className="sr-only">Language</span>
+			<span className="sr-only">{t("languageSelect.ariaLabel")}</span>
 			<select
 				value={value}
 				onChange={(e) => {

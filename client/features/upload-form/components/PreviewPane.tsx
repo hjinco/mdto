@@ -1,6 +1,7 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/styles";
 import { usePreview } from "../hooks/usePreview";
 import type { ParsedMarkdown } from "./MarkdownParser";
@@ -20,6 +21,7 @@ export function PreviewPane({
 	onClose,
 	onLoadingChange,
 }: PreviewPaneProps) {
+	const { t } = useTranslation();
 	const { loading, iframeRef, themeName } = usePreview({
 		parsed,
 		theme,
@@ -34,7 +36,7 @@ export function PreviewPane({
 		<div className="bg-surface flex flex-col shadow-card overflow-hidden h-full border-r border-border">
 			<div className="flex items-center justify-between py-3 px-5 border-b border-border bg-surface-elevated">
 				<div className="text-sm font-medium text-text-primary">
-					Preview - {themeName}
+					{t("previewDialog.title", { theme: themeName })}
 				</div>
 				<button
 					className={cn(
@@ -43,7 +45,7 @@ export function PreviewPane({
 					)}
 					onClick={onClose}
 					type="button"
-					aria-label="Close preview"
+					aria-label={t("previewDialog.closeAria")}
 				>
 					<HugeiconsIcon icon={Close} className="w-4 h-4" />
 				</button>
@@ -58,7 +60,7 @@ export function PreviewPane({
 				<iframe
 					ref={iframeRef}
 					className="w-full h-full border-none block"
-					title="Preview"
+					title={t("previewDialog.iframeTitle")}
 				/>
 			</div>
 		</div>

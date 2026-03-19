@@ -61,12 +61,15 @@ export function UploadView({
 		}
 		const date = new Date();
 		date.setDate(date.getDate() + expirationDays);
+		const language = i18n.resolvedLanguage ?? i18n.language;
 		const intlLocale =
-			(i18n.resolvedLanguage ?? i18n.language) === "ko-kr"
+			language === "ko-kr"
 				? "ko-KR"
-				: (i18n.resolvedLanguage ?? i18n.language) === "zh-cn"
+				: language === "zh-cn"
 					? "zh-CN"
-					: "en-US";
+					: language === "ja-jp"
+						? "ja-JP"
+						: "en-US";
 		const dateStr = date.toLocaleDateString(intlLocale, {
 			weekday: "short",
 			month: "short",

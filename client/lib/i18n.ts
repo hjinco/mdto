@@ -2,13 +2,15 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { resources } from "./i18nResources";
 
-export type SupportedLanguage = "en" | "ko-kr" | "zh-cn";
+export type SupportedLanguage = "en" | "ko-kr" | "zh-cn" | "ja-jp";
 
 const STORAGE_KEY = "mdto.lang";
 let hasExplicitUserLanguageChoice = false;
 
 function isSupportedLanguage(lang: string): lang is SupportedLanguage {
-	return lang === "en" || lang === "ko-kr" || lang === "zh-cn";
+	return (
+		lang === "en" || lang === "ko-kr" || lang === "zh-cn" || lang === "ja-jp"
+	);
 }
 
 export function normalizeLanguage(input: string): SupportedLanguage {
@@ -16,6 +18,7 @@ export function normalizeLanguage(input: string): SupportedLanguage {
 	if (lower === "en" || lower.startsWith("en-")) return "en";
 	if (lower === "ko" || lower.startsWith("ko-")) return "ko-kr";
 	if (lower === "zh" || lower.startsWith("zh-")) return "zh-cn";
+	if (lower === "ja" || lower.startsWith("ja-")) return "ja-jp";
 	return "en";
 }
 
@@ -86,7 +89,7 @@ if (!i18n.isInitialized) {
 		resources,
 		lng: "en",
 		fallbackLng: "en",
-		supportedLngs: ["en", "ko-kr", "zh-cn"],
+		supportedLngs: ["en", "ko-kr", "zh-cn", "ja-jp"],
 		lowerCaseLng: true,
 		load: "currentOnly",
 		interpolation: {

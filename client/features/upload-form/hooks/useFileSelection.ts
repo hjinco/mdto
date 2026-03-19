@@ -1,35 +1,40 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export const ALLOWED_EXTENSIONS = [".md", ".markdown", ".txt"];
 
 export function useFileSelection() {
+	const { t } = useTranslation();
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const handleFileSelect = useCallback((file: File) => {
-		const fileName = file.name.toLowerCase();
-		const isValidExtension = ALLOWED_EXTENSIONS.some((ext) =>
-			fileName.endsWith(ext),
-		);
+	const handleFileSelect = useCallback(
+		(file: File) => {
+			const fileName = file.name.toLowerCase();
+			const isValidExtension = ALLOWED_EXTENSIONS.some((ext) =>
+				fileName.endsWith(ext),
+			);
 
-		if (!isValidExtension) {
-			alert("Please select a .md, .markdown, or .txt file only");
-			if (fileInputRef.current) {
-				fileInputRef.current.value = "";
+			if (!isValidExtension) {
+				alert(t("upload.errors.invalidFileType"));
+				if (fileInputRef.current) {
+					fileInputRef.current.value = "";
+				}
+				return;
 			}
-			return;
-		}
 
-		if (file.size > 100 * 1024) {
-			alert("File size exceeds 100KB");
-			if (fileInputRef.current) {
-				fileInputRef.current.value = "";
+			if (file.size > 100 * 1024) {
+				alert(t("upload.errors.fileTooLarge"));
+				if (fileInputRef.current) {
+					fileInputRef.current.value = "";
+				}
+				return;
 			}
-			return;
-		}
 
-		setSelectedFile(file);
-	}, []);
+			setSelectedFile(file);
+		},
+		[t],
+	);
 
 	// Check for pre-hydration file selection
 	useEffect(() => {

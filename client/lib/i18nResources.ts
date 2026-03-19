@@ -4,18 +4,29 @@ export const resources = {
 			auth: {
 				login: "Log in",
 			},
-			nav: {
-				terms: "Terms",
-				privacy: "Privacy",
-			},
 			common: {
 				cancel: "Cancel",
 				save: "Save",
 				saving: "Saving...",
 			},
+			languageSelect: {
+				ariaLabel: "Language",
+			},
+			nav: {
+				terms: "Terms",
+				privacy: "Privacy",
+			},
 			home: {
 				new: "New",
 				apiBanner: "Manage pages with API keys →",
+				browseFilesHint: "Press {{shortcut}} to browse files",
+			},
+			footer: {
+				github: "GitHub",
+				viewOnGithub: "View on GitHub",
+			},
+			notFound: {
+				title: "Not Found",
 			},
 			dialogs: {
 				warningTitle: "Warning",
@@ -63,6 +74,24 @@ export const resources = {
 				wikiLinkWarningTitle: "Wiki links detected",
 				wikiLinkWarningBody:
 					"External URLs inside wiki links won't be turned into pages here.",
+				errors: {
+					invalidFileType: "Please select a .md, .markdown, or .txt file only",
+					fileTooLarge: "File size exceeds 100KB",
+				},
+			},
+			success: {
+				title: "Page Created",
+				description: "Your page is now live.",
+				copyAction: "Copy",
+				copiedAction: "Copied!",
+				openLinkTitle: "Open Link",
+				createAnother: "Create another page",
+			},
+			previewDialog: {
+				title: "Preview - {{theme}}",
+				closeAria: "Close preview",
+				iframeTitle: "Preview",
+				loading: "Loading preview...",
 			},
 			userMenu: {
 				dashboard: "Dashboard",
@@ -158,18 +187,29 @@ export const resources = {
 			auth: {
 				login: "로그인",
 			},
-			nav: {
-				terms: "이용약관",
-				privacy: "개인정보처리방침",
-			},
 			common: {
 				cancel: "취소",
 				save: "저장",
 				saving: "저장 중...",
 			},
+			languageSelect: {
+				ariaLabel: "언어",
+			},
+			nav: {
+				terms: "이용약관",
+				privacy: "개인정보처리방침",
+			},
 			home: {
-				new: "New",
+				new: "새",
 				apiBanner: "API 키로 페이지를 관리해보세요 →",
+				browseFilesHint: "{{shortcut}} 를 눌러 파일을 선택하세요",
+			},
+			footer: {
+				github: "GitHub",
+				viewOnGithub: "GitHub에서 보기",
+			},
+			notFound: {
+				title: "페이지를 찾을 수 없습니다",
 			},
 			dialogs: {
 				warningTitle: "경고",
@@ -218,6 +258,24 @@ export const resources = {
 				wikiLinkWarningTitle: "위키 링크가 감지되었어요",
 				wikiLinkWarningBody:
 					"위키 링크 안의 외부 URL은 여기서 페이지로 만들어지지 않아요.",
+				errors: {
+					invalidFileType: ".md, .markdown, .txt 파일만 선택할 수 있어요",
+					fileTooLarge: "파일 크기가 100KB를 초과했어요",
+				},
+			},
+			success: {
+				title: "페이지가 생성되었어요",
+				description: "페이지가 이제 공개되었습니다.",
+				copyAction: "복사",
+				copiedAction: "복사됨!",
+				openLinkTitle: "링크 열기",
+				createAnother: "다른 페이지 만들기",
+			},
+			previewDialog: {
+				title: "미리보기 - {{theme}}",
+				closeAria: "미리보기 닫기",
+				iframeTitle: "미리보기",
+				loading: "미리보기를 불러오는 중...",
 			},
 			userMenu: {
 				dashboard: "대시보드",
@@ -314,18 +372,29 @@ export const resources = {
 			auth: {
 				login: "登录",
 			},
-			nav: {
-				terms: "条款",
-				privacy: "隐私",
-			},
 			common: {
 				cancel: "取消",
 				save: "保存",
 				saving: "正在保存…",
 			},
+			languageSelect: {
+				ariaLabel: "语言",
+			},
+			nav: {
+				terms: "条款",
+				privacy: "隐私",
+			},
 			home: {
-				new: "New",
+				new: "新",
 				apiBanner: "使用 API 密钥管理页面 →",
+				browseFilesHint: "按下 {{shortcut}} 以浏览文件",
+			},
+			footer: {
+				github: "GitHub",
+				viewOnGithub: "在 GitHub 上查看",
+			},
+			notFound: {
+				title: "未找到页面",
 			},
 			dialogs: {
 				warningTitle: "警告",
@@ -371,6 +440,24 @@ export const resources = {
 				createPage: "创建页面",
 				wikiLinkWarningTitle: "检测到 Wiki 链接",
 				wikiLinkWarningBody: "Wiki 链接中的外部 URL 不会在这里生成页面。",
+				errors: {
+					invalidFileType: "只能选择 .md、.markdown 或 .txt 文件",
+					fileTooLarge: "文件大小超过 100KB",
+				},
+			},
+			success: {
+				title: "页面已创建",
+				description: "你的页面现已上线。",
+				copyAction: "复制",
+				copiedAction: "已复制！",
+				openLinkTitle: "打开链接",
+				createAnother: "创建另一个页面",
+			},
+			previewDialog: {
+				title: "预览 - {{theme}}",
+				closeAria: "关闭预览",
+				iframeTitle: "预览",
+				loading: "正在加载预览...",
 			},
 			userMenu: {
 				dashboard: "仪表盘",
@@ -451,6 +538,191 @@ export const resources = {
 						tooLong: "用户名不能超过 32 个字符",
 						invalidChars: "用户名只能包含小写字母、数字、连字符和下划线",
 						taken: "用户名已存在",
+					},
+				},
+			},
+		},
+	},
+	"ja-jp": {
+		translation: {
+			auth: {
+				login: "ログイン",
+			},
+			common: {
+				cancel: "キャンセル",
+				save: "保存",
+				saving: "保存中...",
+			},
+			languageSelect: {
+				ariaLabel: "言語",
+			},
+			nav: {
+				terms: "利用規約",
+				privacy: "プライバシー",
+			},
+			home: {
+				new: "新着",
+				apiBanner: "API キーでページを管理する →",
+				browseFilesHint: "{{shortcut}} を押してファイルを選択",
+			},
+			footer: {
+				github: "GitHub",
+				viewOnGithub: "GitHub で見る",
+			},
+			notFound: {
+				title: "ページが見つかりません",
+			},
+			dialogs: {
+				warningTitle: "警告",
+				warningDescription: "一度作成したページは変更や削除ができません",
+				ok: "OK",
+				pageLimitTitle: "ページ上限に達しました",
+				pageLimitDescription:
+					"1 アカウントにつき最大 10 ページまで作成できます。古いページが期限切れになって整理されるまで待ってから再度お試しください。ページはダッシュボードで確認できます。",
+				openDashboard: "ダッシュボードを開く",
+			},
+			features: {
+				markdownSupport: "Markdown 対応",
+				gfmLabel: "GFM 対応",
+				gfmDesc: "テーブル、タスク、オートリンク",
+				mathLabel: "数式 & KaTeX",
+				mathDesc: "数式の表示",
+				mermaidLabel: "Mermaid",
+				mermaidDesc: "フローチャートと図",
+				highlightingLabel: "ハイライト",
+				highlightingDesc: "言語の自動判定",
+			},
+			upload: {
+				importMarkdown: "Markdown を読み込む",
+				readyToPublish: "公開準備完了",
+				dropFile: ".md ファイルをドロップ",
+				orPaste: "または貼り付け ({{shortcut}})",
+				maximumSize: "最大 100KB",
+				permanent: "無期限",
+				expiresOn: "{{date}} {{time}} に期限切れ",
+				expiresPlaceholder: "… に期限切れ",
+				permanentTooltip: "ダッシュボードからいつでも削除できます。",
+				deletionPeriodic:
+					"削除は定期的に実行されるため、正確な時刻は前後する場合があります。",
+				expiration: {
+					oneDay: "1日",
+					oneWeek: "1週間",
+					oneMonth: "1か月",
+				},
+				loginRequired: "ログインが必要です",
+				theme: "テーマ",
+				preview: "プレビュー",
+				closePreview: "プレビューを閉じる",
+				tryLater: "後でもう一度試す",
+				createPage: "ページを作成",
+				wikiLinkWarningTitle: "Wiki リンクを検出しました",
+				wikiLinkWarningBody:
+					"Wiki リンク内の外部 URL はここではページ化されません。",
+				errors: {
+					invalidFileType: ".md、.markdown、.txt ファイルのみ選択できます",
+					fileTooLarge: "ファイルサイズが 100KB を超えています",
+				},
+			},
+			success: {
+				title: "ページを作成しました",
+				description: "ページは公開されました。",
+				copyAction: "コピー",
+				copiedAction: "コピーしました！",
+				openLinkTitle: "リンクを開く",
+				createAnother: "別のページを作成",
+			},
+			previewDialog: {
+				title: "プレビュー - {{theme}}",
+				closeAria: "プレビューを閉じる",
+				iframeTitle: "プレビュー",
+				loading: "プレビューを読み込み中...",
+			},
+			userMenu: {
+				dashboard: "ダッシュボード",
+				language: "言語",
+				logOut: "ログアウト",
+			},
+			loginModal: {
+				title: "mdto にログイン",
+				description: "おかえりなさい。続行するにはログインしてください。",
+				continueWithGithub: "GitHub で続ける",
+			},
+			dashboard: {
+				title: "ダッシュボード",
+				filter: {
+					active: "有効",
+					expired: "期限切れ",
+					all: "すべて",
+				},
+				noDescription: "説明はありません",
+				delete: "削除",
+				pageActions: "ページ操作",
+				loadingPages: "ページを読み込み中…",
+				noExpiredPagesFound: "期限切れのページはありません",
+				noPagesYet: "まだページがありません",
+				created: "作成 {{date}}",
+				expired: "期限切れ",
+				expiresInMinutes: "{{count}}分後に期限切れ",
+				expiresInHours: "{{count}}時間後に期限切れ",
+				expiresInDays: "{{count}}日後に期限切れ",
+				failedToDeletePage: "ページの削除に失敗しました",
+				visibility: {
+					label: "公開設定",
+					public: "公開",
+					private: "非公開",
+					tooltip:
+						"有効にすると、ログインしていなくても /{{username}} からページを閲覧できます。",
+					failedToUpdate: "公開設定の更新に失敗しました",
+				},
+				apiKeys: {
+					title: "API キー",
+					description:
+						"スクリプトや自動化からページを管理するためのアカウント専用キーを作成します。",
+					docsLink: "API v1 ドキュメントを見る",
+					namePlaceholder: "デプロイキー",
+					defaultName: "デフォルトキー",
+					create: "キーを作成",
+					creating: "作成中...",
+					createdTitle: "新しいキー",
+					createdDescription:
+						"このキーは一度だけ表示されます。閉じる前にコピーしてください。",
+					copy: "キーをコピー",
+					copied: "コピー済み",
+					hide: "隠す",
+					listTitle: "有効なキー",
+					loading: "キーを読み込み中…",
+					empty: "API キーはまだありません",
+					unnamed: "無名のキー",
+					keyHint: "{{start}} ・ {{createdAt}} 作成",
+					revoke: "無効化",
+				},
+				changeSlug: {
+					action: "スラッグを変更",
+					title: "スラッグを変更",
+					description: "このページへの既存リンクは利用できなくなります。",
+					placeholder: "new-slug",
+					validation: {
+						empty: "スラッグを入力してください",
+						tooLong: "スラッグは 64 文字以内である必要があります",
+						invalidChars:
+							"スラッグには英字、数字、ハイフン、アンダースコアのみ使用できます",
+					},
+				},
+				changeUsername: {
+					action: "ユーザー名を変更",
+					title: "ユーザー名を変更",
+					description:
+						"この操作を行うと、既存のページリンクは利用できなくなります。",
+					placeholder: "your-name",
+					warning:
+						"ユーザー名を変更すると、既存のページリンクは無効になります。",
+					validation: {
+						empty: "ユーザー名を入力してください",
+						tooShort: "ユーザー名は 3 文字以上である必要があります",
+						tooLong: "ユーザー名は 32 文字以内である必要があります",
+						invalidChars:
+							"ユーザー名には小文字の英字、数字、ハイフン、アンダースコアのみ使用できます",
+						taken: "そのユーザー名はすでに使われています",
 					},
 				},
 			},
