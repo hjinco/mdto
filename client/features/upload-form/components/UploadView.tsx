@@ -9,6 +9,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getIntlLocale } from "@/lib/language";
 import { cn } from "@/utils/styles";
 import { useMetaSymbol } from "../hooks/useMetaSymbol";
 
@@ -61,15 +62,7 @@ export function UploadView({
 		}
 		const date = new Date();
 		date.setDate(date.getDate() + expirationDays);
-		const language = i18n.resolvedLanguage ?? i18n.language;
-		const intlLocale =
-			language === "ko-kr"
-				? "ko-KR"
-				: language === "zh-cn"
-					? "zh-CN"
-					: language === "ja-jp"
-						? "ja-JP"
-						: "en-US";
+		const intlLocale = getIntlLocale(i18n.resolvedLanguage ?? i18n.language);
 		const dateStr = date.toLocaleDateString(intlLocale, {
 			weekday: "short",
 			month: "short",

@@ -1,26 +1,16 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { resources } from "./i18nResources";
+import {
+	isSupportedLanguage,
+	normalizeLanguage,
+	type SupportedLanguage,
+} from "./language";
 
-export type SupportedLanguage = "en" | "ko-kr" | "zh-cn" | "ja-jp";
+export { normalizeLanguage, type SupportedLanguage } from "./language";
 
 const STORAGE_KEY = "mdto.lang";
 let hasExplicitUserLanguageChoice = false;
-
-function isSupportedLanguage(lang: string): lang is SupportedLanguage {
-	return (
-		lang === "en" || lang === "ko-kr" || lang === "zh-cn" || lang === "ja-jp"
-	);
-}
-
-export function normalizeLanguage(input: string): SupportedLanguage {
-	const lower = input.trim().toLowerCase().replaceAll("_", "-");
-	if (lower === "en" || lower.startsWith("en-")) return "en";
-	if (lower === "ko" || lower.startsWith("ko-")) return "ko-kr";
-	if (lower === "zh" || lower.startsWith("zh-")) return "zh-cn";
-	if (lower === "ja" || lower.startsWith("ja-")) return "ja-jp";
-	return "en";
-}
 
 function getStoredLanguage(): SupportedLanguage | null {
 	if (typeof window === "undefined") return null;

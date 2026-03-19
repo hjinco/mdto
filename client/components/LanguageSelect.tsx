@@ -2,7 +2,8 @@ import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { changeLanguage, type SupportedLanguage } from "../lib/i18n";
+import { changeLanguage } from "../lib/i18n";
+import { normalizeLanguage, type SupportedLanguage } from "../lib/language";
 import { cn } from "../utils/styles";
 
 type LanguageOption = {
@@ -21,17 +22,7 @@ export function getResolvedLanguage(
 	language?: string,
 	resolvedLanguage?: string,
 ): SupportedLanguage {
-	const lang = (resolvedLanguage ?? language ?? "en").toLowerCase();
-	if (lang === "ko" || lang === "ko-kr" || lang.startsWith("ko-")) {
-		return "ko-kr";
-	}
-	if (lang === "zh" || lang === "zh-cn" || lang.startsWith("zh-")) {
-		return "zh-cn";
-	}
-	if (lang === "ja" || lang === "ja-jp" || lang.startsWith("ja-")) {
-		return "ja-jp";
-	}
-	return "en";
+	return normalizeLanguage(resolvedLanguage ?? language);
 }
 
 export function LanguageSelect({ className }: { className?: string }) {

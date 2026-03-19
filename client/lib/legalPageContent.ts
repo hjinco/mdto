@@ -1,4 +1,4 @@
-import type { SupportedLanguage } from "./i18n";
+import { normalizeLanguage, type SupportedLanguage } from "./language";
 
 export type LegalPageId = "privacy" | "terms";
 
@@ -681,37 +681,7 @@ const legalPageContent: Record<
 };
 
 export function resolveLegalPageLanguage(language?: string): SupportedLanguage {
-	const normalized = language?.trim().toLowerCase().replaceAll("_", "-");
-
-	if (!normalized) {
-		return "en";
-	}
-
-	if (
-		normalized === "ko" ||
-		normalized === "ko-kr" ||
-		normalized.startsWith("ko-")
-	) {
-		return "ko-kr";
-	}
-
-	if (
-		normalized === "zh" ||
-		normalized === "zh-cn" ||
-		normalized.startsWith("zh-")
-	) {
-		return "zh-cn";
-	}
-
-	if (
-		normalized === "ja" ||
-		normalized === "ja-jp" ||
-		normalized.startsWith("ja-")
-	) {
-		return "ja-jp";
-	}
-
-	return "en";
+	return normalizeLanguage(language);
 }
 
 export function getLegalPageContent(
