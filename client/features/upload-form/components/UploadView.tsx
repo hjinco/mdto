@@ -1,12 +1,18 @@
+import { Popover } from "@base-ui/react/popover";
 import {
 	Alert01Icon,
+	ArrowDown01Icon,
 	Eye,
 	File,
 	InformationCircleIcon,
 	Upload,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { THEME_OPTIONS, type ThemeId } from "@shared/themes/theme-registry";
+import {
+	OVERFLOW_THEME_OPTIONS,
+	PRIMARY_THEME_OPTIONS,
+	type ThemeId,
+} from "@shared/themes/theme-registry";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -55,7 +61,11 @@ export function UploadView({
 	const [isDragover, setIsDragover] = useState(false);
 	const metaSymbol = useMetaSymbol();
 	const [expirationDate, setExpirationDate] = useState("");
+	const [isThemePopoverOpen, setIsThemePopoverOpen] = useState(false);
 	const isPermanent = expirationDays === -1;
+	const selectedOverflowTheme = OVERFLOW_THEME_OPTIONS.find(
+		(option) => option.value === selectedTheme,
+	);
 
 	useEffect(() => {
 		if (isPermanent) {
@@ -135,6 +145,13 @@ export function UploadView({
 				"bg-primary! border-primary! text-white! scale-105 shadow-icon-selected",
 		);
 	};
+
+	const getThemeButtonClasses = (isActive: boolean) =>
+		cn(
+			"bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded cursor-pointer transition-all duration-200 font-sans flex-1 hover:text-text-secondary inline-flex items-center justify-center gap-1.5",
+			isActive &&
+				"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
+		);
 
 	return (
 		<div className="flex flex-col gap-1.5">
@@ -296,20 +313,82 @@ export function UploadView({
 					</div>
 				</div>
 				<div className="flex bg-surface border border-border rounded-md p-0.5 gap-0.5">
-					{THEME_OPTIONS.map((option) => (
+					{PRIMARY_THEME_OPTIONS.map((option) => (
 						<button
 							key={option.value}
 							type="button"
-							className={cn(
-								"bg-transparent border border-transparent text-text-tertiary text-xs font-medium py-1 px-2.5 rounded cursor-pointer transition-all duration-200 font-sans flex-1 hover:text-text-secondary",
-								selectedTheme === option.value &&
-									"bg-surface-highlight! text-text-primary! shadow-option-active border-white/5!",
-							)}
+							className={getThemeButtonClasses(selectedTheme === option.value)}
 							onClick={() => onThemeChange(option.value)}
 						>
 							{option.label}
 						</button>
 					))}
+					<Popover.Root
+						modal={false}
+						open={isThemePopoverOpen}
+						onOpenChange={setIsThemePopoverOpen}
+					>
+						<Popover.Trigger
+							render={(props) => (
+								<button
+									{...props}
+									type="button"
+									className={getThemeButtonClasses(!!selectedOverflowTheme)}
+									aria-label={t("upload.moreThemes")}
+								>
+									<span>
+										{selectedOverflowTheme?.label ?? t("upload.moreThemes")}
+									</span>
+									<HugeiconsIcon
+										icon={ArrowDown01Icon}
+										className={cn(
+											"w-3.5 h-3.5 transition-transform duration-200",
+											isThemePopoverOpen && "rotate-180",
+										)}
+									/>
+								</button>
+							)}
+						/>
+
+						<Popover.Portal>
+							<Popover.Positioner align="end" side="bottom" sideOffset={8}>
+								<Popover.Popup
+									className={cn(
+										"z-50 min-w-40 bg-surface-elevated border border-border rounded-lg shadow-card p-1",
+										"animate-fade-in",
+									)}
+								>
+									{OVERFLOW_THEME_OPTIONS.map((option) => (
+										<button
+											key={option.value}
+											type="button"
+											className={cn(
+												"w-full flex items-center justify-between gap-3 px-3 py-2 rounded-md",
+												"text-xs text-text-secondary transition-colors text-left cursor-pointer",
+												"hover:bg-surface-highlight hover:text-text-primary",
+												selectedTheme === option.value &&
+													"bg-surface-highlight text-text-primary",
+											)}
+											onClick={() => {
+												onThemeChange(option.value);
+												setIsThemePopoverOpen(false);
+											}}
+										>
+											<span>{option.label}</span>
+											{selectedTheme === option.value && (
+												<span
+													aria-hidden="true"
+													className="text-[10px] leading-none text-text-primary"
+												>
+													●
+												</span>
+											)}
+										</button>
+									))}
+								</Popover.Popup>
+							</Popover.Positioner>
+						</Popover.Portal>
+					</Popover.Root>
 				</div>
 			</div>
 
