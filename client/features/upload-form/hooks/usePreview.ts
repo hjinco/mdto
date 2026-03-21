@@ -1,10 +1,14 @@
 import { ViewTemplate } from "@shared/templates/view.template";
+import {
+	getThemeDefinition,
+	type ThemeId,
+} from "@shared/themes/theme-registry";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ParsedMarkdown } from "../components/MarkdownParser";
 
 interface UsePreviewProps {
 	parsed: ParsedMarkdown | null;
-	theme: string;
+	theme: ThemeId;
 	expirationDays: number;
 }
 
@@ -13,10 +17,7 @@ export function usePreview({ parsed, theme, expirationDays }: UsePreviewProps) {
 	const [error, setError] = useState<string | null>(null);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
 
-	const themeName = useMemo(
-		() => theme.charAt(0).toUpperCase() + theme.slice(1),
-		[theme],
-	);
+	const themeName = useMemo(() => getThemeDefinition(theme).label, [theme]);
 
 	useEffect(() => {
 		let isCancelled = false;

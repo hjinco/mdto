@@ -1,7 +1,7 @@
 /* @jsxRuntime automatic */
 /* @jsxImportSource hono/jsx */
-import { markdownToHtml } from "@shared/markdown";
-import { ViewTemplate } from "@shared/templates/view.template";
+import { markdownToHtml } from "../markdown";
+import { ViewTemplate } from "../templates/view.template";
 import type { ApiDocsAlternateLink } from "./api-docs";
 
 type RenderApiDocHtmlInput = {

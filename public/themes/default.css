@@ -1,9 +1,12 @@
+/* Generated theme bundle for "default". Do not edit directly. */
+
+/* Source: theme/tokens/default.css */
 :root {
 	--bg-root: #ffffff;
 	--bg-card: #f7f8f9;
 	--border-subtle: #ebecf0;
 	--text-primary: #1a1b1e;
-	--text-secondary: #5e6ad2; /* Accent usage for links/subtlety */
+	--text-secondary: #5e6ad2;
 	--text-tertiary: #6b7280;
 	--primary-color: #5e6ad2;
 	--code-bg: #f7f8f9;
@@ -25,6 +28,7 @@
 		--shadow-card: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 }
+
 :root[data-theme="dark"] {
 	--bg-root: #0b0c0e;
 	--bg-card: #141518;
@@ -38,6 +42,58 @@
 	--shadow-card: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Source: theme/base.css */
+.content {
+	flex: 1;
+}
+
+.top-actions {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.export-container {
+	position: relative;
+}
+
+.export-option span {
+	flex: 1;
+}
+
+.export-option.copied .option-icon {
+	display: none;
+}
+
+.export-option.copied .option-check {
+	display: block;
+}
+
+.mermaid {
+	text-align: center;
+}
+
+@media print {
+	.top-actions {
+		display: none;
+	}
+
+	footer {
+		display: none;
+	}
+
+	:root,
+	body {
+		background-color: var(--bg-root);
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+}
+
+/* Source: theme/presets/article.css */
 body {
 	font-family:
 		"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -58,10 +114,6 @@ body {
 	transition:
 		background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
 		color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.content {
-	flex: 1;
 }
 
 .frontmatter-container {
@@ -111,9 +163,11 @@ body {
 	border-bottom: 1px solid var(--border-subtle);
 	padding-bottom: 0.5em;
 }
+
 .content h2 {
 	font-size: 1.5em;
 }
+
 .content h3,
 .content h4,
 .content h5,
@@ -250,15 +304,6 @@ footer a:hover {
 	color: var(--text-primary);
 }
 
-.top-actions {
-	position: absolute;
-	top: 16px;
-	right: 16px;
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
 .top-actions button {
 	display: flex;
 	align-items: center;
@@ -285,7 +330,104 @@ footer a:hover {
 	height: 16px;
 }
 
-/* TOC (default theme only) */
+.export-btn {
+	display: flex;
+	align-items: center;
+	padding: 8px;
+	background-color: transparent;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	cursor: pointer;
+	color: var(--text-primary);
+	opacity: 0.7;
+	transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+	background-color: var(--bg-card);
+	border-color: var(--border-subtle);
+	opacity: 1;
+}
+
+.export-btn svg {
+	width: 18px;
+	height: 18px;
+}
+
+.export-dropdown {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: 0;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-subtle);
+	border-radius: 8px;
+	box-shadow:
+		0 0 0 1px rgba(0, 0, 0, 0.04),
+		0 4px 8px rgba(0, 0, 0, 0.06),
+		0 12px 24px rgba(0, 0, 0, 0.08);
+	min-width: 180px;
+	padding: 6px;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(-8px) scale(0.96);
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 100;
+	transform-origin: top right;
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+}
+
+.export-dropdown.show {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0) scale(1);
+}
+
+.export-option {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 7px 10px;
+	background: transparent;
+	border: none;
+	border-radius: 6px;
+	text-align: left;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--text-primary);
+	transition: all 0.1s ease;
+	position: relative;
+}
+
+.export-option:hover {
+	background-color: rgba(94, 106, 210, 0.1);
+	color: var(--primary-color);
+}
+
+.export-option .option-icon {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	opacity: 0.6;
+	stroke-width: 2;
+	transition: opacity 0.1s ease;
+}
+
+.export-option:hover .option-icon {
+	opacity: 1;
+}
+
+.export-option .option-check {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+	display: none;
+	stroke-width: 2.5;
+}
+
+/* Source: theme/features/default.css */
 .toc-toggle {
 	position: fixed;
 	top: 16px;
@@ -391,15 +533,19 @@ footer a:hover {
 .toc-item[data-level="2"] .toc-link {
 	padding-left: 8px;
 }
+
 .toc-item[data-level="3"] .toc-link {
 	padding-left: 20px;
 }
+
 .toc-item[data-level="4"] .toc-link {
 	padding-left: 32px;
 }
+
 .toc-item[data-level="5"] .toc-link {
 	padding-left: 44px;
 }
+
 .toc-item[data-level="6"] .toc-link {
 	padding-left: 56px;
 }
@@ -419,32 +565,10 @@ body.toc-open .toc-toggle {
 	pointer-events: none;
 }
 
-@media print {
-	.top-actions {
-		display: none;
-	}
-
-	.toc-toggle,
-	.toc-panel,
-	.toc-backdrop {
-		display: none;
-	}
-
-	footer {
-		display: none;
-	}
-
-	:root,
-	body {
-		background-color: var(--bg-root);
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
-	}
-}
-
 .theme-toggle .icon-sun {
 	display: none;
 }
+
 .theme-toggle .icon-moon {
 	display: block;
 }
@@ -452,6 +576,7 @@ body.toc-open .toc-toggle {
 :root[data-theme="dark"] .theme-toggle .icon-sun {
 	display: block;
 }
+
 :root[data-theme="dark"] .theme-toggle .icon-moon {
 	display: none;
 }
@@ -460,60 +585,10 @@ body.toc-open .toc-toggle {
 	:root:not([data-theme="light"]) .theme-toggle .icon-sun {
 		display: block;
 	}
+
 	:root:not([data-theme="light"]) .theme-toggle .icon-moon {
 		display: none;
 	}
-}
-
-.export-container {
-	position: relative;
-}
-
-.export-btn {
-	display: flex;
-	align-items: center;
-	padding: 8px;
-	background-color: transparent;
-	border: 1px solid transparent;
-	border-radius: 6px;
-	cursor: pointer;
-	color: var(--text-primary);
-	opacity: 0.7;
-	transition: all 0.2s ease;
-}
-
-.export-btn:hover {
-	background-color: var(--bg-card);
-	border-color: var(--border-subtle);
-	opacity: 1;
-}
-
-.export-btn svg {
-	width: 18px;
-	height: 18px;
-}
-
-.export-dropdown {
-	position: absolute;
-	top: calc(100% + 4px);
-	right: 0;
-	background-color: var(--bg-card);
-	border: 1px solid var(--border-subtle);
-	border-radius: 8px;
-	box-shadow:
-		0 0 0 1px rgba(0, 0, 0, 0.04),
-		0 4px 8px rgba(0, 0, 0, 0.06),
-		0 12px 24px rgba(0, 0, 0, 0.08);
-	min-width: 180px;
-	padding: 6px;
-	opacity: 0;
-	visibility: hidden;
-	transform: translateY(-8px) scale(0.96);
-	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-	z-index: 100;
-	transform-origin: top right;
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
 }
 
 :root[data-theme="dark"] .export-dropdown {
@@ -525,75 +600,17 @@ body.toc-open .toc-toggle {
 		0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
-.export-dropdown.show {
-	opacity: 1;
-	visibility: visible;
-	transform: translateY(0) scale(1);
-}
-
-.export-option {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	width: 100%;
-	padding: 7px 10px;
-	background: transparent;
-	border: none;
-	border-radius: 6px;
-	text-align: left;
-	cursor: pointer;
-	font-size: 13px;
-	font-weight: 500;
-	color: var(--text-primary);
-	transition: all 0.1s ease;
-	position: relative;
-}
-
-.export-option:hover {
-	background-color: rgba(94, 106, 210, 0.1);
-	color: var(--primary-color);
-}
-
 :root[data-theme="dark"] .export-option:hover {
 	background-color: rgba(127, 138, 239, 0.15);
 	color: var(--primary-color);
 }
 
-.export-option .option-icon {
-	width: 16px;
-	height: 16px;
-	flex-shrink: 0;
-	opacity: 0.6;
-	stroke-width: 2;
-	transition: opacity 0.1s ease;
-}
-
-.export-option:hover .option-icon {
-	opacity: 1;
-}
-
-.export-option span {
-	flex: 1;
-}
-
-.export-option .option-check {
-	width: 16px;
-	height: 16px;
-	flex-shrink: 0;
-	display: none;
-	stroke-width: 2.5;
-}
-
-.export-option.copied .option-icon {
-	display: none;
-}
-
-.export-option.copied .option-check {
-	display: block;
-}
-
-.mermaid {
-	text-align: center;
+@media print {
+	.toc-toggle,
+	.toc-panel,
+	.toc-backdrop {
+		display: none;
+	}
 }
 
 @media (min-width: 1280px) {
@@ -632,15 +649,19 @@ body.toc-open .toc-toggle {
 	.toc-item[data-level="2"] .toc-link {
 		padding-left: 0;
 	}
+
 	.toc-item[data-level="3"] .toc-link {
 		padding-left: 12px;
 	}
+
 	.toc-item[data-level="4"] .toc-link {
 		padding-left: 24px;
 	}
+
 	.toc-item[data-level="5"] .toc-link {
 		padding-left: 36px;
 	}
+
 	.toc-item[data-level="6"] .toc-link {
 		padding-left: 48px;
 	}

@@ -1,6 +1,7 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { getApiDocsHref } from "@shared/docs/api-docs";
+import type { ThemeId } from "@shared/themes/theme-registry";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,7 +45,7 @@ export const Route = createFileRoute("/")({
 function Home() {
 	const { t, i18n } = useTranslation();
 	const [expirationDays, setExpirationDays] = useState(30);
-	const [selectedTheme, setSelectedTheme] = useState("default");
+	const [selectedTheme, setSelectedTheme] = useState<ThemeId>("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);

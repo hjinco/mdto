@@ -1,22 +1,8 @@
 /* @jsxRuntime automatic */
 /* @jsxImportSource hono/jsx */
-import { raw } from "hono/html";
 
-/**
- * Get theme CSS paths with fallback to default theme
- * @param theme - Theme name
- * @returns Object with themePath and hljsThemePath
- */
-function getThemePaths(theme: string): {
-	themePath: string;
-	hljsThemePath: string;
-} {
-	const normalizedTheme = theme || "default";
-	return {
-		themePath: `/themes/${normalizedTheme}.css`,
-		hljsThemePath: `/themes/${normalizedTheme}.hljs.css`,
-	};
-}
+import { raw } from "hono/html";
+import { getThemeDefinition, getThemePaths } from "../themes/theme-registry";
 
 const defaultDescription =
 	"Convert and share your markdown files as beautiful HTML pages";
@@ -574,9 +560,9 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 		canonicalUrl,
 		alternateLinks,
 	} = options;
+	const themeDefinition = getThemeDefinition(theme);
 	const { themePath, hljsThemePath } = getThemePaths(theme);
 	const metaDescription = description || defaultDescription;
-	const isDefaultTheme = theme === "default";
 
 	return (
 		<html lang={lang || "en"}>
@@ -612,12 +598,14 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 					/>
 				)}
 			</head>
-			<body class={`theme-${theme}`}>
+			<body class={`theme-${themeDefinition.id}`}>
 				<div class="top-actions">
 					<ExportButton markdown={markdown} />
-					<ThemeToggleButton show={theme !== "resume" && theme !== "matrix"} />
+					<ThemeToggleButton
+						show={themeDefinition.features.showColorModeToggle}
+					/>
 				</div>
-				{isDefaultTheme && (
+				{themeDefinition.features.showToc && (
 					<>
 						<button
 							type="button"
@@ -654,7 +642,10 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 				)}
 				<div class="content">{raw(htmlContent)}</div>
 				<Footer expiresAt={expiresAt} />
-				<Scripts hasMermaid={hasMermaid} hasToc={isDefaultTheme} />
+				<Scripts
+					hasMermaid={hasMermaid}
+					hasToc={themeDefinition.features.showToc}
+				/>
 			</body>
 		</html>
 	);
