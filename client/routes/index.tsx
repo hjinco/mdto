@@ -292,11 +292,7 @@ function Home() {
 					{/* Footer - Only visible in centered mode or right pane */}
 					{!uploadedUrl && (
 						<div className="hidden md:block mt-4 text-center text-xs text-text-tertiary opacity-60 transition-opacity duration-200 hover:opacity-100">
-							Press{" "}
-							<span className="bg-white/5 border border-border rounded px-1.5 py-0.5 ml-1.5 text-[10px] align-middle text-text-secondary font-inherit">
-								⌘ O
-							</span>{" "}
-							to browse files
+							{t("home.browseFilesHint", { shortcut: "⌘ O" })}
 						</div>
 					)}
 
@@ -330,10 +326,10 @@ function Home() {
 							target="_blank"
 							rel="noopener noreferrer"
 							className="flex items-center gap-1.5 text-xs text-text-tertiary no-underline opacity-60 transition-[opacity,color] duration-200 hover:opacity-100 hover:text-text-secondary"
-							title="View on GitHub"
+							title={t("footer.viewOnGithub")}
 						>
 							<HugeiconsIcon icon={Github} className="w-4 h-4" />
-							<span>GitHub</span>
+							<span>{t("footer.github")}</span>
 						</a>
 					</div>
 				</div>

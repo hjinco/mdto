@@ -43,9 +43,12 @@
 	"dependencies": {
 		"@base-ui/react": "^1.1.0",
 		"@better-auth/api-key": "^1.5.5",
+		"@better-auth/oauth-provider": "^1.5.5",
 		"@flowershow/remark-wiki-link": "^3.3.1",
+		"@hono/mcp": "^0.2.4",
 		"@hugeicons/core-free-icons": "^3.1.1",
 		"@hugeicons/react": "^1.1.4",
+		"@modelcontextprotocol/sdk": "^1.27.1",
 		"@posthog/react": "^1.5.2",
 		"@tanstack/react-query": "^5.90.20",
 		"@tanstack/react-router": "^1.156.0",

@@ -101,8 +101,13 @@ export const Route = createRootRoute({
 		],
 	}),
 	component: RootLayout,
-	notFoundComponent: () => <div>Not Found</div>,
+	notFoundComponent: NotFoundPage,
 });
+
+function NotFoundPage() {
+	const { t } = useTranslation();
+	return <div>{t("notFound.title")}</div>;
+}
 
 function ClientI18nBootstrap() {
 	const { i18n } = useTranslation();
