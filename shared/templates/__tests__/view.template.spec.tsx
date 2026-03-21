@@ -23,20 +23,23 @@ describe("ViewTemplate mermaid rendering", () => {
 	});
 
 	it("renders the generated theme and hljs assets for the selected theme", () => {
-		const html = `<!DOCTYPE html>${<ViewTemplate title="Test" html="<p>content</p>" theme="matrix" />}`;
+		const html = `<!DOCTYPE html>${<ViewTemplate title="Test" html="<p>content</p>" theme="github" />}`;
 
-		expect(html).toContain('<link rel="stylesheet" href="/themes/matrix.css"');
+		expect(html).toContain('<link rel="stylesheet" href="/themes/github.css"');
 		expect(html).toContain(
-			'<link rel="stylesheet" href="/themes/matrix.hljs.css"',
+			'<link rel="stylesheet" href="/themes/github.hljs.css"',
 		);
 	});
 
 	it("only renders toc and theme toggle for themes that enable them", () => {
 		const defaultHtml = `<!DOCTYPE html>${<ViewTemplate title="Default" html="<h1>Heading</h1>" theme="default" />}`;
+		const githubHtml = `<!DOCTYPE html>${<ViewTemplate title="GitHub" html="<h1>Heading</h1>" theme="github" />}`;
 		const resumeHtml = `<!DOCTYPE html>${<ViewTemplate title="Resume" html="<h1>Heading</h1>" theme="resume" />}`;
 
 		expect(defaultHtml).toContain('id="theme-toggle"');
 		expect(defaultHtml).toContain('id="toc-toggle"');
+		expect(githubHtml).toContain('id="theme-toggle"');
+		expect(githubHtml).not.toContain('id="toc-toggle"');
 		expect(resumeHtml).not.toContain('id="theme-toggle"');
 		expect(resumeHtml).not.toContain('id="toc-toggle"');
 	});

@@ -1,4 +1,4 @@
-export const THEME_IDS = ["default", "resume", "matrix"] as const;
+export const THEME_IDS = ["default", "resume", "github", "matrix"] as const;
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
@@ -58,6 +58,21 @@ export const THEMES: Record<ThemeId, ThemeDefinition> = {
 			showColorModeToggle: false,
 		},
 	},
+	github: {
+		id: "github",
+		label: "GitHub",
+		themeFragments: [
+			"theme/tokens/github.css",
+			"theme/base.css",
+			"theme/presets/github.css",
+			"theme/features/default.css",
+		],
+		hljsFragments: ["hljs/base.css", "hljs/variants/github.css"],
+		features: {
+			showToc: false,
+			showColorModeToggle: true,
+		},
+	},
 	matrix: {
 		id: "matrix",
 		label: "Matrix",
@@ -88,6 +103,19 @@ export function getThemePaths(value?: string | null) {
 }
 
 export const THEME_OPTIONS = THEME_IDS.map((id) => ({
+	value: id,
+	label: THEMES[id].label,
+}));
+
+const PRIMARY_THEME_IDS = ["default", "resume", "github"] as const;
+const OVERFLOW_THEME_IDS = ["matrix"] as const;
+
+export const PRIMARY_THEME_OPTIONS = PRIMARY_THEME_IDS.map((id) => ({
+	value: id,
+	label: THEMES[id].label,
+}));
+
+export const OVERFLOW_THEME_OPTIONS = OVERFLOW_THEME_IDS.map((id) => ({
 	value: id,
 	label: THEMES[id].label,
 }));
