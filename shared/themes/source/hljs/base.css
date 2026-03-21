@@ -1,0 +1,18 @@
+pre {
+	background-color: var(--code-bg);
+	border: 1px solid var(--code-border);
+	overflow-x: auto;
+	margin-bottom: 1.5em;
+}
+
+pre code,
+pre code.hljs {
+	display: block;
+	overflow-x: auto;
+	padding: 1em;
+	background-color: transparent;
+	color: inherit;
+	border: none;
+	font-size: 0.85em;
+	font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+}

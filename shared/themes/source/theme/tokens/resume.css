@@ -1,0 +1,11 @@
+:root {
+	--bg-root: #ffffff;
+	--bg-card: #f7f7f7;
+	--text-primary: #1f2023;
+	--text-secondary: #5f636a;
+	--border-subtle: #e5e5e5;
+	--primary-color: #000000;
+	--code-bg: #f7f7f7;
+	--code-border: #e5e5e5;
+	--shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+}

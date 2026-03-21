@@ -1,4 +1,5 @@
 import { markdownToHtml } from "@shared/markdown";
+import { THEME_IDS } from "@shared/themes/theme-registry";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -6,7 +7,7 @@ export const MAX_UPLOAD_SIZE = 100_000; // 100KB
 export const MAX_ACTIVE_PAGES_PER_USER = 10;
 export const DAY_MS = 24 * 60 * 60 * 1000;
 
-export const themeSchema = z.enum(["default", "resume", "matrix"]);
+export const themeSchema = z.enum(THEME_IDS);
 export const expirationDaysSchema = z.union([
 	z.literal(1),
 	z.literal(7),

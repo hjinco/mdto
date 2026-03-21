@@ -6,6 +6,7 @@ import {
 	Upload,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { THEME_OPTIONS, type ThemeId } from "@shared/themes/theme-registry";
 import type { RefObject } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -17,7 +18,7 @@ interface UploadViewProps {
 	selectedFile: File | null;
 	expirationDays: number;
 	isAuthenticated: boolean;
-	selectedTheme: string;
+	selectedTheme: ThemeId;
 	isUploading: boolean;
 	uploadError: string | null;
 	hasWikiLink: boolean;
@@ -27,7 +28,7 @@ interface UploadViewProps {
 	turnstileToken: string | null;
 	onFileSelect: (file: File) => void;
 	onExpirationChange: (days: number) => void;
-	onThemeChange: (theme: string) => void;
+	onThemeChange: (theme: ThemeId) => void;
 	onPreview: () => void;
 	onUpload: () => void;
 }
@@ -295,11 +296,7 @@ export function UploadView({
 					</div>
 				</div>
 				<div className="flex bg-surface border border-border rounded-md p-0.5 gap-0.5">
-					{[
-						{ value: "default", label: "Default" },
-						{ value: "resume", label: "Resume" },
-						{ value: "matrix", label: "Matrix" },
-					].map((option) => (
+					{THEME_OPTIONS.map((option) => (
 						<button
 							key={option.value}
 							type="button"

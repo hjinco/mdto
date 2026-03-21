@@ -1,3 +1,4 @@
+import { resolveThemeId, type ThemeId } from "@shared/themes/theme-registry";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useTurnstile } from "react-turnstile";
@@ -6,13 +7,6 @@ import { trpc } from "@/utils/trpc";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const VALID_PUBLIC_EXPIRATION_DAYS = [1, 7, 14, 30] as const;
 type PublicExpirationDays = (typeof VALID_PUBLIC_EXPIRATION_DAYS)[number];
-type Theme = "default" | "resume" | "matrix";
-
-function toTheme(theme: string): Theme {
-	if (theme === "default" || theme === "resume" || theme === "matrix")
-		return theme;
-	return "default";
-}
 
 function toPublicExpirationDays(days: number): PublicExpirationDays {
 	if ((VALID_PUBLIC_EXPIRATION_DAYS as readonly number[]).includes(days)) {
@@ -30,7 +24,7 @@ function getTrpcHttpStatus(error: unknown): number | null {
 interface UseUploadOptions {
 	file: File | null;
 	expirationDays: number;
-	theme: string;
+	theme: ThemeId;
 	turnstileToken: string | null;
 	isAuthenticated: boolean;
 	onSuccess: () => void;
@@ -79,7 +73,7 @@ export function useUpload({
 
 		try {
 			const markdown = await file.text();
-			const coercedTheme = toTheme(theme);
+			const coercedTheme = resolveThemeId(theme);
 
 			const path = isAuthenticated
 				? (

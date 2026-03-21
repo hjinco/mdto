@@ -1,5 +1,6 @@
 import { Close } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { ThemeId } from "@shared/themes/theme-registry";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/utils/styles";
@@ -8,7 +9,7 @@ import type { ParsedMarkdown } from "./MarkdownParser";
 
 interface PreviewPaneProps {
 	parsed: ParsedMarkdown | null;
-	theme: string;
+	theme: ThemeId;
 	expirationDays: number;
 	onClose: () => void;
 	onLoadingChange: (isLoading: boolean) => void;

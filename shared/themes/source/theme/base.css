@@ -1,0 +1,49 @@
+.content {
+	flex: 1;
+}
+
+.top-actions {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.export-container {
+	position: relative;
+}
+
+.export-option span {
+	flex: 1;
+}
+
+.export-option.copied .option-icon {
+	display: none;
+}
+
+.export-option.copied .option-check {
+	display: block;
+}
+
+.mermaid {
+	text-align: center;
+}
+
+@media print {
+	.top-actions {
+		display: none;
+	}
+
+	footer {
+		display: none;
+	}
+
+	:root,
+	body {
+		background-color: var(--bg-root);
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+}
