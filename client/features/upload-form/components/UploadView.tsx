@@ -326,9 +326,7 @@ export function UploadView({
 					<Popover.Root
 						modal={false}
 						open={isThemePopoverOpen}
-						onOpenChange={(open) => {
-							setIsThemePopoverOpen(open);
-						}}
+						onOpenChange={setIsThemePopoverOpen}
 					>
 						<Popover.Trigger
 							render={(props) => (

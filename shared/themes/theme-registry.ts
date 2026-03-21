@@ -108,7 +108,9 @@ export const THEME_OPTIONS = THEME_IDS.map((id) => ({
 }));
 
 const PRIMARY_THEME_IDS = ["default", "resume", "github"] as const;
-const OVERFLOW_THEME_IDS = ["matrix"] as const;
+const OVERFLOW_THEME_IDS = THEME_IDS.filter(
+	(id) => !(PRIMARY_THEME_IDS as readonly string[]).includes(id),
+);
 
 export const PRIMARY_THEME_OPTIONS = PRIMARY_THEME_IDS.map((id) => ({
 	value: id,
