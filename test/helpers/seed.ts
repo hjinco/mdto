@@ -24,6 +24,15 @@ export function createTestDb(db: D1Database) {
 
 export async function resetData(db: ReturnType<typeof createTestDb>) {
 	await db.delete(schema.page);
+	await db.delete(schema.oauthAccessToken);
+	await db.delete(schema.oauthRefreshToken);
+	await db.delete(schema.oauthConsent);
+	await db.delete(schema.oauthClient);
+	await db.delete(schema.apikey);
+	await db.delete(schema.account);
+	await db.delete(schema.session);
+	await db.delete(schema.jwks);
+	await db.delete(schema.verification);
 	await db.delete(schema.user);
 }
 
@@ -153,5 +162,62 @@ export function createMockSession(user: {
 			name: user.name,
 			image: null,
 		},
+	};
+}
+
+export async function seedSessionForUser(
+	db: ReturnType<typeof createTestDb>,
+	user: {
+		id: string;
+	},
+	input?: {
+		id?: string;
+		expiresAt?: Date;
+		token?: string;
+	},
+) {
+	const now = new Date();
+	const expiresAt =
+		input?.expiresAt ?? new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+	const sessionId = input?.id ?? `session_${user.id}`;
+	await db.insert(schema.session).values({
+		id: sessionId,
+		userId: user.id,
+		token: input?.token ?? `token_${sessionId}`,
+		ipAddress: null,
+		userAgent: null,
+		createdAt: now,
+		updatedAt: now,
+		expiresAt,
+	});
+
+	return {
+		id: sessionId,
+		expiresAt,
+	};
+}
+
+export async function seedOauthClient(
+	db: ReturnType<typeof createTestDb>,
+	input: {
+		clientId: string;
+		userId: string;
+		disabled?: boolean;
+		redirectUris?: string[];
+	},
+) {
+	const now = new Date();
+	await db.insert(schema.oauthClient).values({
+		id: `oauth_client_${input.clientId}`,
+		clientId: input.clientId,
+		userId: input.userId,
+		disabled: input.disabled ?? false,
+		redirectUris: input.redirectUris ?? ["https://example.com/callback"],
+		createdAt: now,
+		updatedAt: now,
+	});
+
+	return {
+		clientId: input.clientId,
 	};
 }

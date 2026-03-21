@@ -29,6 +29,13 @@
 			"when": 1773540438981,
 			"tag": "0003_abnormal_red_ghost",
 			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "6",
+			"when": 1773899798916,
+			"tag": "0004_moaning_omega_flight",
+			"breakpoints": true
 		}
 	]
 }
