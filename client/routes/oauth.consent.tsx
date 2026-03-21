@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getSignedOAuthQuery } from "../lib/oauthSignedQuery";
 
 export const Route = createFileRoute("/oauth/consent")({
@@ -12,6 +13,7 @@ type ConsentResponse = {
 };
 
 function OAuthConsentPage() {
+	const { t } = useTranslation();
 	const [error, setError] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [oauthQuery, setOauthQuery] = useState("");
@@ -46,12 +48,12 @@ function OAuthConsentPage() {
 			});
 			const payload = (await response.json()) as ConsentResponse;
 			if (!response.ok) {
-				throw new Error("Failed to process OAuth consent");
+				throw new Error(t("oauth.consent.errors.processConsent"));
 			}
 
 			const redirectUrl = payload.redirect_uri ?? payload.url;
 			if (!redirectUrl) {
-				throw new Error("Missing OAuth redirect URL");
+				throw new Error(t("oauth.consent.errors.missingRedirectUrl"));
 			}
 
 			window.location.assign(redirectUrl);
@@ -59,7 +61,7 @@ function OAuthConsentPage() {
 			setError(
 				caughtError instanceof Error
 					? caughtError.message
-					: "Failed to process OAuth consent",
+					: t("oauth.consent.errors.processConsent"),
 			);
 			setIsSubmitting(false);
 		}
@@ -68,14 +70,16 @@ function OAuthConsentPage() {
 	return (
 		<main className="min-h-screen bg-background text-text-primary flex items-center justify-center px-6">
 			<div className="w-full max-w-xl rounded-2xl border border-border bg-surface p-8 shadow-dialog">
-				<h1 className="text-2xl font-semibold">Authorize mdto access</h1>
+				<h1 className="text-2xl font-semibold">{t("oauth.consent.title")}</h1>
 				<p className="mt-3 text-sm text-text-secondary">
-					Client{" "}
-					<span className="font-medium text-text-primary">{clientId}</span> is
-					requesting access to your mdto account.
+					{t("oauth.consent.description", {
+						clientId: clientId ?? "unknown",
+					})}
 				</p>
 				<div className="mt-6 rounded-xl border border-border bg-background px-4 py-4">
-					<p className="text-sm font-medium">Requested scopes</p>
+					<p className="text-sm font-medium">
+						{t("oauth.consent.requestedScopes")}
+					</p>
 					<ul className="mt-3 space-y-2 text-sm text-text-secondary">
 						{requestedScopes.map((scope) => (
 							<li key={scope}>{scope}</li>
@@ -90,7 +94,7 @@ function OAuthConsentPage() {
 						disabled={isSubmitting}
 						className="inline-flex h-11 flex-1 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium text-text-primary transition-colors hover:bg-background disabled:opacity-60"
 					>
-						Deny
+						{t("oauth.consent.deny")}
 					</button>
 					<button
 						type="button"
@@ -98,7 +102,7 @@ function OAuthConsentPage() {
 						disabled={isSubmitting}
 						className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-text-primary px-4 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
 					>
-						Allow
+						{t("oauth.consent.allow")}
 					</button>
 				</div>
 			</div>

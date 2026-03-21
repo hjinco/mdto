@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { authClient } from "../lib/auth-client";
 import { getSignedOAuthQuery } from "../lib/oauthSignedQuery";
 
@@ -13,6 +14,7 @@ type ContinueResponse = {
 };
 
 function OAuthLoginPage() {
+	const { t } = useTranslation();
 	const { data: session, isPending } = authClient.useSession();
 	const [error, setError] = useState<string | null>(null);
 	const [isContinuing, setIsContinuing] = useState(false);
@@ -41,12 +43,12 @@ function OAuthLoginPage() {
 			.then(async (response) => {
 				const payload = (await response.json()) as ContinueResponse;
 				if (!response.ok) {
-					throw new Error("Failed to continue OAuth authorization");
+					throw new Error(t("oauth.login.errors.continueAuthorization"));
 				}
 
 				const redirectUrl = payload.redirect_uri ?? payload.url;
 				if (!redirectUrl) {
-					throw new Error("Missing OAuth redirect URL");
+					throw new Error(t("oauth.login.errors.missingRedirectUrl"));
 				}
 
 				window.location.assign(redirectUrl);
@@ -55,11 +57,11 @@ function OAuthLoginPage() {
 				setError(
 					caughtError instanceof Error
 						? caughtError.message
-						: "Failed to continue OAuth authorization",
+						: t("oauth.login.errors.continueAuthorization"),
 				);
 				setIsContinuing(false);
 			});
-	}, [isContinuing, oauthQuery, session?.user]);
+	}, [isContinuing, oauthQuery, session?.user, t]);
 
 	const handleGithubLogin = async () => {
 		setError(null);
@@ -72,16 +74,16 @@ function OAuthLoginPage() {
 	return (
 		<main className="min-h-screen bg-background text-text-primary flex items-center justify-center px-6">
 			<div className="w-full max-w-md rounded-2xl border border-border bg-surface p-8 shadow-dialog">
-				<h1 className="text-2xl font-semibold">Sign in to continue</h1>
+				<h1 className="text-2xl font-semibold">{t("oauth.login.title")}</h1>
 				<p className="mt-3 text-sm text-text-secondary">
-					mdto MCP access requires an authenticated account.
+					{t("oauth.login.description")}
 				</p>
 				{error ? <p className="mt-4 text-sm text-red-500">{error}</p> : null}
 				{session?.user ? (
 					<p className="mt-6 text-sm text-text-secondary">
 						{isContinuing
-							? "Continuing OAuth authorization..."
-							: "Signed in. Redirecting..."}
+							? t("oauth.login.continuing")
+							: t("oauth.login.redirecting")}
 					</p>
 				) : (
 					<button
@@ -90,7 +92,7 @@ function OAuthLoginPage() {
 						disabled={isPending}
 						className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#24292e] px-4 text-sm font-medium text-white transition-colors hover:bg-[#2f363d] disabled:opacity-60"
 					>
-						Continue with GitHub
+						{t("oauth.login.continueWithGithub")}
 					</button>
 				)}
 			</div>
