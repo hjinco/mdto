@@ -1,7 +1,7 @@
 import notFoundPage from "@shared/templates/not-found.html";
 import { getTemplateHash } from "@shared/templates/template-hash.generated";
 import { ViewTemplate } from "@shared/templates/view.template";
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { db } from "../db/client";
 import { createViewService } from "../services/view.service";
 import { cacheControlHeader, generateETag } from "../utils/cache";
@@ -16,7 +16,7 @@ const HTML_TEMPLATE_HASH = getTemplateHash();
 const RAW_MARKDOWN_TEMPLATE_HASH = "raw-markdown";
 const MARKDOWN_SUFFIX = ".md";
 
-type ViewContext = Parameters<Parameters<typeof viewRouter.get>[1]>[0];
+type ViewContext = Context<{ Bindings: Env }>;
 
 function getCache() {
 	return (caches as unknown as { default: Cache }).default;
@@ -149,6 +149,9 @@ viewRouter.get("/:prefix{^(1[Ee]|1|7|[Ee])$}/:slug", async (c) => {
 	}
 
 	if (isMarkdownRequest) {
+		if (!markdown) {
+			return c.html(notFoundPage, 404);
+		}
 		setCachingHeaders(c, etag);
 		const response = markdownResponse(c, markdown);
 		cacheResponse(c, cacheKey, response);
