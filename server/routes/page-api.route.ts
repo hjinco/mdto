@@ -5,7 +5,7 @@ import { auth } from "../lib/auth";
 import { createUserRepo } from "../repositories/user.repo";
 import { createManagedPageService } from "../services/managed-page.service";
 import { pageSlugSchema, themeSchema } from "../services/page-content.service";
-import { purgePathsFromCache } from "../utils/cache";
+import { getViewCachePaths, purgePathsFromCache } from "../utils/cache";
 
 const createPageBodySchema = z.object({
 	markdown: z.string(),
@@ -140,8 +140,8 @@ pageApiRouter.put("/:id", async (c) => {
 			user,
 		);
 		await purgePathsFromCache(c.req.url, [
-			`/${user.name}/${result.previousSlug}`,
-			result.page.path,
+			...getViewCachePaths(`/${user.name}/${result.previousSlug}`),
+			...getViewCachePaths(result.page.path),
 		]);
 		return c.json(result.page);
 	} catch (error) {
@@ -164,7 +164,9 @@ pageApiRouter.delete("/:id", async (c) => {
 			user.id,
 			c.req.param("id"),
 		);
-		await purgePathsFromCache(c.req.url, [`/${user.name}/${result.slug}`]);
+		await purgePathsFromCache(c.req.url, [
+			...getViewCachePaths(`/${user.name}/${result.slug}`),
+		]);
 		return c.json(result);
 	} catch (error) {
 		const typedError = error as { code?: string; message?: string };

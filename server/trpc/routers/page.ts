@@ -2,7 +2,7 @@ import { z } from "zod";
 import { db } from "../../db/client";
 import { createManagedPageService } from "../../services/managed-page.service";
 import { createPageQueryService } from "../../services/page-query.service";
-import { purgePathsFromCache } from "../../utils/cache";
+import { getViewCachePaths, purgePathsFromCache } from "../../utils/cache";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const pageRouter = router({
@@ -35,7 +35,7 @@ export const pageRouter = router({
 				input.id,
 			);
 			await purgePathsFromCache(ctx.req.url, [
-				`/${ctx.session.user.name}/${result.slug}`,
+				...getViewCachePaths(`/${ctx.session.user.name}/${result.slug}`),
 			]);
 			return result;
 		}),
@@ -59,8 +59,10 @@ export const pageRouter = router({
 				input.slug,
 			);
 			await purgePathsFromCache(ctx.req.url, [
-				`/${ctx.session.user.name}/${result.previousSlug}`,
-				result.path,
+				...getViewCachePaths(
+					`/${ctx.session.user.name}/${result.previousSlug}`,
+				),
+				...getViewCachePaths(result.path),
 			]);
 			return result;
 		}),

@@ -20,7 +20,7 @@ import { db } from "../db/client";
 import { createManagedPageService } from "../services/managed-page.service";
 import { pageSlugSchema, themeSchema } from "../services/page-content.service";
 import { createUserService } from "../services/user.service";
-import { purgePathsFromCache } from "../utils/cache";
+import { getViewCachePaths, purgePathsFromCache } from "../utils/cache";
 import {
 	getPrincipalFromAuthInfo,
 	hasRequiredScope,
@@ -209,8 +209,8 @@ const tools = [
 			const { user } = requirePrincipal(extra);
 			const result = await managedPageService.updatePage(args, user);
 			await purgePathsFromCache(publicBaseUrl, [
-				`/${user.name}/${result.previousSlug}`,
-				result.page.path,
+				...getViewCachePaths(`/${user.name}/${result.previousSlug}`),
+				...getViewCachePaths(result.page.path),
 			]);
 			return result.page;
 		}),
@@ -224,7 +224,7 @@ const tools = [
 			const { user } = requirePrincipal(extra);
 			const result = await managedPageService.deletePage(user.id, args.pageId);
 			await purgePathsFromCache(publicBaseUrl, [
-				`/${user.name}/${result.slug}`,
+				...getViewCachePaths(`/${user.name}/${result.slug}`),
 			]);
 			return result;
 		}),
@@ -242,8 +242,8 @@ const tools = [
 				args.slug,
 			);
 			await purgePathsFromCache(publicBaseUrl, [
-				`/${user.name}/${result.previousSlug}`,
-				result.path,
+				...getViewCachePaths(`/${user.name}/${result.previousSlug}`),
+				...getViewCachePaths(result.path),
 			]);
 			return result;
 		}),

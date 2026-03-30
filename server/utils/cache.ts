@@ -24,6 +24,11 @@ export function generateETag(params: {
 	return `W/"${params.templateHash}:${params.objectEtag}"`;
 }
 
+export function getViewCachePaths(path: string | null | undefined) {
+	if (!path) return [];
+	return [path, `${path}.md`];
+}
+
 export async function purgePathsFromCache(
 	baseUrl: string,
 	paths: Array<string | null | undefined>,
