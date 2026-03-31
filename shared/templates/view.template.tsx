@@ -341,8 +341,6 @@ const Scripts = ({ hasMermaid, hasToc }: ScriptsProps) => {
 					setExpanded(true);
 				};
 				const closeToc = () => {
-					if (window.innerWidth >= 1280) return;
-					
 					body.classList.remove("toc-open");
 					setExpanded(false);
 				};
