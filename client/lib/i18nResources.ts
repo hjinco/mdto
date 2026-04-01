@@ -72,6 +72,8 @@ export const resources = {
 				closePreview: "Close Preview",
 				tryLater: "Try later",
 				createPage: "Create Page",
+				createPdf: "Create PDF",
+				generatingPdf: "Preparing PDF...",
 				wikiLinkWarningTitle: "Wiki links detected",
 				wikiLinkWarningBody:
 					"External URLs inside wiki links won't be turned into pages here.",
@@ -282,6 +284,8 @@ export const resources = {
 				closePreview: "미리보기 닫기",
 				tryLater: "나중에 다시 시도",
 				createPage: "페이지 만들기",
+				createPdf: "PDF 생성",
+				generatingPdf: "PDF 준비 중...",
 				wikiLinkWarningTitle: "위키 링크가 감지되었어요",
 				wikiLinkWarningBody:
 					"위키 링크 안의 외부 URL은 여기서 페이지로 만들어지지 않아요.",
@@ -491,6 +495,8 @@ export const resources = {
 				closePreview: "关闭预览",
 				tryLater: "稍后再试",
 				createPage: "创建页面",
+				createPdf: "生成 PDF",
+				generatingPdf: "正在准备 PDF...",
 				wikiLinkWarningTitle: "检测到 Wiki 链接",
 				wikiLinkWarningBody: "Wiki 链接中的外部 URL 不会在这里生成页面。",
 				errors: {
@@ -693,6 +699,8 @@ export const resources = {
 				closePreview: "プレビューを閉じる",
 				tryLater: "後でもう一度試す",
 				createPage: "ページを作成",
+				createPdf: "PDF を生成",
+				generatingPdf: "PDF を準備中...",
 				wikiLinkWarningTitle: "Wiki リンクを検出しました",
 				wikiLinkWarningBody:
 					"Wiki リンク内の外部 URL はここではページ化されません。",

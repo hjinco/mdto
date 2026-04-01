@@ -31,12 +31,16 @@ interface UploadViewProps {
 	fileInputRef: RefObject<HTMLInputElement | null>;
 	isPreviewOpen: boolean;
 	isPreviewLoading: boolean;
+	isParsingMarkdown: boolean;
+	isGeneratingPdf: boolean;
+	canGeneratePdf: boolean;
 	turnstileToken: string | null;
 	onFileSelect: (file: File) => void;
 	onExpirationChange: (days: number) => void;
 	onThemeChange: (theme: ThemeId) => void;
 	onPreview: () => void;
 	onUpload: () => void;
+	onGeneratePdf: () => void;
 }
 
 export function UploadView({
@@ -50,12 +54,16 @@ export function UploadView({
 	fileInputRef,
 	isPreviewOpen,
 	isPreviewLoading,
+	isParsingMarkdown,
+	isGeneratingPdf,
+	canGeneratePdf,
 	turnstileToken,
 	onFileSelect,
 	onExpirationChange,
 	onThemeChange,
 	onPreview,
 	onUpload,
+	onGeneratePdf,
 }: UploadViewProps) {
 	const { t, i18n } = useTranslation();
 	const [isDragover, setIsDragover] = useState(false);
@@ -439,6 +447,22 @@ export function UploadView({
 						</>
 					) : (
 						<span>{t("upload.createPage")}</span>
+					)}
+				</button>
+
+				<button
+					type="button"
+					className="w-full bg-transparent border border-border text-text-secondary py-2.5 h-10 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200 shadow-none flex items-center justify-center gap-2 mt-2 hover:enabled:bg-surface-highlight hover:enabled:border-text-tertiary hover:enabled:text-text-primary hover:enabled:shadow-[0_2px_4px_rgba(0,0,0,0.1)] disabled:bg-surface disabled:border-border disabled:text-text-tertiary disabled:cursor-not-allowed disabled:opacity-100"
+					disabled={!canGeneratePdf || isParsingMarkdown || isGeneratingPdf}
+					onClick={onGeneratePdf}
+				>
+					{isGeneratingPdf ? (
+						<>
+							<div className="w-3.5 h-3.5 border-2 border-text-secondary/30 rounded-full border-t-text-secondary animate-spin" />
+							<span>{t("upload.generatingPdf")}</span>
+						</>
+					) : (
+						<span>{t("upload.createPdf")}</span>
 					)}
 				</button>
 			</div>
