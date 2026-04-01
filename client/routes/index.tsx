@@ -35,8 +35,8 @@ const MarkdownParser = lazy(() =>
 );
 
 const SITE_ORIGIN = "https://mdto.page";
-const PDF_PREPARING_TIMEOUT_MS = 3000;
-function printHtmlDocument(html: string): void {
+const PDF_IFRAME_CLEANUP_TIMEOUT_MS = 5000;
+function printHtmlDocument(html: string, onPrintInitiated?: () => void): void {
 	const iframe = document.createElement("iframe");
 	iframe.setAttribute("aria-hidden", "true");
 	iframe.style.position = "fixed";
@@ -47,17 +47,39 @@ function printHtmlDocument(html: string): void {
 	iframe.style.border = "0";
 	iframe.style.opacity = "0";
 	iframe.style.pointerEvents = "none";
+	let hasNotifiedPrintInitiated = false;
+	const notifyPrintInitiated = () => {
+		if (hasNotifiedPrintInitiated) {
+			return;
+		}
+		hasNotifiedPrintInitiated = true;
+		onPrintInitiated?.();
+	};
+	const cleanupIframe = () => {
+		iframe.remove();
+	};
+
+	iframe.onerror = () => {
+		notifyPrintInitiated();
+		cleanupIframe();
+	};
 
 	iframe.onload = () => {
 		const frameWindow = iframe.contentWindow;
 		if (!frameWindow) {
+			notifyPrintInitiated();
+			cleanupIframe();
 			return;
 		}
+		const cleanupAfterPrint = () => {
+			frameWindow.removeEventListener("afterprint", cleanupAfterPrint);
+			cleanupIframe();
+		};
+		frameWindow.addEventListener("afterprint", cleanupAfterPrint);
+		notifyPrintInitiated();
 		frameWindow.focus();
 		frameWindow.print();
-		window.setTimeout(() => {
-			iframe.remove();
-		}, 5000);
+		window.setTimeout(cleanupAfterPrint, PDF_IFRAME_CLEANUP_TIMEOUT_MS);
 	};
 
 	iframe.srcdoc = html;
@@ -208,10 +230,9 @@ function Home() {
 			hasMermaid: parsedMarkdown.metadata.hasMermaid,
 		});
 
-		printHtmlDocument(printHtml.toString());
-		window.setTimeout(() => {
+		printHtmlDocument(printHtml.toString(), () => {
 			setIsGeneratingPdf(false);
-		}, PDF_PREPARING_TIMEOUT_MS);
+		});
 	};
 
 	return (
