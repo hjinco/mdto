@@ -1,6 +1,7 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { getApiDocsHref } from "@shared/docs/api-docs";
+import { ViewTemplate } from "@shared/templates/view.template";
 import type { ThemeId } from "@shared/themes/theme-registry";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { lazy, Suspense, useEffect, useState } from "react";
@@ -34,6 +35,34 @@ const MarkdownParser = lazy(() =>
 );
 
 const SITE_ORIGIN = "https://mdto.page";
+const PDF_PREPARING_TIMEOUT_MS = 3000;
+function printHtmlDocument(html: string): void {
+	const iframe = document.createElement("iframe");
+	iframe.setAttribute("aria-hidden", "true");
+	iframe.style.position = "fixed";
+	iframe.style.right = "0";
+	iframe.style.bottom = "0";
+	iframe.style.width = "0";
+	iframe.style.height = "0";
+	iframe.style.border = "0";
+	iframe.style.opacity = "0";
+	iframe.style.pointerEvents = "none";
+
+	iframe.onload = () => {
+		const frameWindow = iframe.contentWindow;
+		if (!frameWindow) {
+			return;
+		}
+		frameWindow.focus();
+		frameWindow.print();
+		window.setTimeout(() => {
+			iframe.remove();
+		}, 5000);
+	};
+
+	iframe.srcdoc = html;
+	document.body.appendChild(iframe);
+}
 
 export const Route = createFileRoute("/")({
 	head: () => ({
@@ -50,6 +79,7 @@ function Home() {
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);
 	const [isUploadLimitDialogOpen, setIsUploadLimitDialogOpen] = useState(false);
+	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [parsedMarkdown, setParsedMarkdown] = useState<ParsedMarkdown | null>(
 		null,
 	);
@@ -139,6 +169,8 @@ function Home() {
 
 	const hasWikiLink =
 		!isParsingMarkdown && parsedMarkdown?.metadata.hasWikiLink === true;
+	const canGeneratePdf =
+		!!selectedFile && !!parsedMarkdown && !isParsingMarkdown;
 
 	const handleUploadClick = () => {
 		if (!session?.user) {
@@ -146,6 +178,40 @@ function Home() {
 			return;
 		}
 		handleUpload();
+	};
+
+	const handleGeneratePdf = () => {
+		if (
+			!canGeneratePdf ||
+			!parsedMarkdown ||
+			!selectedFile ||
+			isGeneratingPdf
+		) {
+			return;
+		}
+
+		setIsGeneratingPdf(true);
+		const expirationTime =
+			expirationDays === -1
+				? undefined
+				: (Date.now() + expirationDays * 24 * 60 * 60 * 1000).toString();
+
+		const printHtml = ViewTemplate({
+			lang: parsedMarkdown.metadata.lang,
+			title: selectedFile.name,
+			description: parsedMarkdown.metadata.description,
+			expiresAt: expirationTime,
+			html: parsedMarkdown.html,
+			theme: selectedTheme,
+			markdown: parsedMarkdown.markdown,
+			hasKatex: parsedMarkdown.metadata.hasKatex,
+			hasMermaid: parsedMarkdown.metadata.hasMermaid,
+		});
+
+		printHtmlDocument(printHtml.toString());
+		window.setTimeout(() => {
+			setIsGeneratingPdf(false);
+		}, PDF_PREPARING_TIMEOUT_MS);
 	};
 
 	return (
@@ -262,8 +328,14 @@ function Home() {
 								onPreview={togglePreview}
 								isPreviewOpen={showPreview}
 								isPreviewLoading={isPreviewLoading}
+								isParsingMarkdown={isParsingMarkdown}
+								isGeneratingPdf={isGeneratingPdf}
+								canGeneratePdf={canGeneratePdf}
 								turnstileToken={turnstileToken}
 								onUpload={handleUploadClick}
+								onGeneratePdf={() => {
+									handleGeneratePdf();
+								}}
 							/>
 						)}
 					</div>
