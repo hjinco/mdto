@@ -48,7 +48,7 @@ describe("ViewTemplate mermaid rendering", () => {
 		expect(defaultHtml).toContain("let currentIndex = resolvedIndex;");
 		expect(defaultHtml).toContain("let hasUserSetFontSize = false;");
 		expect(defaultHtml).toContain("if (hasUserSetFontSize) {");
-		expect(defaultHtml).not.toContain('(e.metaKey || e.ctrlKey)');
+		expect(defaultHtml).not.toContain("(e.metaKey || e.ctrlKey)");
 		expect(defaultHtml).not.toContain(
 			"content.style.fontSize = sizes[currentIndex];\n\t\t\tdecreaseBtn.disabled",
 		);
