@@ -35,23 +35,7 @@ function renderAlternateLinks(
 	);
 }
 
-/**
- * Extract function body from a function, removing the function declaration
- * @param fn - Function to extract body from
- * @returns Function body as string
- */
-function getFunctionBody(fn: () => void): string {
-	const fnStr = fn.toString();
-	// Extract function body (content between first { and last })
-	const match = fnStr.match(/\{([\s\S]*)\}/);
-	return match ? match[1].trim() : fnStr;
-}
-
-/**
- * Initialize theme toggle functionality
- * This function will be stringified and inserted into the HTML template
- */
-function initThemeToggle(): void {
+const themeToggleScript = `
 	try {
 		const html = document.documentElement;
 		const storedTheme = localStorage.getItem("theme");
@@ -74,13 +58,9 @@ function initThemeToggle(): void {
 	} catch (e) {
 		console.error("Theme toggle failed", e);
 	}
-}
+`;
 
-/**
- * Initialize export actions (dropdown with copy and PDF export)
- * This function will be stringified and inserted into the HTML template
- */
-function initExportActions(): void {
+const exportActionsScript = `
 	try {
 		const exportBtn = document.getElementById("export-btn");
 		const dropdown = document.getElementById("export-dropdown");
@@ -90,20 +70,17 @@ function initExportActions(): void {
 		if (!exportBtn || !dropdown) return;
 
 		const markdown = exportBtn.dataset.markdown || "";
-		let copyTimeout: ReturnType<typeof setTimeout> | null = null;
+		let copyTimeout = null;
 
-		// Toggle dropdown
 		exportBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			dropdown.classList.toggle("show");
 		});
 
-		// Close dropdown when clicking outside
 		document.addEventListener("click", () => {
 			dropdown.classList.remove("show");
 		});
 
-		// Copy markdown option
 		if (copyOption) {
 			copyOption.addEventListener("click", async (e) => {
 				e.stopPropagation();
@@ -135,7 +112,6 @@ function initExportActions(): void {
 			});
 		}
 
-		// Export to PDF option
 		if (pdfOption) {
 			pdfOption.addEventListener("click", (e) => {
 				e.stopPropagation();
@@ -146,7 +122,72 @@ function initExportActions(): void {
 	} catch (e) {
 		console.error("Export actions initialization failed", e);
 	}
-}
+`;
+
+const fontSizeControlsScript = `
+	try {
+		const content = document.querySelector(".content");
+		const decreaseBtn = document.getElementById("font-size-decrease");
+		const increaseBtn = document.getElementById("font-size-increase");
+
+		if (!content || !decreaseBtn || !increaseBtn) return;
+
+		const sizes = [
+			"10px",
+			"12px",
+			"14px",
+			"15px",
+			"16px",
+			"17px",
+			"18px",
+			"19px",
+			"20px",
+		];
+		const computedFontSize = Number.parseFloat(
+			window.getComputedStyle(content).fontSize,
+		);
+		const resolvedIndex = Number.isFinite(computedFontSize)
+			? sizes.reduce((closestIndex, size, index) => {
+					const closestDistance = Math.abs(
+						Number.parseFloat(sizes[closestIndex]) - computedFontSize,
+					);
+					const currentDistance = Math.abs(
+						Number.parseFloat(size) - computedFontSize,
+					);
+					return currentDistance < closestDistance ? index : closestIndex;
+				}, 0)
+			: 4;
+		let currentIndex = resolvedIndex;
+		let hasUserSetFontSize = false;
+
+		function syncControls() {
+			decreaseBtn.disabled = currentIndex === 0;
+			increaseBtn.disabled = currentIndex === sizes.length - 1;
+			if (hasUserSetFontSize) {
+				content.style.fontSize = sizes[currentIndex];
+			}
+		}
+
+		function setFontSize(index) {
+			if (index < 0 || index >= sizes.length || index === currentIndex) return;
+			currentIndex = index;
+			hasUserSetFontSize = true;
+			syncControls();
+		}
+
+		decreaseBtn.addEventListener("click", () => {
+			setFontSize(currentIndex - 1);
+		});
+
+		increaseBtn.addEventListener("click", () => {
+			setFontSize(currentIndex + 1);
+		});
+
+		syncControls();
+	} catch (e) {
+		console.error("Font size control failed", e);
+	}
+`;
 
 interface ThemeToggleButtonProps {
 	show: boolean;
@@ -279,6 +320,52 @@ const ExportButton = ({ markdown }: ExportButtonProps) => {
 	);
 };
 
+const FontSizeControls = () => {
+	return (
+		<fieldset class="font-size-controls" aria-label="Font size controls">
+			<button
+				type="button"
+				class="font-size-btn"
+				id="font-size-decrease"
+				aria-label="Decrease font size"
+			>
+				<svg
+					class="font-size-icon"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="6" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11h5" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4 4" />
+				</svg>
+			</button>
+			<button
+				type="button"
+				class="font-size-btn"
+				id="font-size-increase"
+				aria-label="Increase font size"
+			>
+				<svg
+					class="font-size-icon"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="6" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="M8.5 11h5" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="M11 8.5v5" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4 4" />
+				</svg>
+			</button>
+		</fieldset>
+	);
+};
+
 interface MetaTagsProps {
 	title: string;
 	description: string;
@@ -304,8 +391,6 @@ interface ScriptsProps {
 }
 
 const Scripts = ({ hasMermaid, hasToc }: ScriptsProps) => {
-	const themeToggleBody = getFunctionBody(initThemeToggle);
-	const exportActionsBody = getFunctionBody(initExportActions);
 	const tocScript = hasToc
 		? `
 		(function() {
@@ -411,41 +496,14 @@ const Scripts = ({ hasMermaid, hasToc }: ScriptsProps) => {
 
 	const mainScript = raw(`
 		(function() {
-			${themeToggleBody}
+			${themeToggleScript}
 		})();
 		(function() {
-			${exportActionsBody}
+			${exportActionsScript}
 		})();
 		${tocScript}
 		(function() {
-			try {
-				const content = document.querySelector(".content");
-				if (!content) return;
-
-				const SIZES = ["10px", "12px", "14px", "15px", "16px", "17px", "18px", "19px", "20px"];
-				const DEFAULT_INDEX = 4;
-				let currentIndex = DEFAULT_INDEX;
-
-				function setFontSize(index) {
-					if (index >= 0 && index < SIZES.length) {
-						currentIndex = index;
-						content.style.fontSize = SIZES[currentIndex];
-					}
-				}
-
-				document.addEventListener("keydown", function(e) {
-					if ((e.metaKey || e.ctrlKey) && (e.key === "=" || e.key === "+" || e.key === "-")) {
-						e.preventDefault();
-						if (e.key === "=" || e.key === "+") {
-							setFontSize(currentIndex + 1);
-						} else {
-							setFontSize(currentIndex - 1);
-						}
-					}
-				});
-			} catch (e) {
-				console.error("Font size control failed", e);
-			}
+			${fontSizeControlsScript}
 		})();
 	`);
 
@@ -598,6 +656,7 @@ export function ViewTemplate(options: CreateHtmlPageOptions) {
 			</head>
 			<body class={`theme-${themeDefinition.id}`}>
 				<div class="top-actions">
+					<FontSizeControls />
 					<ExportButton markdown={markdown} />
 					<ThemeToggleButton
 						show={themeDefinition.features.showColorModeToggle}
