@@ -54,10 +54,38 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 .export-container {
 	position: relative;
+}
+
+.font-size-controls {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-inline-size: auto;
+}
+
+.font-size-btn {
+	min-width: 32px;
+	justify-content: center;
+}
+
+.font-size-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.font-size-btn[disabled] {
+	cursor: default;
+	opacity: 0.35;
+	pointer-events: none;
 }
 
 .export-option span {
@@ -90,6 +118,14 @@
 		background-color: var(--bg-root);
 		-webkit-print-color-adjust: exact;
 		print-color-adjust: exact;
+	}
+}
+
+@media (max-width: 640px) {
+	.top-actions {
+		top: 12px;
+		right: 12px;
+		gap: 6px;
 	}
 }
 

@@ -36,6 +36,21 @@ describe("ViewTemplate mermaid rendering", () => {
 		const githubHtml = `<!DOCTYPE html>${<ViewTemplate title="GitHub" html="<h1>Heading</h1>" theme="github" />}`;
 		const resumeHtml = `<!DOCTYPE html>${<ViewTemplate title="Resume" html="<h1>Heading</h1>" theme="resume" />}`;
 
+		expect(defaultHtml).toContain('id="font-size-decrease"');
+		expect(defaultHtml).toContain('id="font-size-increase"');
+		expect(githubHtml).toContain('id="font-size-decrease"');
+		expect(resumeHtml).toContain('id="font-size-increase"');
+		expect(defaultHtml).toContain("decreaseBtn.disabled = currentIndex === 0;");
+		expect(defaultHtml).toContain(
+			"increaseBtn.disabled = currentIndex === sizes.length - 1;",
+		);
+		expect(defaultHtml).toContain("let hasUserSetFontSize = false;");
+		expect(defaultHtml).toContain("if (hasUserSetFontSize) {");
+		expect(defaultHtml).not.toContain(
+			"content.style.fontSize = sizes[currentIndex];\n\t\t\tdecreaseBtn.disabled",
+		);
+		expect(defaultHtml).toContain('class="font-size-icon"');
+		expect(defaultHtml).toContain('d="m16 16 4 4"');
 		expect(defaultHtml).toContain('id="theme-toggle"');
 		expect(defaultHtml).toContain('id="toc-toggle"');
 		expect(githubHtml).toContain('id="theme-toggle"');
