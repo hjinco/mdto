@@ -143,7 +143,21 @@ const fontSizeControlsScript = `
 			"19px",
 			"20px",
 		];
-		let currentIndex = 4;
+		const computedFontSize = Number.parseFloat(
+			window.getComputedStyle(content).fontSize,
+		);
+		const resolvedIndex = Number.isFinite(computedFontSize)
+			? sizes.reduce((closestIndex, size, index) => {
+					const closestDistance = Math.abs(
+						Number.parseFloat(sizes[closestIndex]) - computedFontSize,
+					);
+					const currentDistance = Math.abs(
+						Number.parseFloat(size) - computedFontSize,
+					);
+					return currentDistance < closestDistance ? index : closestIndex;
+				}, 0)
+			: 4;
+		let currentIndex = resolvedIndex;
 		let hasUserSetFontSize = false;
 
 		function syncControls() {
@@ -167,20 +181,6 @@ const fontSizeControlsScript = `
 
 		increaseBtn.addEventListener("click", () => {
 			setFontSize(currentIndex + 1);
-		});
-
-		document.addEventListener("keydown", (e) => {
-			if (
-				(e.metaKey || e.ctrlKey) &&
-				(e.key === "=" || e.key === "+" || e.key === "-")
-			) {
-				e.preventDefault();
-				if (e.key === "=" || e.key === "+") {
-					setFontSize(currentIndex + 1);
-				} else {
-					setFontSize(currentIndex - 1);
-				}
-			}
 		});
 
 		syncControls();
