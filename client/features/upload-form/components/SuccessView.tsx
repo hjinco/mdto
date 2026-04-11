@@ -40,6 +40,7 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 			<div className="flex w-full gap-2 mb-6">
 				<input
 					type="text"
+					data-testid="success-url-input"
 					className="min-w-0 flex-1 bg-background border border-border rounded-md px-3 font-sans text-[13px] text-text-secondary outline-none h-9 transition-colors duration-200 focus:border-text-tertiary focus:text-text-primary"
 					readOnly
 					value={url}
@@ -60,6 +61,7 @@ export function SuccessView({ url, onReset }: SuccessViewProps) {
 				</button>
 				<a
 					href={url}
+					data-testid="success-open-link"
 					target="_blank"
 					rel="noopener noreferrer"
 					className="w-9 h-9 p-0 shrink-0 flex items-center justify-center bg-surface-highlight border border-border rounded-md text-text-secondary cursor-pointer transition-all duration-200 no-underline hover:bg-[#25262a] hover:border-text-tertiary hover:text-text-primary"

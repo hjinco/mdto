@@ -170,6 +170,8 @@ dist
 # Vite bundled output
 dist
 .output
+playwright-report/
+test-results/
 
 .DS_Store
 

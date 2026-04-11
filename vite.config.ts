@@ -29,11 +29,11 @@ export default defineConfig({
 				target: "http://localhost:8787",
 				changeOrigin: true,
 			},
-			"^/(1|7|E|1E|e|1e)/[a-zA-Z0-9_-]{5}$": {
+			"^/(1|7|E|1E|e|1e)/[a-zA-Z0-9_-]{5}(\\.md)?$": {
 				target: "http://localhost:8787",
 				changeOrigin: true,
 			},
-			"^/[^/]+/[a-zA-Z0-9_-]{4}$": {
+			"^/[^/]+/[a-zA-Z0-9_-]{4}(\\.md)?$": {
 				target: "http://localhost:8787",
 				changeOrigin: true,
 			},

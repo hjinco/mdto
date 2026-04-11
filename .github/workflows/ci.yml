@@ -35,3 +35,57 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24.13.0"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build app for E2E
+        run: pnpm build
+        env:
+          VITE_PUBLIC_TURNSTILE_SITE_KEY: ""
+          VITE_PUBLIC_POSTHOG_HOST: ""
+          VITE_PUBLIC_POSTHOG_KEY: ""
+
+      - name: Run Playwright tests
+        run: pnpm test:e2e
+        env:
+          ENV: dev
+          TURNSTILE_SECRET_KEY: dummy-turnstile-secret
+          BETTER_AUTH_SECRET: dummy-better-auth-secret-32chars
+          BETTER_AUTH_URL: http://127.0.0.1:4173
+          GITHUB_CLIENT_ID: dummy-github-client-id
+          GITHUB_CLIENT_SECRET: dummy-github-client-secret
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          if-no-files-found: ignore
+
+      - name: Upload Playwright test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results
+          if-no-files-found: ignore

@@ -108,6 +108,20 @@ If you encounter type errors, generate Cloudflare Worker types:
 pnpm cf-typegen
 ```
 
+### End-to-End Tests
+
+Install the Chromium browser used by Playwright:
+
+```bash
+pnpm test:e2e:install
+```
+
+Run the Playwright smoke tests:
+
+```bash
+pnpm test:e2e
+```
+
 ### Building
 
 Build the production bundle:

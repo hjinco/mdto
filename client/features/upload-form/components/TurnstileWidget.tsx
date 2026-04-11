@@ -1,4 +1,6 @@
-import Turnstile from "react-turnstile";
+import { lazy, Suspense } from "react";
+
+const Turnstile = lazy(() => import("react-turnstile"));
 
 interface TurnstileWidgetProps {
 	onVerify: (token: string) => void;
@@ -12,14 +14,16 @@ export function TurnstileWidget({
 	onError,
 }: TurnstileWidgetProps) {
 	return (
-		<Turnstile
-			sitekey={import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY}
-			appearance="interaction-only"
-			theme="dark"
-			onVerify={onVerify}
-			onExpire={onExpire}
-			onError={onError}
-			fixedSize
-		/>
+		<Suspense fallback={null}>
+			<Turnstile
+				sitekey={import.meta.env.VITE_PUBLIC_TURNSTILE_SITE_KEY}
+				appearance="interaction-only"
+				theme="dark"
+				onVerify={onVerify}
+				onExpire={onExpire}
+				onError={onError}
+				fixedSize
+			/>
+		</Suspense>
 	);
 }

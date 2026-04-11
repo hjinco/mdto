@@ -53,6 +53,7 @@ export function PreviewPane({
 			</div>
 
 			<div
+				data-testid="preview-iframe-wrapper"
 				className={cn(
 					"flex-1 relative bg-white transition-opacity duration-200",
 					loading ? "opacity-0" : "opacity-100",

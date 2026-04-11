@@ -1,7 +1,6 @@
 import { resolveThemeId, type ThemeId } from "@shared/themes/theme-registry";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
-import { useTurnstile } from "react-turnstile";
 import { trpc } from "@/utils/trpc";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -55,8 +54,6 @@ export function useUpload({
 	const [uploadErrorStatus, setUploadErrorStatus] = useState<number | null>(
 		null,
 	);
-	const turnstile = useTurnstile();
-
 	const publicCreateMutation = useMutation(
 		trpc.upload.publicCreate.mutationOptions(),
 	);
@@ -109,7 +106,13 @@ export function useUpload({
 			}, 2000);
 		} finally {
 			setIsUploading(false);
-			if (import.meta.env.PROD) turnstile.reset();
+			if (import.meta.env.PROD) {
+				(
+					window as typeof window & {
+						turnstile?: { reset?: () => void };
+					}
+				).turnstile?.reset?.();
+			}
 		}
 	}, [
 		file,
@@ -120,7 +123,6 @@ export function useUpload({
 		onSuccess,
 		publicCreateMutation,
 		userCreateMutation,
-		turnstile,
 	]);
 
 	const handleReset = useCallback(() => {

@@ -173,6 +173,7 @@ export function UploadView({
 				<input
 					type="file"
 					ref={fileInputRef}
+					data-testid="upload-file-input"
 					className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
 					accept=".md,.markdown,.txt"
 					onChange={handleInputChange}
@@ -403,6 +404,7 @@ export function UploadView({
 			<div className="p-1">
 				<button
 					type="button"
+					data-testid="upload-preview-button"
 					className="w-full bg-transparent border border-border text-text-secondary py-2.5 h-10 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200 shadow-none flex items-center justify-center gap-2 mb-2 hover:enabled:bg-surface-highlight hover:enabled:border-text-tertiary hover:enabled:text-text-primary hover:enabled:shadow-[0_2px_4px_rgba(0,0,0,0.1)] disabled:bg-surface disabled:border-border disabled:text-text-tertiary disabled:cursor-not-allowed disabled:opacity-100"
 					disabled={!selectedFile}
 					onClick={onPreview}
@@ -421,6 +423,7 @@ export function UploadView({
 
 				<button
 					type="button"
+					data-testid="upload-create-button"
 					className={cn(
 						"w-full bg-linear-to-b from-primary to-[#4e5ac0] border border-white/8 border-t-white/15 text-white py-2.5 h-10 rounded-lg text-[13px] font-medium cursor-pointer transition-all duration-200 shadow-btn flex items-center justify-center gap-2",
 						"hover:enabled:-translate-y-px hover:enabled:shadow-btn-hover active:enabled:translate-y-0 active:enabled:opacity-90",
