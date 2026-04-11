@@ -57,6 +57,13 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Build app for E2E
+        run: pnpm build
+        env:
+          VITE_PUBLIC_TURNSTILE_SITE_KEY: ""
+          VITE_PUBLIC_POSTHOG_HOST: ""
+          VITE_PUBLIC_POSTHOG_KEY: ""
+
       - name: Run Playwright tests
         run: pnpm test:e2e
         env:
