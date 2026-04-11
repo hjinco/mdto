@@ -37,7 +37,7 @@ export default defineConfig({
 		},
 		{
 			command:
-				"pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error",
+				"pnpm build && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error",
 			url: "http://127.0.0.1:8787",
 			env: {
 				...process.env,
