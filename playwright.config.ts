@@ -41,11 +41,6 @@ export default defineConfig({
 		{
 			command: workerCommand,
 			url: "http://127.0.0.1:8787",
-			env: {
-				...process.env,
-				ENV: "dev",
-				BETTER_AUTH_URL: baseURL,
-			},
 			reuseExistingServer: !process.env.CI,
 			timeout: 120_000,
 		},
