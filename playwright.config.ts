@@ -2,8 +2,8 @@ import { defineConfig } from "@playwright/test";
 
 const baseURL = "http://127.0.0.1:4173";
 const workerCommand = process.env.CI
-	? "pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret"
-	: "VITE_PUBLIC_TURNSTILE_SITE_KEY='' VITE_PUBLIC_POSTHOG_HOST='' VITE_PUBLIC_POSTHOG_KEY='' pnpm build && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret";
+	? "pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var ENV:dev --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret"
+	: "VITE_PUBLIC_TURNSTILE_SITE_KEY='' VITE_PUBLIC_POSTHOG_HOST='' VITE_PUBLIC_POSTHOG_KEY='' pnpm build && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var ENV:dev --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret";
 
 export default defineConfig({
 	testDir: "./e2e",
