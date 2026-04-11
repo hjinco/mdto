@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 const fixturePath = fileURLToPath(
 	new URL("./fixtures/sample.md", import.meta.url),
@@ -22,6 +22,24 @@ test.beforeEach(async ({ page }) => {
 	});
 });
 
+async function attachMarkdownFile(page: Page) {
+	for (let attempt = 0; attempt < 3; attempt++) {
+		await page.getByTestId("upload-file-input").setInputFiles(fixturePath);
+
+		try {
+			await expect(page.getByText("sample.md")).toBeVisible({ timeout: 5000 });
+			await expect(page.getByTestId("upload-preview-button")).toBeEnabled();
+			await expect(page.getByTestId("upload-create-button")).toBeEnabled();
+			return;
+		} catch (error) {
+			if (attempt === 2) {
+				throw error;
+			}
+			await page.waitForTimeout(500);
+		}
+	}
+}
+
 test("home smoke shows upload controls in the initial state", async ({
 	page,
 }) => {
@@ -36,9 +54,7 @@ test("preview opens and closes for an uploaded markdown file", async ({
 	page,
 }) => {
 	await page.goto("/");
-	await page.getByTestId("upload-file-input").setInputFiles(fixturePath);
-
-	await expect(page.getByText("sample.md")).toBeVisible();
+	await attachMarkdownFile(page);
 
 	await page.getByTestId("upload-preview-button").click();
 
@@ -59,7 +75,7 @@ test("anonymous upload creates a public page and exposes the raw markdown", asyn
 	page,
 }) => {
 	await page.goto("/");
-	await page.getByTestId("upload-file-input").setInputFiles(fixturePath);
+	await attachMarkdownFile(page);
 	await page.getByRole("button", { name: "GitHub" }).click();
 
 	await page.getByTestId("upload-create-button").click();
