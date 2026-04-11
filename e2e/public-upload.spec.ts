@@ -71,9 +71,9 @@ test("anonymous upload creates a public page and exposes the raw markdown", asyn
 	await expect(successUrlInput).toBeVisible();
 	const successUrl = await successUrlInput.inputValue();
 
-	expect(successUrl).toMatch(
-		/^http:\/\/127\.0\.0\.1:4173\/(1|7|E|1E)\/[A-Za-z0-9_-]{5}$/,
-	);
+	const url = new URL(successUrl);
+	expect(url.origin).toBe(new URL(page.url()).origin);
+	expect(url.pathname).toMatch(/^\/(1|7|E|1E)\/[A-Za-z0-9_-]{5}$/);
 	await expect(page.getByTestId("success-open-link")).toHaveAttribute(
 		"href",
 		successUrl,
