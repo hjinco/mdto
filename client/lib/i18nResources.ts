@@ -106,31 +106,6 @@ export const resources = {
 				description: "Welcome back! Please log in to continue.",
 				continueWithGithub: "Continue with GitHub",
 			},
-			oauth: {
-				login: {
-					title: "Sign in to continue",
-					description: "mdto MCP access requires an authenticated account.",
-					continueWithGithub: "Continue with GitHub",
-					continuing: "Continuing OAuth authorization...",
-					redirecting: "Signed in. Redirecting...",
-					errors: {
-						continueAuthorization: "Failed to continue OAuth authorization",
-						missingRedirectUrl: "Missing OAuth redirect URL",
-					},
-				},
-				consent: {
-					title: "Authorize mdto access",
-					description:
-						"Client {{clientId}} is requesting access to your mdto account.",
-					requestedScopes: "Requested scopes",
-					deny: "Deny",
-					allow: "Allow",
-					errors: {
-						processConsent: "Failed to process OAuth consent",
-						missingRedirectUrl: "Missing OAuth redirect URL",
-					},
-				},
-			},
 			dashboard: {
 				title: "Dashboard",
 				filter: {
@@ -318,31 +293,6 @@ export const resources = {
 				description: "돌아오신 것을 환영해요! 계속하려면 로그인하세요.",
 				continueWithGithub: "GitHub로 계속하기",
 			},
-			oauth: {
-				login: {
-					title: "계속하려면 로그인",
-					description: "mdto MCP 액세스에는 인증된 계정이 필요해요.",
-					continueWithGithub: "GitHub로 계속하기",
-					continuing: "OAuth 인증을 계속하는 중...",
-					redirecting: "로그인됨. 이동하는 중...",
-					errors: {
-						continueAuthorization: "OAuth 인증을 계속하지 못했어요",
-						missingRedirectUrl: "OAuth 리디렉션 URL이 없어요",
-					},
-				},
-				consent: {
-					title: "mdto 접근 권한 승인",
-					description:
-						"클라이언트 {{clientId}} 이(가) mdto 계정 접근 권한을 요청하고 있어요.",
-					requestedScopes: "요청된 권한",
-					deny: "거부",
-					allow: "허용",
-					errors: {
-						processConsent: "OAuth 동의 처리에 실패했어요",
-						missingRedirectUrl: "OAuth 리디렉션 URL이 없어요",
-					},
-				},
-			},
 			dashboard: {
 				title: "대시보드",
 				filter: {
@@ -528,30 +478,6 @@ export const resources = {
 				description: "欢迎回来！请登录以继续。",
 				continueWithGithub: "使用 GitHub 继续",
 			},
-			oauth: {
-				login: {
-					title: "登录以继续",
-					description: "mdto MCP 访问需要已验证的账户。",
-					continueWithGithub: "使用 GitHub 继续",
-					continuing: "正在继续 OAuth 授权...",
-					redirecting: "已登录，正在跳转...",
-					errors: {
-						continueAuthorization: "无法继续 OAuth 授权",
-						missingRedirectUrl: "缺少 OAuth 重定向 URL",
-					},
-				},
-				consent: {
-					title: "授权 mdto 访问",
-					description: "客户端 {{clientId}} 正在请求访问你的 mdto 账户。",
-					requestedScopes: "请求的权限",
-					deny: "拒绝",
-					allow: "允许",
-					errors: {
-						processConsent: "处理 OAuth 同意时失败",
-						missingRedirectUrl: "缺少 OAuth 重定向 URL",
-					},
-				},
-			},
 			dashboard: {
 				title: "仪表盘",
 				filter: {
@@ -732,31 +658,6 @@ export const resources = {
 				title: "mdto にログイン",
 				description: "おかえりなさい。続行するにはログインしてください。",
 				continueWithGithub: "GitHub で続ける",
-			},
-			oauth: {
-				login: {
-					title: "続行するにはログイン",
-					description: "mdto MCP を利用するには認証済みアカウントが必要です。",
-					continueWithGithub: "GitHub で続ける",
-					continuing: "OAuth 認可を続行しています...",
-					redirecting: "ログイン済みです。リダイレクトしています...",
-					errors: {
-						continueAuthorization: "OAuth 認可を続行できませんでした",
-						missingRedirectUrl: "OAuth リダイレクト URL がありません",
-					},
-				},
-				consent: {
-					title: "mdto へのアクセスを許可",
-					description:
-						"クライアント {{clientId}} が mdto アカウントへのアクセスを要求しています。",
-					requestedScopes: "要求されたスコープ",
-					deny: "拒否",
-					allow: "許可",
-					errors: {
-						processConsent: "OAuth 同意の処理に失敗しました",
-						missingRedirectUrl: "OAuth リダイレクト URL がありません",
-					},
-				},
 			},
 			dashboard: {
 				title: "ダッシュボード",

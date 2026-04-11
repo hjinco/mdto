@@ -5,8 +5,6 @@ import { cleanerJob } from "./jobs/cleaner.job";
 import { sendDiscordAlert } from "./lib/discord";
 import { authRouter } from "./routes/auth.route";
 import { dashboardRouter } from "./routes/dashboard.route";
-import { mcpRouter } from "./routes/mcp.route";
-import { oauthUiRouter } from "./routes/oauth-ui.route";
 import { pageApiRouter } from "./routes/page-api.route";
 import { viewRouter } from "./routes/view.route";
 import { createContext } from "./trpc/context";
@@ -17,8 +15,6 @@ const app = new Hono<{ Bindings: Env }>();
 
 app.route("/api/auth", authRouter);
 app.route("/api/v1/pages", pageApiRouter);
-app.route("/", mcpRouter);
-app.route("/", oauthUiRouter);
 app.all("/api/trpc/*", async (c) => {
 	return await fetchRequestHandler({
 		endpoint: "/api/trpc",

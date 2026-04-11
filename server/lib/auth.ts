@@ -1,27 +1,11 @@
 import { env } from "cloudflare:workers";
 import { apiKey } from "@better-auth/api-key";
-import { oauthProvider, type Scope } from "@better-auth/oauth-provider";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { jwt } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { db } from "../db/client";
 import * as schema from "../db/schema";
 import { findAvailableUsername } from "./username";
-
-const authOrigin = new URL(env.BETTER_AUTH_URL).origin;
-const mcpResourceUrl = `${authOrigin}/mcp`;
-
-const oauthScopes = [
-	"openid",
-	"profile",
-	"email",
-	"offline_access",
-	"mdto:pages:read",
-	"mdto:pages:write",
-	"mdto:user:read",
-	"mdto:user:write",
-] as const satisfies Scope[];
 
 async function isUserNameTaken(name: string): Promise<boolean> {
 	const existing = await db
@@ -84,23 +68,6 @@ export const auth = betterAuth({
 				enabled: false,
 			},
 		}),
-		jwt({
-			disableSettingJwtHeader: true,
-			jwt: {
-				issuer: `${authOrigin}/api/auth`,
-			},
-		}),
-		oauthProvider({
-			loginPage: `${authOrigin}/oauth/login`,
-			consentPage: `${authOrigin}/oauth/consent`,
-			scopes: [...oauthScopes],
-			validAudiences: [mcpResourceUrl],
-			grantTypes: ["authorization_code", "refresh_token"],
-			allowDynamicClientRegistration: true,
-			allowUnauthenticatedClientRegistration: true,
-			clientRegistrationDefaultScopes: [...oauthScopes],
-			clientRegistrationAllowedScopes: [...oauthScopes],
-		}),
 	],
-	trustedOrigins: [authOrigin],
+	trustedOrigins: [new URL(env.BETTER_AUTH_URL).origin],
 });

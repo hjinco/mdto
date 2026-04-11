@@ -14,8 +14,6 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as UsernameRouteImport } from './routes/$username'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as OauthLoginRouteImport } from './routes/oauth.login'
-import { Route as OauthConsentRouteImport } from './routes/oauth.consent'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -42,16 +40,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OauthLoginRoute = OauthLoginRouteImport.update({
-  id: '/oauth/login',
-  path: '/oauth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OauthConsentRoute = OauthConsentRouteImport.update({
-  id: '/oauth/consent',
-  path: '/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,8 +47,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/oauth/consent': typeof OauthConsentRoute
-  '/oauth/login': typeof OauthLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -68,8 +54,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/oauth/consent': typeof OauthConsentRoute
-  '/oauth/login': typeof OauthLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,37 +62,13 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/oauth/consent': typeof OauthConsentRoute
-  '/oauth/login': typeof OauthLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/$username'
-    | '/dashboard'
-    | '/privacy'
-    | '/terms'
-    | '/oauth/consent'
-    | '/oauth/login'
+  fullPaths: '/' | '/$username' | '/dashboard' | '/privacy' | '/terms'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/$username'
-    | '/dashboard'
-    | '/privacy'
-    | '/terms'
-    | '/oauth/consent'
-    | '/oauth/login'
-  id:
-    | '__root__'
-    | '/'
-    | '/$username'
-    | '/dashboard'
-    | '/privacy'
-    | '/terms'
-    | '/oauth/consent'
-    | '/oauth/login'
+  to: '/' | '/$username' | '/dashboard' | '/privacy' | '/terms'
+  id: '__root__' | '/' | '/$username' | '/dashboard' | '/privacy' | '/terms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +77,6 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
-  OauthConsentRoute: typeof OauthConsentRoute
-  OauthLoginRoute: typeof OauthLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,20 +116,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/oauth/login': {
-      id: '/oauth/login'
-      path: '/oauth/login'
-      fullPath: '/oauth/login'
-      preLoaderRoute: typeof OauthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/oauth/consent': {
-      id: '/oauth/consent'
-      path: '/oauth/consent'
-      fullPath: '/oauth/consent'
-      preLoaderRoute: typeof OauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -181,8 +125,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
-  OauthConsentRoute: OauthConsentRoute,
-  OauthLoginRoute: OauthLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
