@@ -37,7 +37,7 @@ export default defineConfig({
 		},
 		{
 			command:
-				"VITE_PUBLIC_TURNSTILE_SITE_KEY='' VITE_PUBLIC_POSTHOG_HOST='' VITE_PUBLIC_POSTHOG_KEY='' pnpm build && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret",
+				"mkdir -p .output && pnpm exec wrangler dev --ip 127.0.0.1 --port 8787 --local --log-level error --var BETTER_AUTH_URL:http://127.0.0.1:4173 --var TURNSTILE_SECRET_KEY:dummy-turnstile-secret --var BETTER_AUTH_SECRET:dummy-better-auth-secret-32chars --var GITHUB_CLIENT_ID:dummy-github-client-id --var GITHUB_CLIENT_SECRET:dummy-github-client-secret",
 			url: "http://127.0.0.1:8787",
 			env: {
 				...process.env,
