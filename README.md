@@ -20,7 +20,6 @@ Transform your Markdown files into beautifully rendered web pages instantly. A f
 ## Roadmap
 
 - [x] **Public API**: Add a documented programmatic interface for uploads, page management, and third-party integrations.
-- [ ] **MCP server**: Add an MCP integration surface for AI agents and tooling workflows that need to work with mdto programmatically.
 - [ ] **Image hosting for Markdown**: Upload images referenced in Markdown to mdto automatically, so you do not need to host them somewhere else first.
 
 ## Tech Stack
