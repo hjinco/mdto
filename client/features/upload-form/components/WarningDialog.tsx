@@ -52,7 +52,12 @@ export function WarningDialog({
 				<Dialog.Backdrop className="fixed inset-0 bg-black/80 z-1000 backdrop-blur-sm animate-fade-in" />
 				<Dialog.Viewport className="fixed inset-0 z-1000 flex items-center justify-center p-2.5">
 					<Dialog.Popup className="w-full max-w-[400px]">
-						<div className="bg-surface border border-border rounded-xl w-full flex flex-col shadow-dialog relative p-6 animate-fade-in">
+						<div
+							className="bg-surface border border-border rounded-xl w-full flex flex-col shadow-dialog relative p-6 animate-fade-in"
+							data-testid={
+								onSecondary ? "anonymous-warning-dialog" : "warning-dialog"
+							}
+						>
 							<div className="flex items-center justify-center mb-4">
 								<div
 									className={cn(
@@ -80,6 +85,7 @@ export function WarningDialog({
 												<button
 													{...rest}
 													type="button"
+													data-testid="warning-secondary-button"
 													onClick={(e) => {
 														onClick?.(e);
 														onSecondary();
@@ -104,6 +110,7 @@ export function WarningDialog({
 											<button
 												{...rest}
 												type="button"
+												data-testid="warning-confirm-button"
 												onClick={(e) => {
 													onClick?.(e);
 													onConfirm();

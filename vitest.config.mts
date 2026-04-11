@@ -3,6 +3,7 @@ import {
 	defineWorkersConfig,
 	readD1Migrations,
 } from "@cloudflare/vitest-pool-workers/config";
+import { configDefaults } from "vitest/config";
 
 export default defineWorkersConfig(async () => {
 	const migrations = await readD1Migrations(path.join(__dirname, "migrations"));
@@ -15,6 +16,7 @@ export default defineWorkersConfig(async () => {
 			},
 		},
 		test: {
+			exclude: [...configDefaults.exclude, "e2e/**"],
 			poolOptions: {
 				workers: {
 					// Filtered runs intermittently fail in the Cloudflare worker pool
