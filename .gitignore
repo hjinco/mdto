@@ -172,6 +172,7 @@ dist
 .output
 playwright-report/
 test-results/
+e2e/.auth/
 
 .DS_Store
 

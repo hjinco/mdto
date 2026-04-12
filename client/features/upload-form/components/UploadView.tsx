@@ -74,6 +74,10 @@ export function UploadView({
 	const selectedOverflowTheme = OVERFLOW_THEME_OPTIONS.find(
 		(option) => option.value === selectedTheme,
 	);
+	const requiresTurnstile =
+		import.meta.env.PROD &&
+		import.meta.env.VITE_PUBLIC_E2E !== "1" &&
+		!isAuthenticated;
 
 	useEffect(() => {
 		if (isPermanent) {
@@ -437,7 +441,7 @@ export function UploadView({
 						!selectedFile ||
 						isUploading ||
 						!!uploadError ||
-						(import.meta.env.PROD && !turnstileToken)
+						(requiresTurnstile && !turnstileToken)
 					}
 					onClick={onUpload}
 				>

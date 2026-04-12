@@ -95,6 +95,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
 	const { t, i18n } = useTranslation();
+	const [isHomeReady, setIsHomeReady] = useState(false);
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState<ThemeId>("default");
 	const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
@@ -109,6 +110,10 @@ function Home() {
 	const isMobile = useMediaQuery("(max-width: 767px)");
 
 	const { data: session } = authClient.useSession();
+
+	useEffect(() => {
+		setIsHomeReady(true);
+	}, []);
 
 	useEffect(() => {
 		setExpirationDays((prev) => {
@@ -237,6 +242,12 @@ function Home() {
 
 	return (
 		<>
+			<div
+				data-testid="home-ready"
+				data-ready={isHomeReady ? "true" : "false"}
+				className="hidden"
+				aria-hidden="true"
+			/>
 			{/* Main Container - Conditional Styles for Split View */}
 			<div
 				className={cn(
