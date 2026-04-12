@@ -4,6 +4,21 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig } from "vite";
 
+const proxy = {
+	"^/api/.*": {
+		target: "http://localhost:8787",
+		changeOrigin: true,
+	},
+	"^/(1|7|E|1E|e|1e)/[a-zA-Z0-9_-]{5}(\\.md)?$": {
+		target: "http://localhost:8787",
+		changeOrigin: true,
+	},
+	"^/[^/]+/[a-zA-Z0-9_-]{4}(\\.md)?$": {
+		target: "http://localhost:8787",
+		changeOrigin: true,
+	},
+};
+
 export default defineConfig({
 	publicDir: "./public",
 	plugins: [
@@ -17,6 +32,9 @@ export default defineConfig({
 		}),
 		react(),
 	],
+	optimizeDeps: {
+		entries: ["client/**/*.{ts,tsx}"],
+	},
 	resolve: {
 		alias: {
 			"@": resolve(__dirname, "./client"),
@@ -24,20 +42,10 @@ export default defineConfig({
 		},
 	},
 	server: {
-		proxy: {
-			"^/api/.*": {
-				target: "http://localhost:8787",
-				changeOrigin: true,
-			},
-			"^/(1|7|E|1E|e|1e)/[a-zA-Z0-9_-]{5}(\\.md)?$": {
-				target: "http://localhost:8787",
-				changeOrigin: true,
-			},
-			"^/[^/]+/[a-zA-Z0-9_-]{4}(\\.md)?$": {
-				target: "http://localhost:8787",
-				changeOrigin: true,
-			},
-		},
+		proxy,
+	},
+	preview: {
+		proxy,
 	},
 	ssr: {
 		noExternal: [

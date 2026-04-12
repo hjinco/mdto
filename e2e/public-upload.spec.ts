@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { expect, type Page, test } from "@playwright/test";
+import { waitForHomeReady } from "./home.shared";
 
 const fixturePath = fileURLToPath(
 	new URL("./fixtures/sample.md", import.meta.url),
@@ -44,6 +45,7 @@ test("home smoke shows upload controls in the initial state", async ({
 	page,
 }) => {
 	await page.goto("/");
+	await waitForHomeReady(page);
 
 	await expect(page.getByTestId("upload-file-input")).toBeAttached();
 	await expect(page.getByTestId("upload-preview-button")).toBeDisabled();
@@ -54,6 +56,7 @@ test("preview opens and closes for an uploaded markdown file", async ({
 	page,
 }) => {
 	await page.goto("/");
+	await waitForHomeReady(page);
 	await attachMarkdownFile(page);
 
 	await page.getByTestId("upload-preview-button").click();
@@ -75,6 +78,7 @@ test("anonymous upload creates a public page and exposes the raw markdown", asyn
 	page,
 }) => {
 	await page.goto("/");
+	await waitForHomeReady(page);
 	await attachMarkdownFile(page);
 	await page.getByRole("button", { name: "GitHub" }).click();
 
