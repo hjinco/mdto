@@ -34,7 +34,7 @@ export const resources = {
 				ok: "OK",
 				pageLimitTitle: "Page limit reached",
 				pageLimitDescription:
-					"You can create up to 10 pages per account. Please wait until older pages expire and are cleaned up, then try again. You can review your pages in the dashboard.",
+					"You can create up to 30 pages per account. Please wait until older pages expire and are cleaned up, then try again. You can review your pages in the dashboard.",
 				openDashboard: "Open dashboard",
 			},
 			features: {
@@ -221,7 +221,7 @@ export const resources = {
 				ok: "확인",
 				pageLimitTitle: "페이지 한도에 도달했어요",
 				pageLimitDescription:
-					"계정당 최대 10개의 페이지만 만들 수 있어요. 오래된 페이지가 만료되어 정리된 후 다시 시도해주세요. 대시보드에서 페이지를 확인할 수 있어요.",
+					"계정당 최대 30개의 페이지만 만들 수 있어요. 오래된 페이지가 만료되어 정리된 후 다시 시도해주세요. 대시보드에서 페이지를 확인할 수 있어요.",
 				openDashboard: "대시보드 열기",
 			},
 			features: {
@@ -408,7 +408,7 @@ export const resources = {
 				ok: "确定",
 				pageLimitTitle: "已达到页面上限",
 				pageLimitDescription:
-					"每个账号最多可创建 10 个页面。请等待较旧页面过期并被清理后再试。你可以在仪表盘中查看页面。",
+					"每个账号最多可创建 30 个页面。请等待较旧页面过期并被清理后再试。你可以在仪表盘中查看页面。",
 				openDashboard: "打开仪表盘",
 			},
 			features: {
@@ -587,7 +587,7 @@ export const resources = {
 				ok: "OK",
 				pageLimitTitle: "ページ上限に達しました",
 				pageLimitDescription:
-					"1 アカウントにつき最大 10 ページまで作成できます。古いページが期限切れになって整理されるまで待ってから再度お試しください。ページはダッシュボードで確認できます。",
+					"1 アカウントにつき最大 30 ページまで作成できます。古いページが期限切れになって整理されるまで待ってから再度お試しください。ページはダッシュボードで確認できます。",
 				openDashboard: "ダッシュボードを開く",
 			},
 			features: {

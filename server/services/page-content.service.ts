@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const MAX_UPLOAD_SIZE = 100_000; // 100KB
-export const MAX_ACTIVE_PAGES_PER_USER = 10;
+export const MAX_ACTIVE_PAGES_PER_USER = 30;
 export const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const themeSchema = z.enum(THEME_IDS);

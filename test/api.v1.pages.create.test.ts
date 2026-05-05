@@ -226,8 +226,8 @@ describe("/api/v1/pages create", () => {
 		expect(body).toEqual({ message: "Slug already exists" });
 	});
 
-	it("POST / returns 429 when the user already has 10 active pages", async () => {
-		await seedPagesForUser(testDb, testUser.id, 10);
+	it("POST / returns 429 when the user already has 30 active pages", async () => {
+		await seedPagesForUser(testDb, testUser.id, 30);
 		const apiKey = await issueApiKey(testUser.id, "quota-key");
 
 		const { status, body } = await pagesApiFetch<ApiErrorResponse>(

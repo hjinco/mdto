@@ -167,8 +167,8 @@ describe("/api/trpc upload router", () => {
 		).rejects.toThrow(/Invalid expiresAt/);
 	});
 
-	it("userCreate enforces the 10 active pages limit", async () => {
-		await seedPagesForUser(db, testUser.id, 10);
+	it("userCreate enforces the 30 active pages limit", async () => {
+		await seedPagesForUser(db, testUser.id, 30);
 		vi.spyOn(auth.api, "getSession").mockResolvedValue(
 			createMockSession(testUser),
 		);
