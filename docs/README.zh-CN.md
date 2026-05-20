@@ -1,6 +1,6 @@
 # mdto.page
 
-[English](../README.md) | [한국어](README.ko.md)
+[English](../README.md) | [한국어](README.ko.md) | [日本語](README.ja.md)
 
 在线演示: [mdto.page](https://mdto.page)
 
@@ -19,8 +19,8 @@
 
 ## 路线图
 
-- [ ] **公共 API**: 计划提供一套文档化的程序接口，用于上传、页面管理以及第三方集成。
-- [ ] **Markdown 图片自动托管**: 计划将 Markdown 中引用的图片自动上传到 mdto，这样用户就不需要先把图片托管到别的地方。
+- [x] **公共 API**: 提供一套文档化的程序接口，用于上传、页面管理以及第三方集成。
+- [x] **Markdown 本地图片上传**: 发布时可以附加 Markdown 中引用的本地图片，这样用户就不需要先把图片托管到别的地方。
 
 ## 技术栈
 

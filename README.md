@@ -1,6 +1,6 @@
 # mdto.page
 
-[中文](docs/README.zh-CN.md) | [한국어](docs/README.ko.md)
+[中文](docs/README.zh-CN.md) | [한국어](docs/README.ko.md) | [日本語](docs/README.ja.md)
 
 Live: [mdto.page](https://mdto.page)
 
@@ -20,7 +20,7 @@ Transform your Markdown files into beautifully rendered web pages instantly. A f
 ## Roadmap
 
 - [x] **Public API**: Add a documented programmatic interface for uploads, page management, and third-party integrations.
-- [ ] **Image hosting for Markdown**: Upload images referenced in Markdown to mdto automatically, so you do not need to host them somewhere else first.
+- [x] **Local image uploads for Markdown**: Attach local images referenced in Markdown when publishing, so you do not need to host them somewhere else first.
 
 ## Tech Stack
 
