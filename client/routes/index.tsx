@@ -1,16 +1,24 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { getApiDocsHref } from "@shared/docs/api-docs";
+import {
+	analyzeLocalImageReferences,
+	type LocalImageReference,
+} from "@shared/markdown";
 import { ViewTemplate } from "@shared/templates/view.template";
 import type { ThemeId } from "@shared/themes/theme-registry";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PreviewDialog } from "@/features/upload-form/components/PreviewDialog";
 import { PreviewPane } from "@/features/upload-form/components/PreviewPane";
 import { LanguageSelect } from "../components/LanguageSelect";
 import { UserMenu } from "../components/UserMenu";
 import { Features } from "../features/upload-form/components/Features";
+import {
+	LocalImageUploadDialog,
+	type SelectedLocalImage,
+} from "../features/upload-form/components/LocalImageUploadDialog";
 import { LoginModal } from "../features/upload-form/components/LoginModal";
 import type { ParsedMarkdown } from "../features/upload-form/components/MarkdownParser";
 import { SuccessView } from "../features/upload-form/components/SuccessView";
@@ -102,6 +110,10 @@ function Home() {
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 	const [isWarningDialogOpen, setIsWarningDialogOpen] = useState(false);
 	const [isUploadLimitDialogOpen, setIsUploadLimitDialogOpen] = useState(false);
+	const [isLocalImageDialogOpen, setIsLocalImageDialogOpen] = useState(false);
+	const [localImageReferences, setLocalImageReferences] = useState<
+		LocalImageReference[]
+	>([]);
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [parsedMarkdown, setParsedMarkdown] = useState<ParsedMarkdown | null>(
 		null,
@@ -198,13 +210,39 @@ function Home() {
 		!isParsingMarkdown && parsedMarkdown?.metadata.hasWikiLink === true;
 	const canGeneratePdf =
 		!!selectedFile && !!parsedMarkdown && !isParsingMarkdown;
+	const detectedLocalImageReferences = useMemo(
+		() =>
+			parsedMarkdown
+				? analyzeLocalImageReferences(parsedMarkdown.markdown).references
+				: [],
+		[parsedMarkdown],
+	);
+
+	const startUpload = () => {
+		if (detectedLocalImageReferences.length > 0) {
+			setLocalImageReferences(detectedLocalImageReferences);
+			setIsLocalImageDialogOpen(true);
+			return;
+		}
+		void handleUpload();
+	};
 
 	const handleUploadClick = () => {
+		if (!session?.user && detectedLocalImageReferences.length > 0) {
+			setIsWarningDialogOpen(true);
+			return;
+		}
+
 		if (!session?.user) {
 			setIsWarningDialogOpen(true);
 			return;
 		}
-		handleUpload();
+		startUpload();
+	};
+
+	const handleLocalImageConfirm = (images: SelectedLocalImage[]) => {
+		setIsLocalImageDialogOpen(false);
+		void handleUpload({ localImages: images });
 	};
 
 	const handleGeneratePdf = () => {
@@ -239,6 +277,9 @@ function Home() {
 			setIsGeneratingPdf(false);
 		});
 	};
+
+	const requiresLoginForLocalImages =
+		!session?.user && detectedLocalImageReferences.length > 0;
 
 	return (
 		<>
@@ -465,14 +506,39 @@ function Home() {
 			<WarningDialog
 				isOpen={isWarningDialogOpen}
 				onClose={() => setIsWarningDialogOpen(false)}
-				onSecondary={() => setIsLoginModalOpen(true)}
-				secondaryLabel={t("auth.login")}
+				{...(requiresLoginForLocalImages
+					? {}
+					: {
+							onSecondary: () => setIsLoginModalOpen(true),
+							secondaryLabel: t("auth.login"),
+						})}
 				onConfirm={() => {
-					void handleUpload();
+					if (!session?.user && detectedLocalImageReferences.length > 0) {
+						setIsLoginModalOpen(true);
+						return;
+					}
+					startUpload();
 				}}
-				title={t("dialogs.warningTitle")}
-				description={t("dialogs.warningDescription")}
-				confirmLabel={t("dialogs.ok")}
+				title={t(
+					requiresLoginForLocalImages
+						? "dialogs.localImageLoginRequiredTitle"
+						: "dialogs.warningTitle",
+				)}
+				description={t(
+					requiresLoginForLocalImages
+						? "dialogs.localImageLoginRequiredDescription"
+						: "dialogs.warningDescription",
+				)}
+				confirmLabel={t(
+					requiresLoginForLocalImages ? "auth.login" : "dialogs.ok",
+				)}
+			/>
+
+			<LocalImageUploadDialog
+				isOpen={isLocalImageDialogOpen}
+				references={localImageReferences}
+				onClose={() => setIsLocalImageDialogOpen(false)}
+				onConfirm={handleLocalImageConfirm}
 			/>
 
 			{/* Upload limit dialog */}

@@ -35,7 +35,9 @@ interface UseUploadReturn {
 	uploadedUrl: string | null;
 	uploadError: string | null;
 	uploadErrorStatus: number | null;
-	handleUpload: () => Promise<void>;
+	handleUpload: (options?: {
+		localImages?: Array<{ originalPath: string; file: File }>;
+	}) => Promise<void>;
 	handleReset: () => void;
 }
 
@@ -61,69 +63,96 @@ export function useUpload({
 		trpc.upload.userCreate.mutationOptions(),
 	);
 
-	const handleUpload = useCallback(async () => {
-		if (!file) return;
+	const handleUpload = useCallback(
+		async (options?: {
+			localImages?: Array<{ originalPath: string; file: File }>;
+		}) => {
+			if (!file) return;
 
-		setIsUploading(true);
-		setUploadError(null);
-		setUploadErrorStatus(null);
+			setIsUploading(true);
+			setUploadError(null);
+			setUploadErrorStatus(null);
 
-		try {
-			const markdown = await file.text();
-			const coercedTheme = resolveThemeId(theme);
+			try {
+				const markdown = await file.text();
+				const coercedTheme = resolveThemeId(theme);
+				const formData = new FormData();
+				formData.append("markdown", markdown);
+				formData.append("theme", coercedTheme);
 
-			const path = isAuthenticated
-				? (
-						await userCreateMutation.mutateAsync({
-							markdown,
-							theme: coercedTheme,
-							expiresAtMs:
-								expirationDays === -1
-									? null
-									: Date.now() + expirationDays * DAY_MS,
-						})
-					).path
-				: (
-						await publicCreateMutation.mutateAsync({
-							markdown,
-							theme: coercedTheme,
-							expirationDays: toPublicExpirationDays(expirationDays),
-							turnstileToken,
-						})
-					).path;
+				const localImages = options?.localImages ?? [];
+				if (localImages.length > 0) {
+					formData.append(
+						"imageMap",
+						JSON.stringify(
+							localImages.map((image, index) => ({
+								originalPath: image.originalPath,
+								field: `image_${index}`,
+							})),
+						),
+					);
+					localImages.forEach((image, index) => {
+						formData.append(`image_${index}`, image.file);
+					});
+				}
 
-			const viewUrl = `${window.location.origin}/${path}`;
-			setUploadedUrl(viewUrl);
-			onSuccess();
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			setUploadError(message);
-			setUploadErrorStatus(getTrpcHttpStatus(error));
-			// Auto clear error after 2 seconds
-			setTimeout(() => {
-				setUploadError(null);
-				setUploadErrorStatus(null);
-			}, 2000);
-		} finally {
-			setIsUploading(false);
-			if (import.meta.env.PROD) {
-				(
-					window as typeof window & {
-						turnstile?: { reset?: () => void };
-					}
-				).turnstile?.reset?.();
+				const path = isAuthenticated
+					? (() => {
+							if (expirationDays !== -1) {
+								formData.append(
+									"expiresAtMs",
+									String(Date.now() + expirationDays * DAY_MS),
+								);
+							}
+							return userCreateMutation.mutateAsync(formData);
+						})()
+					: (() => {
+							formData.append(
+								"expirationDays",
+								String(toPublicExpirationDays(expirationDays)),
+							);
+							if (turnstileToken) {
+								formData.append("turnstileToken", turnstileToken);
+							}
+							return publicCreateMutation.mutateAsync(formData);
+						})();
+
+				const resolvedPath = (await path).path;
+				const viewUrl = `${window.location.origin}/${resolvedPath}`;
+				setUploadedUrl(viewUrl);
+				onSuccess();
+			} catch (error) {
+				const message =
+					error instanceof Error ? error.message : "Unknown error";
+				setUploadError(message);
+				setUploadErrorStatus(getTrpcHttpStatus(error));
+				// Auto clear error after 2 seconds
+				setTimeout(() => {
+					setUploadError(null);
+					setUploadErrorStatus(null);
+				}, 2000);
+			} finally {
+				setIsUploading(false);
+				if (import.meta.env.PROD) {
+					(
+						window as typeof window & {
+							turnstile?: { reset?: () => void };
+						}
+					).turnstile?.reset?.();
+				}
 			}
-		}
-	}, [
-		file,
-		expirationDays,
-		theme,
-		turnstileToken,
-		isAuthenticated,
-		onSuccess,
-		publicCreateMutation,
-		userCreateMutation,
-	]);
+		},
+		[
+			file,
+			expirationDays,
+			theme,
+			turnstileToken,
+			isAuthenticated,
+			onSuccess,
+			publicCreateMutation,
+			userCreateMutation,
+		],
+	);
 
 	const handleReset = useCallback(() => {
 		setUploadedUrl(null);

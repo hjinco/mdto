@@ -49,6 +49,7 @@ describe("username helpers", () => {
 
 	it("isReservedUsername checks case-insensitively", () => {
 		expect(isReservedUsername("Admin")).toBe(true);
+		expect(isReservedUsername("assets")).toBe(true);
 		expect(isReservedUsername("unlikely_username_for_reserved_list")).toBe(
 			false,
 		);

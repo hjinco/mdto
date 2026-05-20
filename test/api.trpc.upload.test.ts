@@ -45,6 +45,51 @@ async function countPagesByUser(userId: string) {
 	return Number(rows[0]?.count ?? 0);
 }
 
+function publicCreateFormData(input: {
+	markdown: string;
+	expirationDays: number;
+	theme: string;
+	turnstileToken: string | null;
+}) {
+	const formData = new FormData();
+	formData.append("markdown", input.markdown);
+	formData.append("expirationDays", String(input.expirationDays));
+	formData.append("theme", input.theme);
+	if (input.turnstileToken) {
+		formData.append("turnstileToken", input.turnstileToken);
+	}
+	return formData;
+}
+
+function userCreateFormData(input: {
+	markdown: string;
+	theme: string;
+	expiresAtMs: number | null;
+	localImages?: Array<{ originalPath: string; file: File }>;
+}) {
+	const formData = new FormData();
+	formData.append("markdown", input.markdown);
+	formData.append("theme", input.theme);
+	if (input.expiresAtMs !== null) {
+		formData.append("expiresAtMs", String(input.expiresAtMs));
+	}
+	if (input.localImages) {
+		formData.append(
+			"imageMap",
+			JSON.stringify(
+				input.localImages.map((image, index) => ({
+					originalPath: image.originalPath,
+					field: `image_${index}`,
+				})),
+			),
+		);
+		input.localImages.forEach((image, index) => {
+			formData.append(`image_${index}`, image.file);
+		});
+	}
+	return formData;
+}
+
 describe("/api/trpc upload router", () => {
 	beforeAll(async () => {
 		// @ts-expect-error - test migrations binding
@@ -65,12 +110,14 @@ describe("/api/trpc upload router", () => {
 		vi.spyOn(envUtils, "isDev").mockReturnValue(true);
 
 		await expect(
-			trpc.upload.publicCreate.mutate({
-				markdown: "   ",
-				expirationDays: 1,
-				theme: "default",
-				turnstileToken: null,
-			}),
+			trpc.upload.publicCreate.mutate(
+				publicCreateFormData({
+					markdown: "   ",
+					expirationDays: 1,
+					theme: "default",
+					turnstileToken: null,
+				}),
+			),
 		).rejects.toThrow(/Markdown content is required/);
 	});
 
@@ -79,12 +126,14 @@ describe("/api/trpc upload router", () => {
 
 		const markdown = "a".repeat(100_001);
 		await expect(
-			trpc.upload.publicCreate.mutate({
-				markdown,
-				expirationDays: 1,
-				theme: "default",
-				turnstileToken: null,
-			}),
+			trpc.upload.publicCreate.mutate(
+				publicCreateFormData({
+					markdown,
+					expirationDays: 1,
+					theme: "default",
+					turnstileToken: null,
+				}),
+			),
 		).rejects.toThrow(/File size exceeds 100KB limit/);
 	});
 
@@ -92,12 +141,14 @@ describe("/api/trpc upload router", () => {
 		vi.spyOn(envUtils, "isDev").mockReturnValue(false);
 
 		await expect(
-			trpc.upload.publicCreate.mutate({
-				markdown: "# Hello world",
-				expirationDays: 1,
-				theme: "default",
-				turnstileToken: null,
-			}),
+			trpc.upload.publicCreate.mutate(
+				publicCreateFormData({
+					markdown: "# Hello world",
+					expirationDays: 1,
+					theme: "default",
+					turnstileToken: null,
+				}),
+			),
 		).rejects.toThrow(/Turnstile token is required/);
 	});
 
@@ -109,22 +160,26 @@ describe("/api/trpc upload router", () => {
 		});
 
 		await expect(
-			trpc.upload.publicCreate.mutate({
-				markdown: "# Hello world",
-				expirationDays: 1,
-				theme: "default",
-				turnstileToken: "bad-token",
-			}),
+			trpc.upload.publicCreate.mutate(
+				publicCreateFormData({
+					markdown: "# Hello world",
+					expirationDays: 1,
+					theme: "default",
+					turnstileToken: "bad-token",
+				}),
+			),
 		).rejects.toThrow(/Invalid verification/);
 	});
 
 	it("userCreate rejects when unauthenticated", async () => {
 		await expect(
-			trpc.upload.userCreate.mutate({
-				markdown: "# User upload",
-				theme: "default",
-				expiresAtMs: null,
-			}),
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: "# User upload",
+					theme: "default",
+					expiresAtMs: null,
+				}),
+			),
 		).rejects.toThrow(/UNAUTHORIZED/);
 	});
 
@@ -133,15 +188,46 @@ describe("/api/trpc upload router", () => {
 			createMockSession(testUser),
 		);
 
-		const result = await trpc.upload.userCreate.mutate({
-			markdown: "# User upload",
-			theme: "default",
-			expiresAtMs: null,
-		});
+		const result = await trpc.upload.userCreate.mutate(
+			userCreateFormData({
+				markdown: "# User upload",
+				theme: "default",
+				expiresAtMs: null,
+			}),
+		);
 
 		expect(result.path.startsWith(`${testUser.name}/`)).toBe(true);
 		const count = await countPagesByUser(testUser.id);
 		expect(count).toBe(1);
+	});
+
+	it("userCreate rejects missing local image files", async () => {
+		vi.spyOn(auth.api, "getSession").mockResolvedValue(
+			createMockSession(testUser),
+		);
+		const putAssetSpy = vi.spyOn(r2, "putAssetObject");
+
+		await expect(
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: ["# Local images", "![A](./a.png)", "![B](./b.png)"].join(
+						"\n",
+					),
+					theme: "default",
+					expiresAtMs: null,
+					localImages: [
+						{
+							originalPath: "./a.png",
+							file: new File(["a"], "a.png", { type: "image/png" }),
+						},
+					],
+				}),
+			),
+		).rejects.toThrow(/missing files/);
+
+		expect(putAssetSpy).not.toHaveBeenCalled();
+		const count = await countPagesByUser(testUser.id);
+		expect(count).toBe(0);
 	});
 
 	it("userCreate rejects invalid expiresAtMs values", async () => {
@@ -151,19 +237,23 @@ describe("/api/trpc upload router", () => {
 
 		const now = Date.now();
 		await expect(
-			trpc.upload.userCreate.mutate({
-				markdown: "# Invalid expiresAt",
-				theme: "default",
-				expiresAtMs: now - 1,
-			}),
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: "# Invalid expiresAt",
+					theme: "default",
+					expiresAtMs: now - 1,
+				}),
+			),
 		).rejects.toThrow(/Invalid expiresAt/);
 
 		await expect(
-			trpc.upload.userCreate.mutate({
-				markdown: "# Invalid expiresAt",
-				theme: "default",
-				expiresAtMs: now + 2 * 24 * 60 * 60 * 1000,
-			}),
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: "# Invalid expiresAt",
+					theme: "default",
+					expiresAtMs: now + 2 * 24 * 60 * 60 * 1000,
+				}),
+			),
 		).rejects.toThrow(/Invalid expiresAt/);
 	});
 
@@ -174,11 +264,13 @@ describe("/api/trpc upload router", () => {
 		);
 
 		await expect(
-			trpc.upload.userCreate.mutate({
-				markdown: "# Over quota",
-				theme: "default",
-				expiresAtMs: null,
-			}),
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: "# Over quota",
+					theme: "default",
+					expiresAtMs: null,
+				}),
+			),
 		).rejects.toThrow(/Upload limit reached/);
 	});
 
@@ -191,11 +283,13 @@ describe("/api/trpc upload router", () => {
 		);
 
 		await expect(
-			trpc.upload.userCreate.mutate({
-				markdown: "# R2 failure",
-				theme: "default",
-				expiresAtMs: null,
-			}),
+			trpc.upload.userCreate.mutate(
+				userCreateFormData({
+					markdown: "# R2 failure",
+					theme: "default",
+					expiresAtMs: null,
+				}),
+			),
 		).rejects.toThrow(/Internal server error/);
 
 		const count = await countPagesByUser(testUser.id);

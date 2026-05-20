@@ -2,9 +2,15 @@ import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import type { z } from "zod";
 import type { db as dbType } from "../db/client";
-import { putJsonObject } from "../infra/r2";
+import { deleteObjects, putJsonObject } from "../infra/r2";
 import { createPageRepo } from "../repositories/page.repo";
+import { createPageAssetRepo } from "../repositories/page-asset.repo";
 import { retryUntil } from "../utils/retry";
+import {
+	getAssetR2Key,
+	type LocalImageFile,
+	uploadAndRewriteLocalImages,
+} from "./local-image-assets.service";
 import {
 	MAX_ACTIVE_PAGES_PER_USER,
 	pageSlugSchema,
@@ -37,6 +43,7 @@ type CreateManagedPageInput = {
 	slug?: string;
 	theme: z.infer<typeof themeSchema>;
 	expiresAtMs: number | null;
+	localImages?: LocalImageFile[];
 };
 
 type UpdateManagedPageInput = {
@@ -75,6 +82,7 @@ function toSummary(
 
 export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 	const pageRepo = createPageRepo(db);
+	const pageAssetRepo = createPageAssetRepo(db);
 	const findOwnedPageByIdOrThrow = async (userId: string, pageId: string) => {
 		const page = await pageRepo.findActiveById(pageId);
 		if (!page) {
@@ -87,23 +95,28 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 
 		return page;
 	};
+	const assertCanCreatePage = async (userId: string) => {
+		const activeCount = await pageRepo.countActiveByUser(userId);
+		if (activeCount >= MAX_ACTIVE_PAGES_PER_USER) {
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: `Upload limit reached. Max ${MAX_ACTIVE_PAGES_PER_USER} pages per user.`,
+			});
+		}
+	};
 
 	return {
+		assertCanCreatePage(user: PageOwner) {
+			return assertCanCreatePage(user.id);
+		},
+
 		async listForUser(user: PageOwner) {
 			const pages = await pageRepo.listByUser(user.id);
 			return pages.map((page) => toSummary(user, page));
 		},
 
 		async createPage(input: CreateManagedPageInput, user: PageOwner) {
-			const activeCount = await pageRepo.countActiveByUser(user.id);
-			if (activeCount >= MAX_ACTIVE_PAGES_PER_USER) {
-				throw new TRPCError({
-					code: "TOO_MANY_REQUESTS",
-					message: `Upload limit reached. Max ${MAX_ACTIVE_PAGES_PER_USER} pages per user.`,
-				});
-			}
-
-			const { html, metadata } = await renderPageContent(input.markdown);
+			await assertCanCreatePage(user.id);
 			const expiresAt =
 				input.expiresAtMs === null
 					? null
@@ -121,69 +134,122 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 				}
 			}
 
-			const slug =
-				explicitSlug ||
-				(await retryUntil(
-					async () => nanoid(4),
-					async (candidateSlug) => {
-						return !(await pageRepo.slugExistsForUser(user.id, candidateSlug));
-					},
-				));
+			const pageId = crypto.randomUUID();
+			let uploadedAssetKeys: string[] = [];
+			let createdPage: {
+				slug: string;
+				title: string;
+				description: string;
+				createdAt: Date;
+				updatedAt: Date;
+			} | null = null;
+			try {
+				const content = await uploadAndRewriteLocalImages({
+					env,
+					markdown: input.markdown,
+					images: input.localImages ?? [],
+				});
+				uploadedAssetKeys = content.assets.map((asset) =>
+					getAssetR2Key(asset.id),
+				);
+				const markdown = content.markdown;
+				const { html, metadata } = await renderPageContent(markdown);
+				const slug =
+					explicitSlug ||
+					(await retryUntil(
+						async () => nanoid(4),
+						async (candidateSlug) => {
+							return !(await pageRepo.slugExistsForUser(
+								user.id,
+								candidateSlug,
+							));
+						},
+					));
 
-			if (!slug) {
+				if (!slug) {
+					throw new TRPCError({
+						code: "INTERNAL_SERVER_ERROR",
+						message: "Failed to generate unique slug after maximum retries",
+					});
+				}
+
+				const title = (metadata.title || "").trim() || slug;
+				const description = (metadata.description || "").trim();
+				const now = new Date();
+				const key = `u/${user.id}/${pageId}`;
+
+				await pageRepo.insert({
+					id: pageId,
+					userId: user.id,
+					slug,
+					theme: input.theme,
+					expiresAt,
+					title,
+					description,
+					createdAt: now,
+					updatedAt: now,
+					deletedAt: null,
+				});
+
+				await pageAssetRepo.insertMany(
+					content.assets.map((asset) => ({
+						id: asset.id,
+						pageId,
+						userId: user.id,
+						originalPath: asset.originalPath,
+						fileName: asset.fileName,
+						contentType: asset.contentType,
+						size: asset.size,
+						createdAt: now,
+					})),
+				);
+
+				await putJsonObject(
+					env,
+					key,
+					{ markdown, html },
+					{
+						theme: input.theme,
+						lang: metadata.lang || "",
+						title,
+						description,
+						hasCodeBlock: metadata.hasCodeBlock,
+						hasKatex: metadata.hasKatex,
+						hasMermaid: metadata.hasMermaid,
+						hasWikiLink: metadata.hasWikiLink,
+					},
+				);
+				createdPage = {
+					slug,
+					title,
+					description,
+					createdAt: now,
+					updatedAt: now,
+				};
+			} catch (error) {
+				await Promise.allSettled([
+					pageRepo.deleteById(pageId),
+					deleteObjects(env, uploadedAssetKeys),
+				]);
+				throw error;
+			}
+
+			if (!createdPage) {
 				throw new TRPCError({
 					code: "INTERNAL_SERVER_ERROR",
-					message: "Failed to generate unique slug after maximum retries",
+					message: "Failed to create page",
 				});
 			}
 
-			const pageId = crypto.randomUUID();
-			const title = (metadata.title || "").trim() || slug;
-			const description = (metadata.description || "").trim();
-			const now = new Date();
-
-			await pageRepo.insert({
-				id: pageId,
-				userId: user.id,
-				slug,
-				theme: input.theme,
-				expiresAt,
-				title,
-				description,
-				createdAt: now,
-				updatedAt: now,
-				deletedAt: null,
-			});
-
-			const key = `u/${user.id}/${pageId}`;
-			await putJsonObject(
-				env,
-				key,
-				{ markdown: input.markdown, html },
-				{
-					theme: input.theme,
-					lang: metadata.lang || "",
-					title,
-					description,
-					hasCodeBlock: metadata.hasCodeBlock,
-					hasKatex: metadata.hasKatex,
-					hasMermaid: metadata.hasMermaid,
-					hasWikiLink: metadata.hasWikiLink,
-				},
-			).catch(async (error: unknown) => {
-				await pageRepo.deleteById(pageId);
-				throw error;
-			});
-
 			return toSummary(user, {
 				id: pageId,
-				slug,
-				title,
-				description,
+				slug: createdPage.slug,
+				title: createdPage.title,
+				description: createdPage.description,
 				theme: input.theme,
 				expiresAt,
-				createdAt: now,
-				updatedAt: now,
+				createdAt: createdPage.createdAt,
+				updatedAt: createdPage.updatedAt,
 			});
 		},
 
@@ -263,7 +329,12 @@ export function createManagedPageService({ env, db }: { env: Env; db: Db }) {
 
 		async deletePage(userId: string, pageId: string) {
 			const page = await findOwnedPageByIdOrThrow(userId, pageId.trim());
+			const assets = await pageAssetRepo.listIdsByPageId(page.id);
 			await pageRepo.softDelete(page.id, new Date());
+			await deleteObjects(
+				env,
+				assets.map((asset) => getAssetR2Key(asset.id)),
+			);
 			return { ok: true as const, slug: page.slug };
 		},
 

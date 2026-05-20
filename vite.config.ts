@@ -9,6 +9,10 @@ const proxy = {
 		target: "http://localhost:8787",
 		changeOrigin: true,
 	},
+	"^/assets/[a-f0-9-]+$": {
+		target: "http://localhost:8787",
+		changeOrigin: true,
+	},
 	"^/(1|7|E|1E|e|1e)/[a-zA-Z0-9_-]{5}(\\.md)?$": {
 		target: "http://localhost:8787",
 		changeOrigin: true,

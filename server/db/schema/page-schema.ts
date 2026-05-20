@@ -49,3 +49,38 @@ export const pageRelations = relations(page, ({ one }) => ({
 		references: [user.id],
 	}),
 }));
+
+export const pageAsset = sqliteTable(
+	"page_asset",
+	{
+		id: text("id").primaryKey(),
+		pageId: text("page_id")
+			.notNull()
+			.references(() => page.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		originalPath: text("original_path").notNull(),
+		fileName: text("file_name").notNull(),
+		contentType: text("content_type").notNull(),
+		size: integer("size").notNull(),
+		createdAt: integer("created_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
+	},
+	(table) => [
+		index("pageAsset_pageId_idx").on(table.pageId),
+		index("pageAsset_userId_idx").on(table.userId),
+	],
+);
+
+export const pageAssetRelations = relations(pageAsset, ({ one }) => ({
+	page: one(page, {
+		fields: [pageAsset.pageId],
+		references: [page.id],
+	}),
+	user: one(user, {
+		fields: [pageAsset.userId],
+		references: [user.id],
+	}),
+}));

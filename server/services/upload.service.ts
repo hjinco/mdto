@@ -6,6 +6,7 @@ import { objectExists, putJsonObject } from "../infra/r2";
 import { getRemoteIp, validateTurnstile } from "../infra/turnstile";
 import { isDev } from "../utils/env";
 import { retryUntil } from "../utils/retry";
+import type { LocalImageFile } from "./local-image-assets.service";
 import { createManagedPageService } from "./managed-page.service";
 import {
 	type expirationDaysSchema,
@@ -26,6 +27,7 @@ export type UserCreateInput = {
 	markdown: string;
 	theme: z.infer<typeof themeSchema>;
 	expiresAtMs: number | null;
+	localImages: LocalImageFile[];
 };
 
 type Db = typeof dbType;
@@ -39,8 +41,6 @@ type UploadServiceDeps = {
 export function createUploadService({ env, req, db }: UploadServiceDeps) {
 	return {
 		async publicCreate(input: PublicCreateInput) {
-			const markdown = input.markdown;
-
 			if (!isDev(env)) {
 				const token = input.turnstileToken;
 				if (!token) {
@@ -66,6 +66,7 @@ export function createUploadService({ env, req, db }: UploadServiceDeps) {
 				}
 			}
 
+			const markdown = input.markdown;
 			const prefix = input.expirationDays.toString(16).toUpperCase();
 			const { html, metadata } = await renderPageContent(markdown);
 
@@ -114,6 +115,7 @@ export function createUploadService({ env, req, db }: UploadServiceDeps) {
 					markdown: input.markdown,
 					theme: input.theme,
 					expiresAtMs: input.expiresAtMs,
+					localImages: input.localImages,
 				},
 				user,
 			);

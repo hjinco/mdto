@@ -31,6 +31,9 @@ export const resources = {
 			dialogs: {
 				warningTitle: "Warning",
 				warningDescription: "Once created, pages cannot be modified or deleted",
+				localImageLoginRequiredTitle: "Login required",
+				localImageLoginRequiredDescription:
+					"Log in to publish markdown with local images.",
 				ok: "OK",
 				pageLimitTitle: "Page limit reached",
 				pageLimitDescription:
@@ -81,6 +84,17 @@ export const resources = {
 					invalidFileType: "Please select a .md, .markdown, or .txt file only",
 					fileTooLarge: "File size exceeds 100KB",
 				},
+			},
+			localImages: {
+				title: "Add local images",
+				description:
+					"Select the image files referenced by this markdown so they can be published with the page.",
+				noFile: "No file selected",
+				chooseFile: "Choose",
+				expectedFile: "Select {{fileName}}.",
+				selectedCount: "{{selected}}/{{total}} selected",
+				cancel: "Cancel",
+				confirm: "Create Page",
 			},
 			success: {
 				title: "Page Created",
@@ -218,6 +232,9 @@ export const resources = {
 				warningTitle: "경고",
 				warningDescription:
 					"한 번 생성된 페이지는 수정하거나 삭제할 수 없습니다",
+				localImageLoginRequiredTitle: "로그인이 필요해요",
+				localImageLoginRequiredDescription:
+					"로컬 이미지가 포함된 마크다운은 로그인 후 게시할 수 있어요.",
 				ok: "확인",
 				pageLimitTitle: "페이지 한도에 도달했어요",
 				pageLimitDescription:
@@ -268,6 +285,17 @@ export const resources = {
 					invalidFileType: ".md, .markdown, .txt 파일만 선택할 수 있어요",
 					fileTooLarge: "파일 크기가 100KB를 초과했어요",
 				},
+			},
+			localImages: {
+				title: "로컬 이미지 추가",
+				description:
+					"페이지에 함께 게시할 수 있도록 이 마크다운에서 참조한 이미지 파일을 선택하세요.",
+				noFile: "선택된 파일 없음",
+				chooseFile: "선택",
+				expectedFile: "{{fileName}} 파일을 선택하세요.",
+				selectedCount: "{{selected}}/{{total}} 선택됨",
+				cancel: "취소",
+				confirm: "페이지 만들기",
 			},
 			success: {
 				title: "페이지가 생성되었어요",
@@ -405,6 +433,9 @@ export const resources = {
 			dialogs: {
 				warningTitle: "警告",
 				warningDescription: "创建后页面无法修改或删除",
+				localImageLoginRequiredTitle: "需要登录",
+				localImageLoginRequiredDescription:
+					"请登录后发布包含本地图片的 Markdown。",
 				ok: "确定",
 				pageLimitTitle: "已达到页面上限",
 				pageLimitDescription:
@@ -453,6 +484,16 @@ export const resources = {
 					invalidFileType: "只能选择 .md、.markdown 或 .txt 文件",
 					fileTooLarge: "文件大小超过 100KB",
 				},
+			},
+			localImages: {
+				title: "添加本地图片",
+				description: "选择此 Markdown 引用的图片文件，以便随页面一起发布。",
+				noFile: "未选择文件",
+				chooseFile: "选择",
+				expectedFile: "请选择 {{fileName}}。",
+				selectedCount: "已选择 {{selected}}/{{total}}",
+				cancel: "取消",
+				confirm: "创建页面",
 			},
 			success: {
 				title: "页面已创建",
@@ -584,6 +625,9 @@ export const resources = {
 			dialogs: {
 				warningTitle: "警告",
 				warningDescription: "一度作成したページは変更や削除ができません",
+				localImageLoginRequiredTitle: "ログインが必要です",
+				localImageLoginRequiredDescription:
+					"ローカル画像を含む Markdown はログイン後に公開できます。",
 				ok: "OK",
 				pageLimitTitle: "ページ上限に達しました",
 				pageLimitDescription:
@@ -634,6 +678,17 @@ export const resources = {
 					invalidFileType: ".md、.markdown、.txt ファイルのみ選択できます",
 					fileTooLarge: "ファイルサイズが 100KB を超えています",
 				},
+			},
+			localImages: {
+				title: "ローカル画像を追加",
+				description:
+					"この Markdown が参照している画像ファイルを選択して、ページと一緒に公開します。",
+				noFile: "ファイル未選択",
+				chooseFile: "選択",
+				expectedFile: "{{fileName}} を選択してください。",
+				selectedCount: "{{selected}}/{{total}} 選択済み",
+				cancel: "キャンセル",
+				confirm: "ページを作成",
 			},
 			success: {
 				title: "ページを作成しました",

@@ -15,15 +15,10 @@ type WarningDialogBaseProps = {
 	tone?: WarningDialogTone;
 };
 
-type WarningDialogProps =
-	| (WarningDialogBaseProps & {
-			onSecondary?: never;
-			secondaryLabel?: never;
-	  })
-	| (WarningDialogBaseProps & {
-			onSecondary: () => void;
-			secondaryLabel: string;
-	  });
+type WarningDialogProps = WarningDialogBaseProps & {
+	onSecondary?: () => void;
+	secondaryLabel?: string;
+};
 
 export function WarningDialog({
 	isOpen,
@@ -77,7 +72,7 @@ export function WarningDialog({
 							</Dialog.Description>
 
 							<div className="flex gap-2">
-								{onSecondary && (
+								{onSecondary && secondaryLabel && (
 									<Dialog.Close
 										render={(props) => {
 											const { onClick, ...rest } = props;

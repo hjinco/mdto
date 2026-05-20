@@ -3,6 +3,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
 import { cleanerJob } from "./jobs/cleaner.job";
 import { sendDiscordAlert } from "./lib/discord";
+import { assetsRouter } from "./routes/assets.route";
 import { authRouter } from "./routes/auth.route";
 import { dashboardRouter } from "./routes/dashboard.route";
 import { pageApiRouter } from "./routes/page-api.route";
@@ -41,6 +42,7 @@ app.all("/api/trpc/*", async (c) => {
 		},
 	});
 });
+app.route("/", assetsRouter);
 app.route("/", dashboardRouter);
 app.route("/", viewRouter);
 

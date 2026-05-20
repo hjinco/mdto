@@ -158,6 +158,17 @@ export function createPageRepo(db: Db) {
 			await db.delete(schema.page).where(eq(schema.page.id, pageId));
 		},
 		async softDeleteExpired(now: Date) {
+			const expiredPages = await db
+				.select({ id: schema.page.id })
+				.from(schema.page)
+				.where(
+					and(
+						isNull(schema.page.deletedAt),
+						sql`${schema.page.expiresAt} is not null`,
+						lte(schema.page.expiresAt, now),
+					),
+				)
+				.all();
 			await db
 				.update(schema.page)
 				.set({ deletedAt: now })
@@ -168,6 +179,7 @@ export function createPageRepo(db: Db) {
 						lte(schema.page.expiresAt, now),
 					),
 				);
+			return expiredPages;
 		},
 	};
 }

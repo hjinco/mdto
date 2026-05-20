@@ -50,3 +50,20 @@ export async function putJsonObject(
 		customMetadata: toR2Metadata(metadata),
 	});
 }
+
+export async function putAssetObject(env: Env, key: string, file: File) {
+	return await env.BUCKET.put(key, file.stream(), {
+		httpMetadata: {
+			contentType: file.type,
+		},
+	});
+}
+
+export async function deleteObject(env: Env, key: string) {
+	await env.BUCKET.delete(key);
+}
+
+export async function deleteObjects(env: Env, keys: string[]) {
+	if (keys.length === 0) return;
+	await Promise.allSettled(keys.map((key) => deleteObject(env, key)));
+}
