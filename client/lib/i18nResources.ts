@@ -18,7 +18,7 @@ export const resources = {
 			},
 			home: {
 				new: "New",
-				apiBanner: "Manage pages with API keys →",
+				apiBanner: "Attach local images to your pages",
 				browseFilesHint: "Press {{shortcut}} to browse files",
 			},
 			footer: {
@@ -217,8 +217,8 @@ export const resources = {
 				privacy: "개인정보처리방침",
 			},
 			home: {
-				new: "새",
-				apiBanner: "API 키로 페이지를 관리해보세요 →",
+				new: "업데이트",
+				apiBanner: "페이지에 로컬 이미지를 첨부할 수 있어요",
 				browseFilesHint: "{{shortcut}} 를 눌러 파일을 선택하세요",
 			},
 			footer: {
@@ -419,8 +419,8 @@ export const resources = {
 				privacy: "隐私",
 			},
 			home: {
-				new: "新",
-				apiBanner: "使用 API 密钥管理页面 →",
+				new: "更新",
+				apiBanner: "可以为页面附加本地图片",
 				browseFilesHint: "按下 {{shortcut}} 以浏览文件",
 			},
 			footer: {
@@ -611,8 +611,8 @@ export const resources = {
 				privacy: "プライバシー",
 			},
 			home: {
-				new: "新着",
-				apiBanner: "API キーでページを管理する →",
+				new: "更新",
+				apiBanner: "ページにローカル画像を添付できます",
 				browseFilesHint: "{{shortcut}} を押してファイルを選択",
 			},
 			footer: {

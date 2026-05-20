@@ -1,6 +1,5 @@
 import { Github } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { getApiDocsHref } from "@shared/docs/api-docs";
 import {
 	analyzeLocalImageReferences,
 	type LocalImageReference,
@@ -102,7 +101,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const [isHomeReady, setIsHomeReady] = useState(false);
 	const [expirationDays, setExpirationDays] = useState(30);
 	const [selectedTheme, setSelectedTheme] = useState<ThemeId>("default");
@@ -366,19 +365,14 @@ function Home() {
 						</div>
 					</div>
 
-					{/* API Banner */}
+					{/* Feature Banner */}
 					{!uploadedUrl && (
-						<a
-							href={getApiDocsHref(i18n.language)}
-							target="_blank"
-							rel="noreferrer"
-							className="mb-8 px-4 py-2 rounded-full bg-surface-card border border-border text-sm text-text-secondary hover:text-text-primary hover:border-[#2a2b30] hover:shadow-card-hover transition-all flex items-center gap-2"
-						>
-							<span className="text-[10px] uppercase font-bold text-[#a0a0a0] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded leading-none">
+						<div className="mb-8 max-w-[calc(100vw-2.5rem)] px-4 py-2 rounded-full bg-surface-card border border-border text-sm text-text-secondary transition-all flex items-center gap-2">
+							<span className="shrink-0 text-[10px] uppercase font-bold text-[#a0a0a0] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded leading-none">
 								{t("home.new")}
 							</span>
-							<span>{t("home.apiBanner")}</span>
-						</a>
+							<span className="min-w-0 break-words">{t("home.apiBanner")}</span>
+						</div>
 					)}
 
 					{/* Card */}
