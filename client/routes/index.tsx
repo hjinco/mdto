@@ -429,13 +429,6 @@ function Home() {
 
 					{!uploadedUrl && <Features />}
 
-					{/* Footer - Only visible in centered mode or right pane */}
-					{!uploadedUrl && (
-						<div className="hidden md:block mt-4 text-center text-xs text-text-tertiary opacity-60 transition-opacity duration-200 hover:opacity-100">
-							{t("home.browseFilesHint", { shortcut: "⌘ O" })}
-						</div>
-					)}
-
 					{/* Footer Links (Terms, Privacy, GitHub) */}
 					<div
 						className={cn(
