@@ -46,7 +46,11 @@ curl https://mdto.page/api/v1/pages \
 
 - `default`
 - `resume`
+- `github`
 - `matrix`
+- `catppuccin`
+- `everforest`
+- `dracula`
 
 ### slug
 

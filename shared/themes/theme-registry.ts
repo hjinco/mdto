@@ -1,4 +1,12 @@
-export const THEME_IDS = ["default", "resume", "github", "matrix"] as const;
+export const THEME_IDS = [
+	"default",
+	"resume",
+	"github",
+	"matrix",
+	"catppuccin",
+	"everforest",
+	"dracula",
+] as const;
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
@@ -85,6 +93,51 @@ export const THEMES: Record<ThemeId, ThemeDefinition> = {
 		features: {
 			showToc: false,
 			showColorModeToggle: false,
+		},
+	},
+	catppuccin: {
+		id: "catppuccin",
+		label: "Catppuccin",
+		themeFragments: [
+			"theme/tokens/catppuccin.css",
+			"theme/base.css",
+			"theme/presets/article.css",
+			"theme/features/default.css",
+		],
+		hljsFragments: ["hljs/base.css", "hljs/variants/catppuccin.css"],
+		features: {
+			showToc: true,
+			showColorModeToggle: true,
+		},
+	},
+	everforest: {
+		id: "everforest",
+		label: "Everforest",
+		themeFragments: [
+			"theme/tokens/everforest.css",
+			"theme/base.css",
+			"theme/presets/article.css",
+			"theme/features/default.css",
+		],
+		hljsFragments: ["hljs/base.css", "hljs/variants/everforest.css"],
+		features: {
+			showToc: true,
+			showColorModeToggle: true,
+		},
+	},
+	dracula: {
+		id: "dracula",
+		label: "Dracula",
+		themeFragments: [
+			"theme/tokens/dracula.css",
+			"theme/base.css",
+			"theme/presets/article.css",
+			"theme/features/default.css",
+		],
+		hljsFragments: ["hljs/base.css", "hljs/variants/dracula.css"],
+		features: {
+			showToc: true,
+			showColorModeToggle: true,
 		},
 	},
 };
