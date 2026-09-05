@@ -24,6 +24,9 @@ describe("theme registry", () => {
 			{ value: "resume", label: "Resume" },
 			{ value: "github", label: "GitHub" },
 			{ value: "matrix", label: "Matrix" },
+			{ value: "catppuccin", label: "Catppuccin" },
+			{ value: "everforest", label: "Everforest" },
+			{ value: "dracula", label: "Dracula" },
 		]);
 	});
 
@@ -35,6 +38,9 @@ describe("theme registry", () => {
 		]);
 		expect(OVERFLOW_THEME_OPTIONS).toEqual([
 			{ value: "matrix", label: "Matrix" },
+			{ value: "catppuccin", label: "Catppuccin" },
+			{ value: "everforest", label: "Everforest" },
+			{ value: "dracula", label: "Dracula" },
 		]);
 	});
 
@@ -50,6 +56,18 @@ describe("theme registry", () => {
 		expect(getThemeDefinition("resume").features).toEqual({
 			showToc: false,
 			showColorModeToggle: false,
+		});
+		expect(getThemeDefinition("catppuccin").features).toEqual({
+			showToc: true,
+			showColorModeToggle: true,
+		});
+		expect(getThemeDefinition("everforest").features).toEqual({
+			showToc: true,
+			showColorModeToggle: true,
+		});
+		expect(getThemeDefinition("dracula").features).toEqual({
+			showToc: true,
+			showColorModeToggle: true,
 		});
 	});
 });

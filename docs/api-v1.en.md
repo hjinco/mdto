@@ -46,7 +46,11 @@ Requests without a valid key return `401 Unauthorized`.
 
 - `default`
 - `resume`
+- `github`
 - `matrix`
+- `catppuccin`
+- `everforest`
+- `dracula`
 
 ### Slugs
 
